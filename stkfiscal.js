@@ -12,10 +12,9 @@ app.use('/js', express.static('js'))
 app.use('/img', express.static('img'))
 app.use('/plugins', express.static('plugins'))
 
-app.get("/:id?", function(req, res) {
-    //res.send("essa é a minha página inicial");
-    //res.sendFile(__dirname+"/index.html")
-    res.render('index', {id: req.params.id});
+
+app.get("/", function(req, res) {
+    res.render('index');
 })
 
 app.listen(3000, function(req, res) {
