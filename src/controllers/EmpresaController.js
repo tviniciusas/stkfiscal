@@ -3,14 +3,7 @@ const Empresa = require('../models/Empresa.js');
 module.exports =  {
 
     async index(req, res) {
-
-        const empresas = await Empresa.findAll();
-
-        if(empresas == '' || empresas == null) {
-            return res.status(200).send({message: "Nenhuma empresa cadastrada"});
-        }
-
-        return res.status(200).send({empresas});
+        res.render('empresa');
     },
 
     async store(req, res) {
