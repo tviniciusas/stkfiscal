@@ -1,4 +1,5 @@
 const User = require('../models/User.js');
+const bcrypt = require('bcrypt');
 
 module.exports =  {
 
@@ -14,15 +15,51 @@ module.exports =  {
     },
 
     async store(req, res) {
+        
+        try {
+            
+            const users = await User.findOne({where: {email: req.body.email}});
+
+            if(users) {
+                res.status(400).send({status: false, msg: "Já existe um usuário cadastrado com esse e-mail"});     
+            }
+            
+            const hashedPassword = await bcrypt.hash(req.body.password, 10);
+            
+            const password = hashedPassword;
+            const email = req.body.email;
+
+            const user = await User.create({password,email});
+
+            res.redirect('/login')
+        
+        } catch (error) { 
+               
+            res.status(400).send({status: false, msg: "Erro"});     
+        }
+    
 
     },
 
     async update(req, res) {
 
+        const {name, password, email} = req.body;
+
+        const { user_id } = req.params;
+
+        await User.update({name,password,email}, {where: {id: user_id}});
+
+        return res.status(200).send({status: true, msg: "Dados Alterados com sucesso"});
+
     },
 
-    async delate(req, res) {
+    async delete(req, res) {
 
+        const { user_id } = req.params;
+
+        await User.destroy({where: {id: user_id}});
+
+        return res.status(200).send({status: true, msg: "Usuário deletado com sucesso"});
     }
 
 }
