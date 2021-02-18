@@ -34,17 +34,13 @@ module.exports =  {
             res.redirect('/login')
         
         } catch (error) { 
-               
             res.status(400).send({status: false, msg: "Erro"});     
         }
-    
-
     },
 
     async update(req, res) {
 
         const {name, password, email} = req.body;
-
         const { user_id } = req.params;
 
         await User.update({name,password,email}, {where: {id: user_id}});
@@ -61,5 +57,4 @@ module.exports =  {
 
         return res.status(200).send({status: true, msg: "Usuário deletado com sucesso"});
     }
-
 }

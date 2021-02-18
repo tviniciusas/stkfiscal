@@ -40,5 +40,4 @@ function checkAuthenticated(req, res, next) {
 }
 
 
-
 module.exports = router;

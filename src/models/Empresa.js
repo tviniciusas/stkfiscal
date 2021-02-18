@@ -14,5 +14,4 @@ class Empresa extends Model {
         }, { sequelize })
     }
 }
-
 module.exports = Empresa;
