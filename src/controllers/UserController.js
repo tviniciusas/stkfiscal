@@ -35,7 +35,7 @@ module.exports =  {
         
         } catch (error) { 
                
-            res.status(400).send({status: false, msg: "Erro"});     
+            res.status(400).send({status: false, msg: error});     
         }
     
 

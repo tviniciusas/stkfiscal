@@ -2,7 +2,7 @@
     <div class="col-lg-12">
         <div class="card card-primary">
         <div class="card-header">
-            <h3 class="card-title">Dados Cadastrais</h3>
+            <h3 class="card-title">Dados cadastrais</h3>
         </div>
         <!-- /.card-header -->
         <!-- form start -->
@@ -24,13 +24,13 @@
                 <div class="col-sm-8">
                     <div class="form-group">
                         <label>Razão Social</label>
-                        <input type="text" class="form-control" placeholder="Informe a razão social da sua empresa">
+                        <input type="text" disabled="disabled" value="{{empresa.razao}}" class="form-control" placeholder="Informe a razão social da sua empresa">
                     </div>
                 </div>
                 <div class="col-sm-4">
                     <div class="form-group">
                         <label>CNPJ</label>
-                        <input type="text" class="form-control" placeholder="Informe o CNPJ da sua empresa">
+                        <input type="text" disabled="disabled" class="form-control" value="{{empresa.cnpj}}" placeholder="Informe o CNPJ da sua empresa">
                     </div>
                 </div>
                 <div class="col-sm-8">

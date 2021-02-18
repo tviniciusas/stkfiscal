@@ -39,48 +39,36 @@
             <img src="/img/logo-gray-blue.svg" alt="AdminLTE Logo" style="max-height:33px">
         </div>
 
-      <form action="/user" method="post">
-        <div class="input-group mb-3">
+      <form id="register" action="/register" method="post">
+        {{#if messages.error}}
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+          <i class="icon fas fa-exclamation-triangle"></i>{{messages.error}}
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        {{/if}}
+       
+        <div class="form-group mb-3">
+          <input type="text" id="razao_social" name="razao_social" class="form-control" placeholder="Razão Social">
+        </div>
+        <div class="form-group mb-3">
+          <input type="text" id="cnpj" name="cnpj" class="form-control" placeholder="CNPJ/CPF">
+        </div>
+        <div class="form-group mb-3">
           <input type="email" id="email" name="email" class="form-control" placeholder="Email">
-          <div class="input-group-append">
-            <div class="input-group-text">
-              <span class="fas fa-envelope"></span>
-            </div>
-          </div>
         </div>
-        <div class="input-group mb-3">
-          <input type="password" id="password" name="password" class="form-control" placeholder="Password">
-          <div class="input-group-append">
-            <div class="input-group-text">
-              <span class="fas fa-lock"></span>
-            </div>
-          </div>
+        <div class="form-group mb-3">
+          <input type="password" id="password" name="password" class="form-control" placeholder="Senha">
         </div>
-        <div class="input-group mb-3">
-          <input type="password" id="password-confirmation" name="password-confirmation" class="form-control" placeholder="Retype password">
-          <div class="input-group-append">
-            <div class="input-group-text">
-              <span class="fas fa-lock"></span>
-            </div>
-          </div>
+        <div class="form-group mb-3">
+          <input type="password" id="password_confirmation" name="password_confirmation" class="form-control" placeholder="Confirme sua senha">
         </div>
-        <div class="row">
-          <div class="col-8">
-            <div class="icheck-primary">
-              <input type="checkbox" id="agreeTerms" name="terms" value="agree">
-              <label for="agreeTerms">
-               I agree to the <a href="#">terms</a>
-              </label>
-            </div>
-          </div>
-          <!-- /.col -->
-          <div class="col-4">
-            <button type="submit" class="btn btn-primary btn-block">Register</button>
-          </div>
-          <!-- /.col -->
+        <div class="text-center mb-3">
+          <button type="submit" class="btn btn-primary btn-block">Cadastrar</button>
         </div>
       </form>
-      <a href="/login" class="text-center">I already have a membership</a>
+      <a href="/login" class="text-center mt-3">Voltar para o login</a>
     </div>
     <!-- /.form-box -->
   </div><!-- /.card -->
@@ -91,7 +79,72 @@
 <script src="/plugins/jquery/jquery.min.js"></script>
 <!-- Bootstrap 4 -->
 <script src="/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<!-- jquery-validation -->
+<script src="/plugins/jquery-validation/jquery.validate.min.js"></script>
+<script src="/plugins/jquery-validation/additional-methods.min.js"></script>
 <!-- AdminLTE App -->
 <script src="/js/adminlte.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function () {
+
+  $('#register').validate({
+    rules: {
+      cnpj: {
+        required: true,
+        minlength: 11
+      },
+      razao_social: {
+        required: true,
+        minlength: 3
+      },
+      email: {
+        required: true,
+        email: true,
+      },
+      password: {
+        required: true,
+        minlength: 5
+      },
+      password_confirmation: {
+        required: true,
+        minlength: 5
+      },
+    },
+    messages: {
+      cnpj: {
+        required: "Insira um CNPJ/CPF válido",
+        minlength: "Insira um CNPJ/CPF válido"
+      },
+      razao_social: {
+        required: "Insira uma Razão Social válida",
+        minlength: "Insira uma Razão Social válida",
+      },
+      email: {
+        required: "Insira um endereço de e-mail",
+        email: "Insira um endereço de e-mail válido"
+      },
+      password: {
+        required: "Insira uma senha",
+        minlength: "A sua senha deve ter no mínimo 5 caracteres"
+      },
+      password_confirmation: {
+        required: "Confirme sua senha",
+      }
+    },
+    errorElement: 'span',
+    errorPlacement: function (error, element) {
+      error.addClass('invalid-feedback');
+      element.closest('.form-group').append(error);
+    },
+    highlight: function (element, errorClass, validClass) {
+      $(element).addClass('is-invalid');
+    },
+    unhighlight: function (element, errorClass, validClass) {
+      $(element).removeClass('is-invalid');
+    }
+  });
+});
+</script>
 </body>
 </html>

@@ -1,9 +1,20 @@
 const Empresa = require('../models/Empresa.js');
+const User = require('../models/User.js');
 
 module.exports =  {
 
     async index(req, res) {
-        res.render('empresa');
+
+        var empresa;
+
+        const usuario = req.user;
+        console.log(usuario);
+
+        await Empresa.findByPk(usuario.empresas_id).then(data => {
+           empresa = data.get({ plain: true });
+        });
+       
+        res.render('empresa', {usuario: req.user, empresa: empresa})
     },
 
     async store(req, res) {
