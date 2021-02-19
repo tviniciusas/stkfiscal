@@ -1,2 +1,7 @@
 /node_modules
+<<<<<<< HEAD
+=======
+/src/config/database.js
+
+>>>>>>> 29bae453e9a0e0d1e25e849cb2cad87b21079107
 

@@ -4,58 +4,65 @@
         <div class="card-header">
             <h3 class="card-title">Dados cadastrais</h3>
         </div>
-        <!-- /.card-header -->
-        <!-- form start -->
-        <form role="form">
+        <form action="/empresa" method="post" role="form">
         <div class="card-body">
             <div class="row">
                 <div class="col-sm-8">
+
                     <div class="form-group">
                         <label>Nome</label>
-                        <input type="text" class="form-control" placeholder="Informe o nome da sua empresa">
+                        <input type="text" name="nome" id="nome" class="form-control" placeholder="Informe o nome da sua empresa">
                     </div>
                 </div>
                 <div class="col-sm-4">
                     <div class="form-group">
                         <label>Inscrição Estadual</label>
-                        <input type="text" class="form-control" placeholder="Informe a inscrição estadual da sua empresa">
+                        <input type="text" name="ie" class="form-control" placeholder="Informe a inscrição estadual da sua empresa">
                     </div>
                 </div>
                 <div class="col-sm-8">
                     <div class="form-group">
                         <label>Razão Social</label>
+<<<<<<< HEAD
                         <input type="text" disabled="disabled" value="{{empresa.razao}}" class="form-control" placeholder="Informe a razão social da sua empresa">
+=======
+                        <input type="text" name="razao" class="form-control" placeholder="Informe a razão social da sua empresa">
+>>>>>>> 29bae453e9a0e0d1e25e849cb2cad87b21079107
                     </div>
                 </div>
                 <div class="col-sm-4">
                     <div class="form-group">
                         <label>CNPJ</label>
+<<<<<<< HEAD
                         <input type="text" disabled="disabled" class="form-control" value="{{empresa.cnpj}}" placeholder="Informe o CNPJ da sua empresa">
+=======
+                        <input type="text" name="cnpj" class="form-control" placeholder="Informe o CNPJ da sua empresa">
+>>>>>>> 29bae453e9a0e0d1e25e849cb2cad87b21079107
                     </div>
                 </div>
                 <div class="col-sm-8">
                     <div class="form-group">
                         <label for="exampleInputEmail1">E-mail comercial</label>
-                        <input type="email" class="form-control" id="exampleInputEmail1" placeholder="Informe o e-mail comercial da empresa">
+                        <input type="email" name="email" class="form-control" id="exampleInputEmail1" placeholder="Informe o e-mail comercial da empresa">
                     </div>
                 </div>
                 <div class="col-sm-4">
                     <div class="form-group">
                         <label>Telefone</label>
-                        <input type="text" class="form-control" placeholder="Informe o telefone comercial">
+                        <input type="text" name="telefone" class="form-control" placeholder="Informe o telefone comercial">
                     </div>
                 </div>
                 <div class="col-sm-6">
-                    <div class="form-group">
+                    <div  class="form-group">
                     <label>Estado</label>
                     <select class="form-control select2bs4" style="width: 100%;">
-                        <option selected="selected">Alabama</option>
-                        <option>Alaska</option>
-                        <option>California</option>
-                        <option>Delaware</option>
-                        <option>Tennessee</option>
-                        <option>Texas</option>
-                        <option>Washington</option>
+                        <option  selected="selected"></option>
+                        <option value="AC">AC</option>
+                        <option value="AL">AL</option>
+                        <option value="AP">AP</option>
+                        <option value="AM">AM</option>
+                        <option value="BA">BA</option>
+                        <option value="CE">CE</option>
                     </select>
                     </div>
                 </div>
@@ -63,18 +70,12 @@
                     <div class="form-group">
                     <label>Cidade</label>
                     <select class="form-control select2bs4" disabled="disabled" style="width: 100%;">
-                        <option selected="selected">Alabama</option>
-                        <option>Alaska</option>
-                        <option>California</option>
-                        <option>Delaware</option>
-                        <option>Tennessee</option>
-                        <option>Texas</option>
-                        <option>Washington</option>
+                        <option nome="cidade" selected="selected">Salvador</option>
+                        <option>Rio de Janeiro</option>
                     </select>
                     </div>
                 </div>
             </div>
-
             <div class="socio-adm mt-4">
                 <h5>Sócio Administrador</h5>
                 <hr class="solid mt-0 mb-3">
@@ -82,19 +83,17 @@
                     <div class="col-sm-8">
                         <div class="form-group">
                             <label>Nome</label>
-                            <input type="text" class="form-control" placeholder="Informe o nome completo do sócio administrador">
+                            <input name="estado" type="text" class="form-control" placeholder="Informe o nome completo do sócio administrador">
                         </div>
                     </div>
                     <div class="col-sm-4">
                         <div class="form-group">
                             <label>Telefone</label>
-                            <input type="text" class="form-control" placeholder="Informe o telefone do sócio administrador">
+                            <input name="cidade" type="text" class="form-control" placeholder="Informe o telefone do sócio administrador">
                         </div>
                     </div>
                 </div>
             </div>
-
-            
             <div class="fiscal-interno mt-4">
                 <h5>Fiscal Interno</h5>
                 <hr class="solid mt-0 mb-3">
@@ -119,7 +118,6 @@
                     </div>
                 </div>
             </div>
-
             <div class="sefaz mt-4">
                 <h5>SEFAZ</h5>
                 <hr class="solid mt-0 mb-3">
@@ -138,10 +136,8 @@
                     </div>
                 </div>
             </div>
-
         </div>
         <!-- /.card-body -->
-
         <div class="card-footer">
             <button type="submit" class="btn btn-primary">Salvar</button>
         </div>

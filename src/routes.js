@@ -85,7 +85,10 @@ function checkNotAuthenticated(req, res, next) {
         return res.redirect('/');
     }
 
+<<<<<<< HEAD
     next();
 }
 
+=======
+>>>>>>> 29bae453e9a0e0d1e25e849cb2cad87b21079107
 module.exports = router;
