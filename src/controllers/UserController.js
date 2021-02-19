@@ -33,13 +33,8 @@ module.exports =  {
 
             res.redirect('/login')
         
-        } catch (error) { 
-<<<<<<< HEAD
-               
+        } catch (error) {                
             res.status(400).send({status: false, msg: error});     
-=======
-            res.status(400).send({status: false, msg: "Erro"});     
->>>>>>> 29bae453e9a0e0d1e25e849cb2cad87b21079107
         }
     },
 
