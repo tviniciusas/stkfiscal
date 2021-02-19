@@ -18,7 +18,7 @@ app.use(express.json());
 app.use(session({
     secret: process.env.SESSION_SECRET,
     resave: false,
-    saveUninitialized: true,
+    saveUninitialized: false,
     cookie: { maxAge: 5 * 60 * 1000 } // A sessão deve durar 5 min
 }));
 
@@ -35,6 +35,34 @@ app.use(function(req, res, next){
 
 app.engine("handlebars",handlebars({defaultLayout:'main'}));
 app.set('view engine', 'handlebars');
+
+app.use(function (req, res, next) {
+    res.locals.menu = getMenu(req.user);
+
+    if(req.user) {
+        if(req.user.admin) {
+            res.locals.user_name = 'Administrador iStok';
+        } else {
+            res.locals.user_name = req.user.empresa.razao;
+            res.locals.empresa = req.user.empresa;
+        }
+
+        res.locals.user_model = req.user;
+    }
+
+    next();
+});
+
+function getMenu(user) {
+
+    if(user) {
+        if(user.admin) {
+            return 'admin_menu';
+        } else {
+            return 'user_menu';
+        }   
+    }
+};
 
 app.use(express.urlencoded({ extended: false}))
 

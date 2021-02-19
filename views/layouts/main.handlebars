@@ -136,12 +136,12 @@ scratch. This page gets rid of all links and provides the needed markup only.
         <div class="d-flex h-100">
           <img src="/img/user2-160x160.jpg" class="img-circle h-100 mr-2" alt="User Image">
           <div class="info">
-            <span>{{req.session.name}}</span>
+            <span>{{user_name}}</span>
           </div>
         </div>
       </a>
               <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-          <span class="dropdown-header">{{name}}</span>
+          <span class="dropdown-header">{{user_name}}</span>
           <div class="dropdown-divider"></div>
           <a href="#" class="dropdown-item">
             <i class="fas fa-file-signature mr-2"></i> Plano
@@ -183,79 +183,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
     <!-- Sidebar -->
     <div class="sidebar">
-
-      <!-- Sidebar Menu -->
-      <nav class="mt-2">
-        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-          <!-- Add icons to the links using the .nav-icon class
-               with font-awesome or any other icon font library -->
-          <li class="nav-item">
-            <a href="/" class="nav-link">
-              <i class="nav-icon fas fa-chart-line"></i>
-              <p>
-                Dashboard
-              </p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="empresa" class="nav-link">
-              <i class="nav-icon fas fa-building"></i>
-              <p>
-                Dados Cadastrais
-              </p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="documentos/upload" class="nav-link">
-              <i class="nav-icon fas fa-file-upload"></i>
-              <p>
-                Adicionar documento
-              </p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="documentos/em-processo" class="nav-link">
-              <i class="nav-icon far fa-clock"></i>
-              <p>
-                Em processo
-              </p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="documentos/finalizados" class="nav-link">
-              <i class="nav-icon far fa-check-circle"></i>
-              <p>
-                Finalizados
-              </p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="historico" class="nav-link">
-              <i class="nav-icon far fa-calendar-alt"></i>
-              <p>
-                Histórico
-              </p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="tributario" class="nav-link">
-              <i class="nav-icon fas fa-gavel"></i>
-              <p>
-                Cadastro Tributário
-              </p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="lixeira" class="nav-link">
-              <i class="nav-icon fas fa-trash"></i>
-              <p>
-                Lixeira
-              </p>
-            </a>
-          </li>
-        </ul>
-      </nav>
-      <!-- /.sidebar-menu -->
+      {{> (lookup . 'menu') }}
     </div>
     <!-- /.sidebar -->
   </aside>

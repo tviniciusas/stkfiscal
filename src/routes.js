@@ -21,8 +21,10 @@ router.post("/login", checkNotAuthenticated, passport.authenticate('local', {
 
 router.delete("/logout", checkAuthenticated, LoginController.logout);
 
+router.use(checkAuthenticated);
+
 //=== Rotas Home ===//
-router.get("/", checkAuthenticated, (req, res) => {
+router.get("/", (req, res) => {
     res.render('index');
 })
 
@@ -38,6 +40,25 @@ router.post("/empresa", EmpresaController.store);
 router.put("/empresa/:idemp", EmpresaController.update);
 router.delete("/empresa/:idemp", EmpresaController.delete);
 
+//=== Rotas Admin ===//
+router.use("/admin", isAdmin);
+
+router.get("/admin/documentos/cadastro", (req, res) => {
+    res.render('./admin/documentos/cadastro')
+});
+
+router.get("/admin/documentos/solicitacao", (req, res) => {
+    res.render('./admin/documentos/solicitacao')
+});
+
+router.get("/admin/documentos/historico", (req, res) => {
+    res.render('./admin/documentos/historico')
+});
+
+router.get("/admin/usuarios", (req, res) => {
+    res.render('./admin/usuarios')
+});
+
 
 //=== Função middlewer's ===//
 
@@ -48,6 +69,15 @@ function checkAuthenticated(req, res, next) {
     }
 
     res.redirect('/login');
+}
+
+function isAdmin(req, res, next) {
+        if(req.user.admin){
+            next();
+        }else{
+            req.logOut();
+            res.redirect('/login');
+        }
 }
 
 function checkNotAuthenticated(req, res, next) {

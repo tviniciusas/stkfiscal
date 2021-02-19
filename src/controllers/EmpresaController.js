@@ -8,7 +8,6 @@ module.exports =  {
         var empresa;
 
         const usuario = req.user;
-        console.log(usuario);
 
         await Empresa.findByPk(usuario.empresas_id).then(data => {
            empresa = data.get({ plain: true });
