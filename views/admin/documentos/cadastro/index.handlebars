@@ -1,1 +1,176 @@
-<h1>Cadastrar</h1>
+<div class="row">
+    <div class="col-md-12">
+        <div class="card-buttons mb-3">
+            <button type="button" class="btn btn-primary swalDefaultSuccess" data-toggle="modal"
+                data-target="#modal-cadastrar-documentos"><i class="fas fa-plus mr-2"></i>Cadastrar
+                novo
+                documento</button>
+        </div>
+
+        <div class="card card-primary card-outline">
+            <div class="card-header">
+                <h3 class="card-title">Documentos Cadastrados</h3>
+
+                <div class="card-tools">
+                    <div class="input-group input-group-sm" style="width: 200px;">
+                        <input id="inputBuscar" type="text" name="table_search" onkeyup="buscarDocumento()"
+                            class="form-control float-right" placeholder="Buscar Documento">
+
+                        <div class="input-group-append">
+                            <button type="submit" class="btn btn-default"><i class="fas fa-search"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body table-responsive p-0">
+                <table id="tableDocumentos" class="table table-sm table-hover text-nowrap">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Descrição</th>
+                            <th>Extensão</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+            <!-- /.card-body -->
+            {{#if documentos}}
+            <div class="card-footer text-muted small clearfix">Total de registros: {{documentos.length}}</div>
+            {{else}}
+            <div class="card-footer clearfix">Teste</div>
+            {{/if}}
+        </div>
+
+        <div class="modal fade" id="modal-cadastrar-documentos">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Cadastrar documento</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="cadastrar_documento">
+                            <div class="row">
+                                <div class="col-sm-8">
+                                    <div class="form-group mb-3">
+                                        <label for="nome">Nome do documento</label>
+                                        <input type="text" id="nome" name="nome" class="form-control"
+                                            placeholder="Nome">
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group mb-3">
+                                        <label for="extensao">Extensão do arquivo</label>
+                                        <input type="text" id="extensao" name="extensao" class="form-control"
+                                            placeholder="Extensão">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="descricao">Descrição do documento</label>
+                                <textarea id="descricao" name="descricao" class="form-control" rows="3"
+                                    placeholder="Descrição do documento"></textarea>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+                        <button type="button" onclick="store_documentos()" class="btn btn-primary">Salvar</button>
+                    </div>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+    </div>
+</div>
+
+{{> scripts}}
+
+<script>
+
+    $(function () {
+        show_documentos();
+
+        $('#modal-cadastrar-documentos').on('hidden.bs.modal', function () {
+            $("#cadastrar_documento").trigger('reset');
+        });
+
+    });
+
+    function buscarDocumento() {
+        var input, filter, table, tr, td, i, txtValue;
+        input = document.getElementById("inputBuscar");
+        filter = input.value.toUpperCase();
+        table = document.getElementById("tableDocumentos");
+        tr = table.getElementsByTagName("tr");
+        for (i = 0; i < tr.length; i++) {
+            td = tr[i].getElementsByTagName("td")[0];
+            if (td) {
+                txtValue = td.textContent || td.innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
+                }
+            }
+        }
+    }
+
+    function show_documentos() {
+        $('#tableDocumentos').DataTable({
+            bInfo: false,
+            destroy: true,
+            paging: false,
+            searching: false,
+            "ajax": "/admin/documentos/show_documentos",
+            "columns": [
+                { "data": "nome" },
+                { "data": "descricao" },
+                { "data": "extensao" }
+            ]
+        });
+    }
+
+    function store_documentos() {
+
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000
+        });
+
+        $.ajax({
+            url: "/admin/documentos/store",
+            data: $("#cadastrar_documento").serialize(),
+            type: "POST",
+            beforeSend: function () {
+
+            },
+            success: function (response) {
+                if (response.status) {
+
+                    $('#modal-cadastrar-documentos').modal('hide');
+                    $('.modal-backdrop').remove();
+
+                    toastr.options.closeButton = true;
+                    toastr.success(response.message)
+
+                    show_documentos();
+
+                } else {
+
+                    Toast.fire({
+                        icon: 'error',
+                        title: 'Documento cadastrado com sucesso.'
+                    })
+                }
+
+            },
+        });
+    }
+</script>

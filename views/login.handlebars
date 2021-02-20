@@ -94,6 +94,23 @@
 <!-- AdminLTE App -->
 <script src="/js/adminlte.min.js"></script>
 
+{{#if cadastrado}}
+  <script>
+        $(document).ready(function () {
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000
+        });
+
+        Toast.fire({
+            icon: 'success',
+            title: 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr.'
+        })
+    });
+  </script>
+{{/if}}
 
 <script type="text/javascript">
 $(document).ready(function () {

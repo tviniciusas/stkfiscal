@@ -19,6 +19,10 @@ scratch. This page gets rid of all links and provides the needed markup only.
   <link rel="stylesheet" href="/plugins/fontawesome-free/css/all.min.css">
   <!-- Theme style -->
   <link rel="stylesheet" href="/css/adminlte.min.css">
+    <!-- SweetAlert2 -->
+  <link rel="stylesheet" href="../../plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
+  <!-- Toastr -->
+  <link rel="stylesheet" href="../../plugins/toastr/toastr.min.css">
   <!-- Google Font: Source Sans Pro -->
   <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
 
@@ -220,21 +224,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <!-- ./wrapper -->
 
 <!-- REQUIRED SCRIPTS -->
+{{> scripts}}
 
-<!-- jQuery -->
-<script src="/plugins/jquery/jquery.min.js"></script>
-<!-- Bootstrap 4 -->
-<script src="/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
-<!-- AdminLTE App -->
-<script src="/js/adminlte.min.js"></script>
-
-<!-- OPTIONAL SCRIPTS -->
-<script src="/plugins/select2/js/select2.full.min.js"></script>
-<script src="/plugins/chart.js/Chart.min.js"></script>
-<script src="/js/demo.js"></script>
-<script src="/js/pages/dashboard3.js"></script>
-<script src="/plugins/jquery-validation/jquery.validate.min.js"></script>
-<script src="/plugins/jquery-validation/additional-methods.min.js"></script>
 <script>
   
 $(function () {
@@ -259,6 +250,7 @@ $(function () {
         .css({'display': 'block'})
         .addClass('menu-open').prev('a')
         .addClass('active');
+        
 });
 </script>
 </body>
