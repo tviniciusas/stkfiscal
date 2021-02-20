@@ -1,4 +1,5 @@
 const express = require('express');
+const upload = require('./config/upload.js')
 
 const UserController = require('./controllers/UserController')
 const EmpresaController = require('./controllers/EmpresaController')
@@ -19,7 +20,6 @@ router.post("/login", checkNotAuthenticated, passport.authenticate('local', {
     failureFlash: true,
     badRequestMessage: 'Insira um usuário válido.',
 }));
-
 
 router.delete("/logout", checkAuthenticated, LoginController.logout);
 
@@ -69,15 +69,14 @@ router.get("/admin/documentos/teste_ajax", (req, res) => {
             "extn": "8422"
         }
     ]
-
     return res.status(200).send({
         status: true,
         data: JSON.parse(JSON.stringify(dados))
     })
 });
 
-router.get("/admin/documentos/solicitacao", (req, res) => {
-    res.render('./admin/documentos/solicitacao')
+router.post("/upload",upload.single('file'),(req,res)=>{
+    res.send('upload')
 });
 
 router.get("/admin/documentos/historico", (req, res) => {
@@ -87,7 +86,6 @@ router.get("/admin/documentos/historico", (req, res) => {
 router.get("/admin/usuarios", (req, res) => {
     res.render('./admin/usuarios')
 });
-
 
 //=== Função middlewer's ===//
 
@@ -115,5 +113,7 @@ function checkNotAuthenticated(req, res, next) {
     }
     next();
 }
+
+
 
 module.exports = router;

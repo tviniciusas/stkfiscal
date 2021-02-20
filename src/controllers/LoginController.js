@@ -24,7 +24,6 @@ module.exports = {
 
     async store(req, res, next) {
         try {
-
         
             const users = await User.findOne({where: {email: req.body.email}});
             

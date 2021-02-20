@@ -18,7 +18,9 @@ module.exports =  {
         
         try {
             
-            const users = await User.findOne({where: {email: req.body.email}});
+            const users = await ({nome,razao});
+
+            console.log(users)
 
             if(users) {
                 res.status(400).send({status: false, msg: "Já existe um usuário cadastrado com esse e-mail"});     
@@ -42,9 +44,8 @@ module.exports =  {
 
         const {name, password, email} = req.body;
         const { user_id } = req.params;
-
+        
         await User.update({name,password,email}, {where: {id: user_id}});
-
         return res.status(200).send({status: true, msg: "Dados Alterados com sucesso"});
 
     },
