@@ -21,6 +21,16 @@ router.post("/login", checkNotAuthenticated, passport.authenticate('local', {
     badRequestMessage: 'Insira um usuário válido.',
 }));
 
+router.get('/upload', (req,res)=> {
+    res.render('upload')
+})
+
+router.post("/upload", upload.single('arquivos'), (req,res) => {
+    res.send('arquivo recebido');
+})
+
+
+
 router.delete("/logout", checkAuthenticated, LoginController.logout);
 
 router.use(checkAuthenticated);
@@ -75,9 +85,6 @@ router.get("/admin/documentos/teste_ajax", (req, res) => {
     })
 });
 
-router.post("/upload",upload.single('file'),(req,res)=>{
-    res.send('upload')
-});
 
 router.get("/admin/documentos/historico", (req, res) => {
     res.render('./admin/documentos/historico')

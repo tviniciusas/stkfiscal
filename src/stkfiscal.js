@@ -10,6 +10,7 @@ const session = require('express-session');
 const passport = require('passport');
 const methodOverride = require('method-override');
 
+
 require('./database')
 
 const app=express();
@@ -33,6 +34,7 @@ app.use(function(req, res, next){
     next();
 });
 
+
 app.engine("handlebars",handlebars({defaultLayout:'main'}));
 app.set('view engine', 'handlebars');
 
@@ -43,7 +45,7 @@ app.use(function (req, res, next) {
         if(req.user.admin) {
             res.locals.user_name = 'Administrador iStok';
         } else {
-            res.locals.user_name = req.user.empresa.razao;
+             res.locals.user_name = req.user.empresa.razao;
             res.locals.empresa = req.user.empresa;
         }
 
