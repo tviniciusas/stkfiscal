@@ -26,13 +26,14 @@
             </div>
             <!-- /.card-header -->
             <div class="card-body table-responsive p-0">
-                <table id="tableDocumentos" class="table table-sm table-hover text-nowrap">
+                <table id="tableDocumentos" class="table table-sm table-striped text-nowrap m-0">
                     <thead>
                         <tr>
                             <th>id</th>
                             <th>Nome</th>
                             <th>Descrição</th>
                             <th>Extensão</th>
+                            <th>Ações</th>
                         </tr>
                     </thead>
                 </table>
@@ -99,6 +100,14 @@
 
 <script>
 
+    const Toast = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000,
+        closeButton: true
+    });
+
     $(function () {
         show_documentos();
 
@@ -133,56 +142,75 @@
             destroy: true,
             paging: false,
             searching: false,
-            "ajax": "/admin/documentos/show_documentos",
+            "language": {
+                "emptyTable": 
+                "<div class='text-center text-muted p-5'>" +
+                    "<i class='icon far fa-folder-open fa-2x'></i><br>" +
+                    "<small>Nenhum documento cadastrado</small><br>" +
+                    "<button type='button' onclick='criar_documento()' class='btn btn-outline-primary swalDefaultSuccess mt-3'><i class='fas fa-plus mr-2'></i>Cadastrar agora</button>" +
+                "</div>"
+            },
+            "ajax": "/admin/documentos/cadastro/show_documentos",
             "columns": [
                 { "data": "id" },
                 { "data": "nome" },
                 { "data": "descricao" },
-                { "data": "extensao" }
+                { "data": "extensao" },
+                {
+                    "data": null,
+                    "defaultContent": '<i style="cursor: pointer" class="text-info icon fas fa-pen editar mr-3" data-toggle="tooltip" title="Editar"></i><i style="cursor: pointer" class="text-danger icon fas fa-trash excluir" data-toggle="tooltip" title="Excluir"></i>'
+                }
             ]
         });
 
-        $('#tableDocumentos tbody').on('click', 'tr', async function () {
-            var data = await table.row(this).data();
+        $('#tableDocumentos tbody').on('click', 'tr .editar', async function () {
+            var data = await table.row($(this).parents('tr')).data();
             edit_documento(data.id);
+        });
+
+        $('#tableDocumentos tbody').on('click', '.excluir', async function () {
+            var data = await table.row($(this).parents('tr')).data();
+            destroy_documento(data.id)
         });
 
         table.ajax.reload();
     }
 
+    function criar_documento() {
+
+        var source = $("#my-template").html();
+        var template = Handlebars.compile(source);
+        var html = template();
+        $('#loginPopup').html(html);
+
+        $('#modal-cadastrar-documentos').modal('show');
+    }
+
     function store_documentos() {
 
-        const Toast = Swal.mixin({
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 3000
-        });
-
         $.ajax({
-            url: "/admin/documentos/store",
+            url: "/admin/documentos/cadastro",
             data: $("#cadastrar_documento").serialize(),
             type: "POST",
             beforeSend: function () {
 
             },
             success: function (response) {
+
+                toastr.options.closeButton = true;
+
                 if (response.status) {
 
                     $('#modal-cadastrar-documentos').modal('hide');
                     $('.modal-backdrop').remove();
 
-                    toastr.options.closeButton = true;
                     toastr.success(response.message)
 
                     show_documentos();
 
                 } else {
 
-                    Toast.fire({
-                        icon: 'error',
-                        title: 'Documento cadastrado com sucesso.'
-                    })
+                    toastr.error(response.message)
                 }
 
             },
@@ -193,7 +221,7 @@
         console.log(_id);
 
         $.ajax({
-            url: "/modal/" + _id,
+            url: "/admin/documentos/cadastro/edit/" + _id,
             type: "GET",
             beforeSend: function () {
 
@@ -209,14 +237,25 @@
         });
     }
 
-    function criar_documento() {
 
-        var source = $("#my-template").html();
-        var template = Handlebars.compile(source);
-        var html = template();
-        $('#loginPopup').html(html);
+    function destroy_documento(_id) {
 
-        $('#modal-cadastrar-documentos').modal('show');
+        $.ajax({
+            url: "/admin/documentos/cadastro",
+            data: { 'id': _id },
+            type: "DELETE",
+            beforeSend: function () {
+
+            },
+            success: function (response) {
+                show_documentos();
+
+                toastr.options.closeButton = true;
+                toastr.success(response.message)
+            },
+        });
+
+
     }
 
 </script>
