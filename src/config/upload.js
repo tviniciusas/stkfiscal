@@ -1,5 +1,4 @@
 const multer = require('multer')
-const dia = new Date()
 
 const storage = multer.diskStorage({
     destination: function(req, file, cb) {
@@ -10,5 +9,6 @@ const storage = multer.diskStorage({
     }
 })
 const upload = multer({storage})
+
 
 module.exports = upload;
