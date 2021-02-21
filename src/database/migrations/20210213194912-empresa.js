@@ -8,39 +8,39 @@ module.exports = {
          type: Sequelize.INTEGER,
          primaryKey: true,
          autoIncrement: true,
-         allowNull: false,
+         allowNull: true,
        },
        nome: {
          type: Sequelize.STRING,
-         allowNull: false,
+         allowNull: true,
        },
        razao: {
          type: Sequelize.STRING,
-         allowNull: false,
+         allowNull: true,
        },
        cnpj: {
         type: Sequelize.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       ie: {
         type: Sequelize.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       telefone: {
         type: Sequelize.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       email: {
         type: Sequelize.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       estado: {
         type: Sequelize.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       cidade: {
         type: Sequelize.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       created_at: {
         type: Sequelize.DATE,

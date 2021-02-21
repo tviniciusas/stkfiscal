@@ -2,6 +2,7 @@ const User = require('./models/User');
 const Documento = require('./models/Documento');
 
 const express = require('express');
+const upload = require('./config/upload.js')
 
 const UserController = require('./controllers/UserController')
 const EmpresaController = require('./controllers/EmpresaController')
@@ -23,6 +24,13 @@ router.post("/login", checkNotAuthenticated, passport.authenticate('local', {
     badRequestMessage: 'Insira um usuário válido.',
 }));
 
+router.get('/upload', (req,res)=> {
+    res.render('upload')
+})
+
+router.post("/upload", upload.single('arquivos'), (req,res) => {
+    res.send('arquivo recebido');
+})
 
 router.delete("/logout", checkAuthenticated, LoginController.logout);
 
@@ -70,6 +78,7 @@ router.get("/admin/documentos/solicitacao", (req, res) => {
     res.render('./admin/documentos/solicitacao')
 });
 
+
 router.get("/admin/documentos/historico", (req, res) => {
     res.render('./admin/documentos/historico')
 });
@@ -77,7 +86,6 @@ router.get("/admin/documentos/historico", (req, res) => {
 router.get("/admin/usuarios", (req, res) => {
     res.render('./admin/usuarios')
 });
-
 
 //=== Função middlewer's ===//
 
@@ -105,5 +113,7 @@ function checkNotAuthenticated(req, res, next) {
     }
     next();
 }
+
+
 
 module.exports = router;

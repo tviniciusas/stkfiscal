@@ -3,14 +3,35 @@ const { Model, DataTypes } = require('sequelize');
 class Empresa extends Model {
     static init(sequelize) {
         super.init({
-            nome: DataTypes.STRING,
-            razao: DataTypes.STRING,
-            cnpj: DataTypes.STRING,
-            ie: DataTypes.STRING,
-            telefone: DataTypes.STRING,
-            email: DataTypes.STRING,
-            estado: DataTypes.STRING,
-            cidade: DataTypes.STRING,
+            nome: {
+                type: DataTypes.STRING,
+                allowNull: false
+              },
+              razao: {
+                type: DataTypes.STRING,
+                allowNull: false
+              },
+        
+              ie: {
+                type: DataTypes.STRING,
+                allowNull: false
+              },
+              telefone: {
+                type: DataTypes.STRING,
+                allowNull: false
+              },
+              email: {
+                type: DataTypes.STRING,
+                allowNull: false
+              },
+              estado: {
+                type: DataTypes.STRING,
+                allowNull: false
+              },
+              cidade: {
+                type: DataTypes.STRING,
+                allowNull: false
+              },
         }, { sequelize })
     }
 }
