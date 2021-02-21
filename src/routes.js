@@ -1,11 +1,14 @@
+const User = require('./models/User');
+const Documento = require('./models/Documento');
+
 const express = require('express');
 
 const UserController = require('./controllers/UserController')
 const EmpresaController = require('./controllers/EmpresaController')
 const LoginController = require('./controllers/LoginController');
 const passport = require('passport');
-const User = require('./models/User');
 const DocumentoController = require('./controllers/DocumentoController');
+const path = require('path');
 
 const router = express.Router();
 
@@ -30,6 +33,20 @@ router.get("/", (req, res) => {
     res.render('index');
 })
 
+router.get("/modal/:id", async (req, res) => {
+
+    var documento;
+
+    await Documento.findByPk(req.params.id).then(function(docs) {
+        documento = JSON.parse(JSON.stringify(docs, null, 2));
+    });
+
+    return res.status(200).send({
+        status: true,
+        dados: documento
+    })
+})
+
 //=== Rotas Usuarios ===//
 router.get("/user", UserController.index);
 router.post("/user", UserController.store);
@@ -48,33 +65,6 @@ router.use("/admin", isAdmin);
 router.get("/admin/documentos/cadastro", DocumentoController.index);
 router.get("/admin/documentos/show_documentos", DocumentoController.show_documentos);
 router.post("/admin/documentos/store", DocumentoController.store);
-
-router.get("/admin/documentos/teste_ajax", (req, res) => {
-
-    var dados = [
-        {
-            "id": "1",
-            "name": "Tiger Nixon",
-            "position": "System Architect",
-            "office": "Edinburgh",
-            "extn": "5421"
-        },
-        {
-            "id": "2",
-            "name": "Garrett Winters",
-            "position": "Accountant",
-            "salary": "$170,750",
-            "start_date": "2011/07/25",
-            "office": "Tokyo",
-            "extn": "8422"
-        }
-    ]
-
-    return res.status(200).send({
-        status: true,
-        data: JSON.parse(JSON.stringify(dados))
-    })
-});
 
 router.get("/admin/documentos/solicitacao", (req, res) => {
     res.render('./admin/documentos/solicitacao')

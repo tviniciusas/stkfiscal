@@ -1,11 +1,13 @@
 <div class="row">
     <div class="col-md-12">
         <div class="card-buttons mb-3">
-            <button type="button" class="btn btn-primary swalDefaultSuccess" data-toggle="modal"
-                data-target="#modal-cadastrar-documentos"><i class="fas fa-plus mr-2"></i>Cadastrar
+            <button type="button" onclick="criar_documento()" class="btn btn-primary swalDefaultSuccess"><i
+                    class="fas fa-plus mr-2"></i>Cadastrar
                 novo
                 documento</button>
         </div>
+
+        <div id="loginPopup"></div>
 
         <div class="card card-primary card-outline">
             <div class="card-header">
@@ -27,6 +29,7 @@
                 <table id="tableDocumentos" class="table table-sm table-hover text-nowrap">
                     <thead>
                         <tr>
+                            <th>id</th>
                             <th>Nome</th>
                             <th>Descrição</th>
                             <th>Extensão</th>
@@ -41,54 +44,58 @@
             <div class="card-footer clearfix">Teste</div>
             {{/if}}
         </div>
-
-        <div class="modal fade" id="modal-cadastrar-documentos">
-            <div class="modal-dialog modal-xl">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title">Cadastrar documento</h4>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <form id="cadastrar_documento">
-                            <div class="row">
-                                <div class="col-sm-8">
-                                    <div class="form-group mb-3">
-                                        <label for="nome">Nome do documento</label>
-                                        <input type="text" id="nome" name="nome" class="form-control"
-                                            placeholder="Nome">
-                                    </div>
-                                </div>
-                                <div class="col-sm-4">
-                                    <div class="form-group mb-3">
-                                        <label for="extensao">Extensão do arquivo</label>
-                                        <input type="text" id="extensao" name="extensao" class="form-control"
-                                            placeholder="Extensão">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="descricao">Descrição do documento</label>
-                                <textarea id="descricao" name="descricao" class="form-control" rows="3"
-                                    placeholder="Descrição do documento"></textarea>
-                            </div>
-                        </form>
-                    </div>
-                    <div class="modal-footer justify-content-between">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
-                        <button type="button" onclick="store_documentos()" class="btn btn-primary">Salvar</button>
-                    </div>
-                </div>
-                <!-- /.modal-content -->
-            </div>
-            <!-- /.modal-dialog -->
-        </div>
     </div>
 </div>
 
 {{> scripts}}
+
+<script id="my-template" type="text/x-handlebars-template">
+
+    <div class="modal fade" id="modal-cadastrar-documentos">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Cadastrar documento</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="cadastrar_documento">
+                    <div class="row">
+                        <input value="\{{id}}" type="hidden" id="documentos_id" name="documentos_id" class="form-control" placeholder="documentos_id">
+                        <div class="col-sm-8">
+                            <div class="form-group mb-3">
+                                <label for="nome">Nome do documento</label>
+                                <input value="\{{nome}}" type="text" id="nome" name="nome" class="form-control"
+                                    placeholder="Nome">
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group mb-3">
+                                <label for="extensao">Extensão do arquivo</label>
+                                <input value="\{{extensao}}" type="text" id="extensao" name="extensao" class="form-control"
+                                    placeholder="Extensão">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="descricao">Descrição do documento</label>
+                        <textarea id="descricao" name="descricao" class="form-control" rows="3"
+                            placeholder="Descrição do documento">\{{descricao}}</textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+                <button type="button" onclick="store_documentos()" class="btn btn-primary">Salvar</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+</script>
 
 <script>
 
@@ -121,18 +128,26 @@
     }
 
     function show_documentos() {
-        $('#tableDocumentos').DataTable({
+        var table = $('#tableDocumentos').DataTable({
             bInfo: false,
             destroy: true,
             paging: false,
             searching: false,
             "ajax": "/admin/documentos/show_documentos",
             "columns": [
+                { "data": "id" },
                 { "data": "nome" },
                 { "data": "descricao" },
                 { "data": "extensao" }
             ]
         });
+
+        $('#tableDocumentos tbody').on('click', 'tr', async function () {
+            var data = await table.row(this).data();
+            edit_documento(data.id);
+        });
+
+        table.ajax.reload();
     }
 
     function store_documentos() {
@@ -173,4 +188,35 @@
             },
         });
     }
+
+    function edit_documento(_id) {
+        console.log(_id);
+
+        $.ajax({
+            url: "/modal/" + _id,
+            type: "GET",
+            beforeSend: function () {
+
+            },
+            success: function (response) {
+                var source = $("#my-template").html();
+                var template = Handlebars.compile(source);
+                var html = template(response.dados);
+                $('#loginPopup').html(html);
+
+                $('#modal-cadastrar-documentos').modal('show');
+            },
+        });
+    }
+
+    function criar_documento() {
+
+        var source = $("#my-template").html();
+        var template = Handlebars.compile(source);
+        var html = template();
+        $('#loginPopup').html(html);
+
+        $('#modal-cadastrar-documentos').modal('show');
+    }
+
 </script>
