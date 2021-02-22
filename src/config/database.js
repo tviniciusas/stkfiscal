@@ -2,7 +2,7 @@ module.exports = {
     host:"localhost",
     dialect:"mysql",
     username: "root",
-    password: "damit",
+    password: "",
     database: "istock",
     define: {
         timestamps: true,

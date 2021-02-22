@@ -54,34 +54,31 @@ module.exports = {
         })
     },
 
-    async update(req, res) {
+    async edit(req, res) {
 
-        const { nome, razao, cnpj, ie, telefone, email, estado, cidade } = req.body;
-        const { idemp } = req.params;
-
-        await Empresa.update({
-            nome, razao, cnpj, ie, telefone, email, estado, cidade
-        }, {
-            where: {
-                id: idemp
-            }
+        var documento;
+    
+        await Documento.findByPk(req.params.id).then(function(docs) {
+            documento = JSON.parse(JSON.stringify(docs, null, 2));
         });
+    
         return res.status(200).send({
-            status: 1,
-            message: 'Empresa atualizada com sucesso!',
+            status: true,
+            dados: documento
         })
     },
 
     async delete(req, res) {
 
-        const { idemp } = req.params;
+        const id  = req.body.id;
 
-        await Empresa.destroy({
+        await Documento.destroy({
             where: {
-                id: idemp
+                id: id
             }
 
         });
+
         return res.status(200).send({
             status: 1,
             message: 'Deletado com sucesso!'

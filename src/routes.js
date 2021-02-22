@@ -48,21 +48,6 @@ router.get("/", (req, res) => {
     res.render('index');
 })
 
-router.get("/modal/:id", async (req, res) => {
-
-    var documento;
-
-    await Documento.findByPk(req.params.id).then(function(docs) {
-        documento = JSON.parse(JSON.stringify(docs, null, 2));
-    });
-
-    return res.status(200).send({
-        status: true,
-        dados: documento
-    })
-})
-
-
 //=== Rotas Usuarios ===//
 router.get("/user", UserController.index);
 router.post("/user", UserController.store);
@@ -78,9 +63,12 @@ router.delete("/empresa/:idemp", EmpresaController.delete);
 //=== Rotas Admin ===//
 router.use("/admin", isAdmin);
 
+//=== Rotas Admin Documentos Cadastro ===//
 router.get("/admin/documentos/cadastro", DocumentoController.index);
-router.get("/admin/documentos/show_documentos", DocumentoController.show_documentos);
-router.post("/admin/documentos/store", DocumentoController.store);
+router.get("/admin/documentos/cadastro/edit/:id", DocumentoController.edit);
+router.get("/admin/documentos/cadastro/show_documentos", DocumentoController.show_documentos);
+router.post("/admin/documentos/cadastro", DocumentoController.store);
+router.delete("/admin/documentos/cadastro", DocumentoController.delete);
 
 router.get("/admin/documentos/solicitacao", (req, res) => {
     res.render('./admin/documentos/solicitacao')
