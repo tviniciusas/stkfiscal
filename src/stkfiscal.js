@@ -9,8 +9,6 @@ const flash = require('express-flash')
 const session = require('express-session');
 const passport = require('passport');
 const methodOverride = require('method-override');
-
-
 require('./database')
 
 const app=express();

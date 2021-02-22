@@ -1,8 +1,10 @@
 const User = require('./models/User');
 const Documento = require('./models/Documento');
+list = require('./config/listFiles.js')
+
 
 const express = require('express');
-const upload = require('./config/upload.js')
+const upload = require('./config/upload')
 
 const UserController = require('./controllers/UserController')
 const EmpresaController = require('./controllers/EmpresaController')
@@ -10,6 +12,7 @@ const LoginController = require('./controllers/LoginController');
 const passport = require('passport');
 const DocumentoController = require('./controllers/DocumentoController');
 const path = require('path');
+const uploadController = require('./controllers/uploadController');
 
 const router = express.Router();
 
@@ -25,11 +28,15 @@ router.post("/login", checkNotAuthenticated, passport.authenticate('local', {
 }));
 
 router.get('/upload', (req,res)=> {
+    
     res.render('upload')
+    console.log(list)
 })
 
 router.post("/upload", upload.single('arquivos'), (req,res) => {
-    res.send('arquivo recebido');
+
+
+    res.render('upload');
 })
 
 router.delete("/logout", checkAuthenticated, LoginController.logout);
@@ -55,6 +62,7 @@ router.get("/modal/:id", async (req, res) => {
     })
 })
 
+
 //=== Rotas Usuarios ===//
 router.get("/user", UserController.index);
 router.post("/user", UserController.store);
@@ -77,7 +85,6 @@ router.post("/admin/documentos/store", DocumentoController.store);
 router.get("/admin/documentos/solicitacao", (req, res) => {
     res.render('./admin/documentos/solicitacao')
 });
-
 
 router.get("/admin/documentos/historico", (req, res) => {
     res.render('./admin/documentos/historico')

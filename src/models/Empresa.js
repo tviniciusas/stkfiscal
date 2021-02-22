@@ -5,32 +5,31 @@ class Empresa extends Model {
         super.init({
             nome: {
                 type: DataTypes.STRING,
-                allowNull: false
+                allowNull: true
               },
               razao: {
                 type: DataTypes.STRING,
-                allowNull: false
+                allowNull: true
               },
-        
               ie: {
                 type: DataTypes.STRING,
-                allowNull: false
+                allowNull: true
               },
               telefone: {
                 type: DataTypes.STRING,
-                allowNull: false
+                allowNull: true
               },
               email: {
                 type: DataTypes.STRING,
-                allowNull: false
+                allowNull: true
               },
               estado: {
                 type: DataTypes.STRING,
-                allowNull: false
+                allowNull: true
               },
               cidade: {
                 type: DataTypes.STRING,
-                allowNull: false
+                allowNull: true
               },
         }, { sequelize })
     }
