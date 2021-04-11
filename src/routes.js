@@ -1,11 +1,7 @@
 const User = require('./models/User');
 const Documento = require('./models/Documento');
-list = require('./config/listFiles.js')
-
-
 const express = require('express');
 const upload = require('./config/upload')
-
 const UserController = require('./controllers/UserController')
 const EmpresaController = require('./controllers/EmpresaController')
 const LoginController = require('./controllers/LoginController');
@@ -27,20 +23,26 @@ router.post("/login", checkNotAuthenticated, passport.authenticate('local', {
     badRequestMessage: 'Insira um usuário válido.',
 }));
 
-router.get('/upload', (req,res)=> {
-    
-    res.render('upload')
-    console.log(list)
+router.get('/list', (req,res)=> {
+    res.send('listar')
 })
 
-router.post("/upload", upload.single('arquivos'), (req,res) => {
-
+router.get("/upload",  (req,res) => {
 
     res.render('upload');
 })
 
-router.delete("/logout", checkAuthenticated, LoginController.logout);
+// router.post('/upload',  upload.single('file'), (req, res) => {
 
+//     console.log(req.file)
+// })
+
+
+router.post('/upload', upload.single('file'), uploadController.store)
+
+
+
+router.delete("/logout", checkAuthenticated, LoginController.logout);
 router.use(checkAuthenticated);
 
 //=== Rotas Home ===//

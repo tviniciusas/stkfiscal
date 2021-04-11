@@ -18,10 +18,9 @@ async function listarArquivosDoDiretorio(diretorio, arquivos) {
     return arquivos;
 }
 
-async function list() {
-    let arquivos = await listarArquivosDoDiretorio(__dirname.replace("config","") + '/uploads'); // coloque o caminho do seu diretorio
-    console.log(arquivos);
-
+const list = async () => {
+    let arquivos = await listarArquivosDoDiretorio(__dirname.replace("config","") + '/uploads') // coloque o caminho do seu diretorio
+    return arquivos
 }
 
-module.exports = list();
+module.exports = list

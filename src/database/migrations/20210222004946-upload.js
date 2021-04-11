@@ -3,8 +3,7 @@
 module.exports = {
   up: async (queryInterface, Sequelize) => {
  
-      await queryInterface.createTable('upload', { 
-
+      await queryInterface.createTable('uploads', { 
         id:{
           type: Sequelize.INTEGER,
           primaryKey: true,
@@ -23,11 +22,31 @@ module.exports = {
           type: Sequelize.STRING,
           allowNull: true,
         },
+        mes: {
+          type: Sequelize.INTEGER,
+          allowNull: true,
+        },
+        ano: {
+          type: Sequelize.INTEGER,
+          allowNull: true,
+        },
+        file: {
+          type: Sequelize.BLOB('long'),
+          allowNull: true,
+        },
+        created_at: {
+          type: Sequelize.DATE,
+          allowNull: false,
+        },
+        updated_at: {
+          type: Sequelize.DATE,
+          allowNull: false,
+        }
       });
   },
   down: async (queryInterface, Sequelize) => {
     
-    await queryInterface.dropTable('upload');
+    await queryInterface.dropTable('uploads');
   
   }
 };

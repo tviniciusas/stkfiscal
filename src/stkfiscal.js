@@ -21,6 +21,7 @@ app.use(session({
     cookie: { maxAge: 600000 } // A sessão deve durar 5 min
 }));
 
+
 app.use(passport.initialize())
 app.use(passport.session())
 app.use(methodOverride('_method'));
@@ -32,6 +33,12 @@ app.use(function(req, res, next){
     next();
 });
 
+
+app.use((req, res, next) =>{
+    res.locals.success_msg = req.flash("success_msg")
+    res.locals.error_msg = req.flash("error_msg")
+    next()
+})
 
 app.engine("handlebars",handlebars({defaultLayout:'main'}));
 app.set('view engine', 'handlebars');
@@ -49,7 +56,6 @@ app.use(function (req, res, next) {
 
         res.locals.user_model = req.user;
     }
-
     next();
 });
 
@@ -73,8 +79,9 @@ app.use('/plugins', express.static('plugins'))
 
 app.use(routes);
 
+
 app.listen(3000, function(req, res) {
-    console.log('Servidor está rodando')
+    console.log('Servidor rodando')
 })
 
 
