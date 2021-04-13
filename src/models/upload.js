@@ -1,37 +1,36 @@
 const { Model, DataTypes } = require('sequelize');
 
-class Empresa extends Model {
+class Upload extends Model {
     static init(sequelize) {
         super.init({
-            nome: {
+            diretorio: {
                 type: DataTypes.STRING,
                 allowNull: true
               },
-              razao: {
+              user: {
                 type: DataTypes.STRING,
                 allowNull: true
               },
-              ie: {
+              empresa: {
                 type: DataTypes.STRING,
                 allowNull: true
               },
-              telefone: {
-                type: DataTypes.STRING,
+              mes: {
+                type: DataTypes.INTEGER,
                 allowNull: true
               },
-              email: {
-                type: DataTypes.STRING,
+              ano: {
+                type: DataTypes.INTEGER,
                 allowNull: true
               },
-              estado: {
-                type: DataTypes.STRING,
-                allowNull: true
-              },
-              cidade: {
-                type: DataTypes.STRING,
+              arquivo: {
+                type: DataTypes.BLOB('long') ,
                 allowNull: true
               },
         }, { sequelize })
     }
 }
-module.exports = Empresa;
+
+module.exports = Upload;
+
+

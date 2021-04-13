@@ -39,7 +39,11 @@
                 </table>
             </div>
             <!-- /.card-body -->
+            {{#if documentos}}
+            <div class="card-footer text-muted small clearfix">Total de registros: {{documentos.length}}</div>
+            {{else}}
             <div class="card-footer clearfix"></div>
+            {{/if}}
         </div>
     </div>
 </div>
@@ -189,7 +193,6 @@
             data: $("#cadastrar_documento").serialize(),
             type: "POST",
             beforeSend: function () {
-
             },
             success: function (response) {
 
@@ -199,7 +202,7 @@
 
                     $('#modal-cadastrar-documentos').modal('hide');
                     $('.modal-backdrop').remove();
-
+                    
                     toastr.success(response.message)
 
                     show_documentos();
@@ -250,8 +253,6 @@
                 toastr.success(response.message)
             },
         });
-
-
     }
 
 </script>

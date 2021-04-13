@@ -47,7 +47,6 @@ module.exports =  {
         
         await User.update({name,password,email}, {where: {id: user_id}});
         return res.status(200).send({status: true, msg: "Dados Alterados com sucesso"});
-
     },
 
     async delete(req, res) {
