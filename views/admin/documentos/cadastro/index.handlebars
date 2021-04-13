@@ -39,11 +39,7 @@
                 </table>
             </div>
             <!-- /.card-body -->
-            {{#if documentos}}
-            <div class="card-footer text-muted small clearfix">Total de registros: {{documentos.length}}</div>
-            {{else}}
-            <div class="card-footer clearfix">Teste</div>
-            {{/if}}
+            <div class="card-footer clearfix"></div>
         </div>
     </div>
 </div>
@@ -144,7 +140,7 @@
             searching: false,
             "language": {
                 "emptyTable": 
-                "<div class='text-center text-muted p-5'>" +
+                "<div class='text-center text-muted p-4'>" +
                     "<i class='icon far fa-folder-open fa-2x'></i><br>" +
                     "<small>Nenhum documento cadastrado</small><br>" +
                     "<button type='button' onclick='criar_documento()' class='btn btn-outline-primary swalDefaultSuccess mt-3'><i class='fas fa-plus mr-2'></i>Cadastrar agora</button>" +
@@ -158,7 +154,7 @@
                 { "data": "extensao" },
                 {
                     "data": null,
-                    "defaultContent": '<i style="cursor: pointer" class="text-info icon fas fa-pen editar mr-3" data-toggle="tooltip" title="Editar"></i><i style="cursor: pointer" class="text-danger icon fas fa-trash excluir" data-toggle="tooltip" title="Excluir"></i>'
+                    "defaultContent": '<i style="cursor: pointer" class="text-primary icon fas fa-pen editar mr-3" data-toggle="tooltip" title="Editar"></i><i style="cursor: pointer" class="text-danger icon fas fa-trash excluir" data-toggle="tooltip" title="Excluir"></i>'
                 }
             ]
         });
