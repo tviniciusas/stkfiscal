@@ -17,7 +17,6 @@ module.exports =  {
         const up = await Upload.create({ diretorio, mes, ano ,archive }).then(() => {
             req.flash('success_msg','Arquivo enviado com sucesso!')
             res.redirect('/upload')
-            console.log(diretorio,ano, mes,archive)
 
         }).catch(e => {
             req.flash('error_msg','erro no envio do arquivo, tente novamente')
