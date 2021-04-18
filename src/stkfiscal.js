@@ -11,7 +11,7 @@ const passport = require('passport');
 const methodOverride = require('method-override');
 require('./database')
 
-const app=express();
+const app = express();
 app.use(express.json());
 
 app.use(session({
@@ -20,7 +20,6 @@ app.use(session({
     saveUninitialized: false,
     cookie: { maxAge: 600000 } // A sessão deve durar 5 min
 }));
-
 
 app.use(passport.initialize())
 app.use(passport.session())
@@ -34,7 +33,7 @@ app.use(function(req, res, next){
 });
 
 
-app.use((req, res, next) =>{
+app.use((req, res, next) => {
     res.locals.success_msg = req.flash("success_msg")
     res.locals.error_msg = req.flash("error_msg")
     next()
