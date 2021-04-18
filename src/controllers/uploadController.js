@@ -5,18 +5,20 @@ const User = require('../models/User.js')
 module.exports =  {
     
     async index(req, res) {
+
       
     },
 
     async store(req, res) {
 
         const { mes, ano } = req.body
-        let diretorio = req.file.destination
-        let archive = req.file
+        let file = req.file
+        const diretorio = file.path
 
-        const up = await Upload.create({ diretorio, mes, ano ,archive }).then(() => {
+        const up = await Upload.create({ diretorio , mes, ano  }).then(() => {
             req.flash('success_msg','Arquivo enviado com sucesso!')
             res.redirect('/upload')
+            console.log(diretorio, ano, mes, file)
 
         }).catch(e => {
             req.flash('error_msg','erro no envio do arquivo, tente novamente')
