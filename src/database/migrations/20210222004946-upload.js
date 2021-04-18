@@ -30,10 +30,6 @@ module.exports = {
           type: Sequelize.INTEGER,
           allowNull: true,
         },
-        file: {
-          type: Sequelize.BLOB('long'),
-          allowNull: true,
-        },
         created_at: {
           type: Sequelize.DATE,
           allowNull: false,
