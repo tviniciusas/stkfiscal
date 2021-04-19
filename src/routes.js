@@ -9,6 +9,7 @@ const passport = require('passport');
 const DocumentoController = require('./controllers/DocumentoController');
 const path = require('path');
 const uploadController = require('./controllers/uploadController');
+const companyRegister = require('./config/companyRegister')
 
 const router = express.Router();
 
@@ -37,6 +38,8 @@ router.get("/upload",  (req,res) => {
 //     console.log(req.file)
 // })
 
+//== Rota cadastar empresa == //
+router.get('/cadauto/:id', companyRegister.registerCompany)
 
 router.post('/upload', upload.single('file'), uploadController.store)
 
