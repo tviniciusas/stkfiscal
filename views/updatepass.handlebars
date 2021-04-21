@@ -1,0 +1,123 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>iStok</title>
+  <!-- Tell the browser to be responsive to screen width -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link rel="shortcut icon" href="/img/logo_istock.svg" type="image/x-icon">
+  <link rel="icon" href="/img/logo_istock.svg" type="image/x-icon">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="/plugins/fontawesome-free/css/all.min.css">
+  <!-- Ionicons -->
+  <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+  <!-- icheck bootstrap -->
+  <link rel="stylesheet" href="/plugins/icheck-bootstrap/icheck-bootstrap.min.css">
+  <!-- Theme style -->
+  <link rel="stylesheet" href="/css/adminlte.min.css">
+  <!-- Google Font: Source Sans Pro -->
+  <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+
+    <style>
+        body {
+            background-image: linear-gradient(to bottom right, #29abe2 , #29cfe2) !important;
+        }
+    </style>
+</head>
+<body class="hold-transition register-page">
+<div class="register-box">
+  <div class="card">
+    <div class="card-body register-card-body">
+        <div class="register-logo">
+            <img src="/img/logo-gray-blue.svg" alt="AdminLTE Logo" style="max-height:33px">
+        </div>
+
+      <form id="register" action="/register" method="post">
+        {{#if messages.error}}
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+          <i class="icon fas fa-exclamation-triangle"></i>{{messages.error}}
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        {{/if}}
+        <div class="form-group mb-3">
+          <input type="email" id="email" name="email" class="form-control" placeholder="Email">
+        </div>
+        <div class="form-group mb-3">
+          <input type="password" id="password" name="password" class="form-control" placeholder="Senha">
+        </div>
+        <div class="form-group mb-3">
+          <input type="password" id="password_confirmation" name="password_confirmation" class="form-control" placeholder="Confirme sua senha">
+        </div>
+        <div class="text-center mb-3">
+          <button type="submit" class="btn btn-primary btn-block">Cadastrar Senha</button>
+        </div>
+      </form>
+    </div>
+    <!-- /.form-box -->
+  </div><!-- /.card -->
+</div>
+<!-- /.register-box -->
+
+<!-- jQuery -->
+<script src="/plugins/jquery/jquery.min.js"></script>
+<!-- Bootstrap 4 -->
+<script src="/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<!-- jquery-validation -->
+<script src="/plugins/jquery-validation/jquery.validate.min.js"></script>
+<script src="/plugins/jquery-validation/additional-methods.min.js"></script>
+<!-- AdminLTE App -->
+<script src="/js/adminlte.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function () {
+
+  $('#register').validate({
+    rules: {
+      email: {
+        required: true,
+        email: true,
+      },
+      password: {
+        required: true,
+        minlength: 5
+      },
+      password_confirmation: {
+        required: true,
+        minlength: 5
+      },
+    },
+    messages: {
+      email: {
+        required: "Insira um endereço de e-mail",
+        email: "Insira um endereço de e-mail válido"
+      },
+      password: {
+        required: "Insira uma senha",
+        minlength: "A sua senha deve ter no mínimo 5 caracteres"
+      },
+      password_confirmation: {
+        required: "Confirme sua senha",
+      }
+    },
+    errorElement: 'span',
+    errorPlacement: function (error, element) {
+      error.addClass('invalid-feedback');
+      element.closest('.form-group').append(error);
+    },
+    highlight: function (element, errorClass, validClass) {
+      $(element).addClass('is-invalid');
+    },
+    unhighlight: function (element, errorClass, validClass) {
+      $(element).removeClass('is-invalid');
+    }
+  });
+});
+</script>
+</body>
+</html>

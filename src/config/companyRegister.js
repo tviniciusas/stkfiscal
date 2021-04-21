@@ -32,7 +32,7 @@ module.exports = {
 
             empresas.push(nome,ie,uf,endereco,numero,bairro,municipio,cep,email,telefone)
 
-            console.log(empresa)
+            console.log(empresas)
 
         }
         catch(e) {

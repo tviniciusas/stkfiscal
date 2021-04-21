@@ -11,6 +11,10 @@ class Empresa extends Model {
                 type: DataTypes.STRING,
                 allowNull: true
               },
+              cnpj: {
+                type: DataTypes.STRING,
+                allowNull: true
+              },
               ie: {
                 type: DataTypes.STRING,
                 allowNull: true

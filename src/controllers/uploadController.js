@@ -1,4 +1,4 @@
-const Upload = require('../models/Upload.js')
+const Upload = require('../models/upload.js')
 const file = require('../config/upload')
 const User = require('../models/User.js')
 
