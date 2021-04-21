@@ -8,7 +8,7 @@ const LoginController = require('./controllers/LoginController');
 const passport = require('passport');
 const DocumentoController = require('./controllers/DocumentoController');
 const path = require('path');
-const uploadController = require('./controllers/uploadController');
+const uploadController = require('./controllers/UploadController');
 const companyRegister = require('./config/companyRegister')
 const transporter = require('./config/emailSend')
 
