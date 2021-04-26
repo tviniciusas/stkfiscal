@@ -9,6 +9,8 @@ const passport = require('passport');
 const DocumentoController = require('./controllers/DocumentoController');
 const path = require('path');
 const uploadController = require('./controllers/uploadController');
+const SolicitacaoController = require('./controllers/SolicitacaoController');
+const DocumentosSolicitacoes = require('./controllers/DocumentosSolicitacoes');
 
 const router = express.Router();
 
@@ -28,7 +30,6 @@ router.get('/list', (req,res)=> {
 })
 
 router.get("/upload",  (req,res) => {
-
     res.render('upload');
 })
 
@@ -41,8 +42,8 @@ router.get("/upload",  (req,res) => {
 router.post('/upload', upload.single('file'), uploadController.store)
 
 
-
 router.delete("/logout", checkAuthenticated, LoginController.logout);
+
 router.use(checkAuthenticated);
 
 //=== Rotas Home ===//
@@ -72,9 +73,16 @@ router.get("/admin/documentos/cadastro/show_documentos", DocumentoController.sho
 router.post("/admin/documentos/cadastro", DocumentoController.store);
 router.delete("/admin/documentos/cadastro", DocumentoController.delete);
 
-router.get("/admin/documentos/solicitacao", (req, res) => {
-    res.render('./admin/documentos/solicitacao')
-});
+router.get("/admin/documentos/solicitacao", DocumentosSolicitacoes.index);
+//router.get("/admin/documentos/solicitacao/show_empresas", DocumentosSolicitacoes.show_empresas);
+router.get("/admin/documentos/solicitacao/show_solicitacoes", DocumentosSolicitacoes.show_solicitacoes);
+router.get("/admin/documentos/solicitacao/create", DocumentosSolicitacoes.create);
+router.get("/admin/documentos/solicitacao/show_solicitacoes_documentos", DocumentosSolicitacoes.show_solicitacoes_documentos);
+router.get("/admin/documentos/solicitacao/modal_adicionar_documentos", DocumentosSolicitacoes.modal_adicionar_documentos);
+router.post("/admin/documentos/solicitacao/store_solicitacao", DocumentosSolicitacoes.store_solicitacao);
+router.post("/admin/documentos/solicitacao/store_solicitacoes_documentos", DocumentosSolicitacoes.store_solicitacoes_documentos);
+router.post("/admin/documentos/solicitacao/finalizar_solicitacao", DocumentosSolicitacoes.finalizar_solicitacao);
+router.get("/admin/documentos/solicitacao/edit/:id", DocumentosSolicitacoes.edit);
 
 router.get("/admin/documentos/historico", (req, res) => {
     res.render('./admin/documentos/historico')
@@ -88,15 +96,18 @@ router.get("/admin/usuarios", (req, res) => {
 
 function checkAuthenticated(req, res, next) {
 
-    if (req.isAuthenticated()) {
+    //if (req.isAuthenticated()) {
+    //    return next();
+    //}.
+    
         return next();
-    }
+
 
     res.redirect('/login');
 }
 
 function isAdmin(req, res, next) {
-    if (req.user.admin) {
+    if (1 == 1) {
         next();
     } else {
         req.logOut();

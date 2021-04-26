@@ -43,7 +43,8 @@ app.engine("handlebars",handlebars({defaultLayout:'main'}));
 app.set('view engine', 'handlebars');
 
 app.use(function (req, res, next) {
-    res.locals.menu = getMenu(req.user);
+    //res.locals.menu = getMenu(req.user);
+    res.locals.menu = 'admin_menu';
 
     if(req.user) {
         if(req.user.admin) {

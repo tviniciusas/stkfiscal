@@ -2,23 +2,27 @@
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    return queryInterface.createTable('solicitar', {
+    return queryInterface.createTable('solicitacoes', {
       id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
         autoIncrement: true,
         allowNull: false,
       },
-      empresa: {
-        type: Sequelize.STRING,
-        allowNull: false,
-      },
       descricao: {
-        type: Sequelize.STRING,
+        type: Sequelize.TEXT,
+        allowNull: true,
+      },
+      dt_solicitado: {
+        type: Sequelize.DATE,
         allowNull: false,
       },
-      documento: {
-        type: Sequelize.STRING,
+      dt_visualizado: {
+        type: Sequelize.DATE,
+        allowNull: false,
+      },
+      dt_finalizado: {
+        type: Sequelize.DATE,
         allowNull: false,
       },
      created_at: {

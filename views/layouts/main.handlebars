@@ -205,6 +205,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <!-- Main content -->
     <div class="content">
       <div class="container-fluid">
+        <div id="painel_modal"></div>
         {{{body}}}
       </div><!-- /.container-fluid -->
     </div>
@@ -239,6 +240,7 @@ $(function () {
     })
   
     var url = window.location;
+
     // for single sidebar menu
     $('ul.nav-sidebar a').filter(function () {
         return this.href == url;
@@ -252,7 +254,17 @@ $(function () {
         .addClass('menu-open').prev('a')
         .addClass('active');
         
+        
 });
+
+    const Toast = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000,
+        closeButton: true
+    });
+
 </script>
 </body>
 </html>

@@ -3,11 +3,15 @@ const { Model, DataTypes } = require('sequelize');
 class Empresa extends Model {
     static init(sequelize) {
         super.init({
-            nome: {
+              nome: {
                 type: DataTypes.STRING,
                 allowNull: true
               },
               razao: {
+                type: DataTypes.STRING,
+                allowNull: true
+              },
+              cnpj: {
                 type: DataTypes.STRING,
                 allowNull: true
               },
@@ -32,6 +36,10 @@ class Empresa extends Model {
                 allowNull: true
               },
         }, { sequelize })
+    }
+
+    static associate(models) {
+      this.hasOne(models.Solicitacao, { foreignKey: 'empresas_id', as: 'empresa' })
     }
 }
 module.exports = Empresa;

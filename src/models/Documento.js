@@ -17,6 +17,10 @@ class Documento extends Model {
               },
         }, { sequelize })
     }
+
+    static associate(models) {
+      this.hasOne(models.SolicitacaoDocumentos, { foreignKey: 'documentos_id', as: 'documento' })
+    }
 }
 module.exports = Documento;
 

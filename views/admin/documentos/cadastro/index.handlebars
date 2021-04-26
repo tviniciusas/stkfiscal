@@ -226,6 +226,9 @@
 
             },
             success: function (response) {
+
+                console.log(response.dados);
+
                 var source = $("#my-template").html();
                 var template = Handlebars.compile(source);
                 var html = template(response.dados);
