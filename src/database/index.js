@@ -25,4 +25,6 @@ Empresa.associate(connection.models)
 
 
 
+
+
 module.exports = connection;

@@ -35,7 +35,7 @@ module.exports =  {
         const { nome, razao, cnpj, ie, telefone, email, estado, cidade } = req.body;
         const { idemp } = req.params;
         
-        await Empresa.update({ nome, razao, cnpj, ie, telefone, email, estado, cidade 
+        await Empresa.update({ nome, ie, estado, cidade, telefone 
         }, {
             where: {
                 id: idemp
@@ -55,7 +55,6 @@ module.exports =  {
                 where: {
                     id: idemp
                 }
-                
         });
         return res.status(200).send({
             status: 1,

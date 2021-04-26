@@ -5,7 +5,7 @@ class Upload extends Model {
         super.init({
             diretorio: {
                 type: DataTypes.STRING,
-                allowNull: false
+                allowNull: true
               },
               user: {
                 type: DataTypes.STRING,
@@ -17,13 +17,16 @@ class Upload extends Model {
               },
               mes: {
                 type: DataTypes.INTEGER,
-                allowNull: false
+                allowNull: true
               },
               ano: {
                 type: DataTypes.INTEGER,
-                allowNull: false
+                allowNull: true
               },
-     
+              arquivo: {
+                type: DataTypes.BLOB('long') ,
+                allowNull: true
+              },
         }, { sequelize })
     }
 }

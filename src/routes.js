@@ -8,9 +8,10 @@ const LoginController = require('./controllers/LoginController');
 const passport = require('passport');
 const DocumentoController = require('./controllers/DocumentoController');
 const path = require('path');
-const uploadController = require('./controllers/uploadController');
-const SolicitacaoController = require('./controllers/SolicitacaoController');
-const DocumentosSolicitacoes = require('./controllers/DocumentosSolicitacoes');
+
+const uploadController = require('./controllers/UploadController');
+const companyRegister = require('./config/companyRegister')
+const transporter = require('./config/emailSend')
 
 const router = express.Router();
 
@@ -38,9 +39,27 @@ router.get("/upload",  (req,res) => {
 //     console.log(req.file)
 // })
 
+//== Rota cadastar empresa == //
+router.get('/cadauto/:id', companyRegister.registerCompany)
 
 router.post('/upload', upload.single('file'), uploadController.store)
 
+router.get('/sendEmail', checkNotAuthenticated, (req, res) => {
+
+    res.render('updatepass')
+
+    // transporter.sendMail({
+    //     from: "<thiago@masconsultoria.com.br>", 
+    //     to: "tviniciusas@gmail.com ", 
+    //     subject: "Finalize seu cadastro i-store.duckdns.org ", 
+    //     text: "Obrigado por se cadastrar em nossa plataforma", 
+    //     html: "<h1><b>Click no link abaixo para completar seu cadastro</b></h1><br><a href='http://i-store.duckdns.org/login'><button>Finalizar Cadastro</button></a>", 
+    //   }).then(info => {
+    //       res.send('Email sent')
+    //   }).catch(e => {
+    //       console.log('erro ao enviar e-mail '+ e)
+    //   })
+})
 
 router.delete("/logout", checkAuthenticated, LoginController.logout);
 
@@ -74,7 +93,6 @@ router.post("/admin/documentos/cadastro", DocumentoController.store);
 router.delete("/admin/documentos/cadastro", DocumentoController.delete);
 
 router.get("/admin/documentos/solicitacao", DocumentosSolicitacoes.index);
-//router.get("/admin/documentos/solicitacao/show_empresas", DocumentosSolicitacoes.show_empresas);
 router.get("/admin/documentos/solicitacao/show_solicitacoes", DocumentosSolicitacoes.show_solicitacoes);
 router.get("/admin/documentos/solicitacao/create", DocumentosSolicitacoes.create);
 router.get("/admin/documentos/solicitacao/show_solicitacoes_documentos", DocumentosSolicitacoes.show_solicitacoes_documentos);
