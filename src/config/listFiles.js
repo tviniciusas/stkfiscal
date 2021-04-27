@@ -14,12 +14,11 @@ async function listarArquivosDoDiretorio(diretorio, arquivos) {
         else
             arquivos.push(diretorio + '/' + listaDeArquivos[k]);
     }
-
     return arquivos;
 }
 
 const list = async () => {
-    let arquivos = await listarArquivosDoDiretorio(__dirname.replace("config","") + '/uploads') // coloque o caminho do seu diretorio
+    let arquivos = await listarArquivosDoDiretorio(__dirname.replace("src","") + '/uploads') // coloque o caminho do seu diretorio
     return arquivos
 }
 

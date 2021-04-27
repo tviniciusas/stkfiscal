@@ -12,8 +12,8 @@ const uploadController = require('./controllers/UploadController');
 const companyRegister = require('./config/companyRegister')
 const transporter = require('./config/emailSend')
 
-
 const router = express.Router();
+
 
 //=== Rotas Login ===//
 router.get("/register", checkNotAuthenticated, LoginController.register);
@@ -30,7 +30,7 @@ router.get('/list', (req,res)=> {
     res.send('listar')
 })
 
-router.get("/upload",  (req,res) => {
+router.get("/upload", (req,res) => {
 
     res.render('upload');
 })
@@ -41,27 +41,28 @@ router.get("/upload",  (req,res) => {
 // })
 
 //== Rota cadastar empresa == //
-router.get('/cadauto/:id', companyRegister.registerCompany)
+router.post('/cadauto', companyRegister.registerCompany)
 
 router.post('/upload', upload.single('file'), uploadController.store)
 
-router.get('/sendEmail', checkNotAuthenticated, (req, res) => {
+router.get('/sendmail/:mail',  (req, res, next) => {
 
-    res.render('updatepass')
+    const mail = req.params.mail
 
-    // transporter.sendMail({
-    //     from: "<thiago@masconsultoria.com.br>", 
-    //     to: "tviniciusas@gmail.com ", 
-    //     subject: "Finalize seu cadastro i-store.duckdns.org ", 
-    //     text: "Obrigado por se cadastrar em nossa plataforma", 
-    //     html: "<h1><b>Click no link abaixo para completar seu cadastro</b></h1><br><a href='http://i-store.duckdns.org/login'><button>Finalizar Cadastro</button></a>", 
-    //   }).then(info => {
-    //       res.send('Email sent')
-    //   }).catch(e => {
-    //       console.log('erro ao enviar e-mail '+ e)
-    //   })
+    console.log(mail)
+
+    transporter.sendMail({
+        from: "<istok@stokfiscal.com.br>", 
+        to: mail, 
+        subject: "Finalize seu cadastro i-store.duckdns.org ", 
+        text: "Obrigado por se cadastrar em nossa plataforma", 
+        html: "<h1><b>Click no link abaixo para completar seu cadastro</b></h1><br><a href='http://i-store.duckdns.org/login'><button>Finalizar Cadastro</button></a>", 
+      }).then(info => {
+          res.send('Email sent to ' + mail)
+      }).catch(e => {
+          console.log('erro ao enviar e-mail '+ e)
+      })
 })
-
 
 router.delete("/logout", checkAuthenticated, LoginController.logout);
 router.use(checkAuthenticated);

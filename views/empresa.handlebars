@@ -1,11 +1,22 @@
 <div class="row">
     <div class="col-lg-12">
+        {{>_msg}}
         <div class="card card-primary">
         <div class="card-header">
             <h3 class="card-title">Dados cadastrais</h3>
         </div>
         <br>
-        <a href="/cadauto/15444992000113"><button  type="submit" class="btn btn-primary">Cadastar Empresa pelo CNPJ informado</button></a>
+            <div class="col-sm-2">
+                <div class="form-group">
+                    <form action="/cadauto" method="post"> 
+                        <div class="form-group">
+                            <input type="text" name="cadpcnpj" id="cadpcnpj" class="form-control" placeholder="Informe o CNPJ">
+                            <br>
+                            <button type="submit" class="btn btn-primary">Cadastrar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         <form action="/empresa" method="post" role="form">
         <div class="form-group">
         </div>
@@ -20,38 +31,38 @@
                 <div class="col-sm-4">
                     <div class="form-group">
                         <label>Inscrição Estadual</label>
-                        <input type="text" name="ie" class="form-control" placeholder="Informe a inscrição estadual da sua empresa">
+                        <input type="text" name="ie" value="{{empresa.ie}}" class="form-control" placeholder="Informe a inscrição estadual da sua empresa">
                     </div>
                 </div>
                 <div class="col-sm-8">
                     <div class="form-group">
                         <label>Razão Social</label>
-                        <input type="text" disabled="disabled" value="{{empresa.razao}}" class="form-control" placeholder="Informe a razão social da sua empresa">
+                        <input type="text" name="razao" value="{{empresa.razao}}" class="form-control" placeholder="Informe a razão social da sua empresa">
                     </div>
                 </div>
                 <div class="col-sm-4">
                     <div class="form-group">
                         <label>CNPJ</label>
-                        <input type="text" disabled="disabled" class="form-control" value="{{empresa.cnpj}}" placeholder="Informe o CNPJ da sua empresa">
+                        <input type="text" name="cnpj"  value="{{empresa.cnpj}}" class="form-control" placeholder="Informe o CNPJ da sua empresa">
                     </div>
                 </div>
                 <div class="col-sm-8">
                     <div class="form-group">
                         <label for="exampleInputEmail1">E-mail comercial</label>
-                        <input type="email" name="email" class="form-control" id="exampleInputEmail1" placeholder="Informe o e-mail comercial da empresa">
+                        <input type="email" name="email" value="{{empresa.email}}" class="form-control" id="exampleInputEmail1" placeholder="Informe o e-mail comercial da empresa">
                     </div>
                 </div>
                 <div class="col-sm-4">
                     <div class="form-group">
                         <label>Telefone</label>
-                        <input type="text" name="telefone" class="form-control" placeholder="Informe o telefone comercial">
+                        <input type="text" name="telefone" value="{{empresa.telefone}}" class="form-control" placeholder="Informe o telefone comercial">
                     </div>
                 </div>
                 <div class="col-sm-6">
                     <div  class="form-group">
                     <label>Estado</label>
                     <select class="form-control select2bs4" style="width: 100%;">
-                        <option  selected="selected"></option>
+                        <option selected="selected" value="{{empresa.estado}}">Selecione</option>
                         <option value="AC">AC</option>
                         <option value="AL">AL</option>
                         <option value="AP">AP</option>
@@ -65,7 +76,7 @@
                     <div class="form-group">
                     <label>Cidade</label>
                     <select class="form-control select2bs4" disabled="disabled" style="width: 100%;">
-                        <option nome="cidade" selected="selected">Salvador</option>
+                        <option nome="cidade" value="{{empresa.cidade}}" selected="selected">Salvador</option>
                         <option>Rio de Janeiro</option>
                     </select>
                     </div>
@@ -140,3 +151,4 @@
         </div>
     </div>
 </div>
+
