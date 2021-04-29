@@ -10,7 +10,6 @@ const DocumentoController = require('./controllers/DocumentoController');
 const path = require('path');
 const uploadController = require('./controllers/UploadController');
 const companyRegister = require('./config/companyRegister')
-const transporter = require('./config/emailSend')
 
 const router = express.Router();
 
@@ -35,34 +34,11 @@ router.get("/upload", (req,res) => {
     res.render('upload');
 })
 
-// router.post('/upload',  upload.single('file'), (req, res) => {
-
-//     console.log(req.file)
-// })
 
 //== Rota cadastar empresa == //
 router.post('/cadauto', companyRegister.registerCompany)
 
 router.post('/upload', upload.single('file'), uploadController.store)
-
-router.get('/sendmail/:mail',  (req, res, next) => {
-
-    const mail = req.params.mail
-
-    console.log(mail)
-
-    transporter.sendMail({
-        from: "<istok@stokfiscal.com.br>", 
-        to: mail, 
-        subject: "Finalize seu cadastro i-store.duckdns.org ", 
-        text: "Obrigado por se cadastrar em nossa plataforma", 
-        html: "<h1><b>Click no link abaixo para completar seu cadastro</b></h1><br><a href='http://i-store.duckdns.org/login'><button>Finalizar Cadastro</button></a>", 
-      }).then(info => {
-          res.send('Email sent to ' + mail)
-      }).catch(e => {
-          console.log('erro ao enviar e-mail '+ e)
-      })
-})
 
 router.delete("/logout", checkAuthenticated, LoginController.logout);
 router.use(checkAuthenticated);
@@ -75,6 +51,7 @@ router.get("/", (req, res) => {
 //=== Rotas Usuarios ===//
 router.get("/user", UserController.index);
 router.post("/user", UserController.store);
+router.post("/usercad", UserController.storeUserMail);
 router.put("/user/:user_id", UserController.update);
 router.delete("/user/:user_id", UserController.delete);
 
@@ -132,7 +109,5 @@ function checkNotAuthenticated(req, res, next) {
     }
     next();
 }
-
-
 
 module.exports = router;
