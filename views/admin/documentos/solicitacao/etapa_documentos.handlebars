@@ -1,4 +1,4 @@
-<div class="col-sm-12 mt-5">
+<div class="col-sm-12 mt-2">
     <div class="card-buttons mb-3">
         <button type="button" onclick="modal_adicionar_documentos()" class="btn btn-primary swalDefaultSuccess"><i
                 class="fas fa-plus mr-2"></i>Adicionar
@@ -23,7 +23,8 @@
 <div style="overflow:auto;">
     <div style="float:right;">
         <button type="button" id="prevBtn" class="btn btn-muted" onclick="nextPage(-1)">Voltar</button>
-        <button type="button" id="nextBtn" class="btn btn-primary" onclick="finalizar_solicitacao()">Finalizar</button>
+        <button type="button" id="nextBtn" class="btn btn-primary" onclick="painel_solicitacoes()">Sair</button>
+        <button type="button" id="nextBtn" class="btn btn-warning" onclick="finalizar_solicitacao()">Finalizar e Solicitar</button>
     </div>
 </div>
 
@@ -115,14 +116,45 @@
 
         $('#tableSolicitacoesDocumentos tbody').on('click', 'tr .editar', async function () {
             var data = await table.row($(this).parents('tr')).data();
-            edit_documento(data.id);
+            edit_solcicitacoes_documentos(data.id);
         });
 
         $('#tableSolicitacoesDocumentos tbody').on('click', '.excluir', async function () {
             var data = await table.row($(this).parents('tr')).data();
-            destroy_documento(data.id)
+            destroy_solcicitacoes_documentos(data.id)
         });
 
         table.ajax.reload();
+    }
+
+    function edit_solcicitacoes_documentos(_id) {
+
+        $.ajax({
+            url: "/admin/documentos/solicitacao/edit_solcicitacoes_documentos/" + _id,
+            type: "GET",
+            success: function (response) {
+                
+                $('#painel_modal').html(response);
+                $('#modal-editar-solic-doc').modal('show')
+
+            },
+        });
+    }
+
+    function destroy_solcicitacoes_documentos(_id) {
+        $.ajax({
+            url: "/admin/documentos/solicitacao/destroy_solcicitacoes_documentos",
+            data: { 'id': _id },
+            type: "DELETE",
+            beforeSend: function () {
+
+            },
+            success: function (response) {
+                show_solicitacoes_documentos();
+
+                toastr.options.closeButton = true;
+                toastr.success(response.message)
+            },
+        });
     }
 </script>

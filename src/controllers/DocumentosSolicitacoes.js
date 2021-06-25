@@ -3,6 +3,8 @@ const Documento = require('../models/Documento');
 const Empresa = require('../models/Empresa');
 const Solicitacao = require('../models/Solicitacao');
 const SolicitacaoDocumentos = require('../models/SolicitacaoDocumentos');
+const Helpers = require('../helpers/helpers.js');
+const Sequelize = require('sequelize');
 
 
 module.exports = {
@@ -13,14 +15,14 @@ module.exports = {
 
     async show_solicitacoes(req, res) {
 
-        console.log('chegando')
-
         var solicitacoes;
 
         await Solicitacao.findAll({
             include: { association: 'empresa' },
         }).then(function (solic) {
             solicitacoes = JSON.parse(JSON.stringify(solic, null, 2));
+
+            solicitacoes['displayName'] = 'John';
         });
 
         console.log(solicitacoes);
@@ -60,40 +62,59 @@ module.exports = {
     async store_solicitacao(req, res) {
 
         const { solicitacoes_id, empresas_id, descricao } = req.body;
-
         var solicitacao_return
 
         await Solicitacao.findOne({ where: { id: solicitacoes_id } })
             .then(async function (obj) {
                 if (obj) {
 
-                    console.log('1')
-
-                    if (obj.empresas_id != empresas_id || obj.descrição != descricao) {
+                    if (obj.empresas_id != empresas_id || obj.descricao != descricao) {
                         obj.update({
                             "empresas_id": empresas_id,
-                            "descrição": descricao,
+                            "descricao": descricao,
                         });
                     }
 
                 } else {
 
-                    console.log('2')
-
                     solicitacao_return = await Solicitacao.create({
                         "empresas_id": empresas_id,
                         "status": "DIGITAÇÃO",
-                        "descrição": descricao,
+                        "descricao": descricao,
                     });
 
                     solicitacao_return = JSON.parse(JSON.stringify(solicitacao_return, null, 2));
                 }
             })
 
-            console.log(solicitacao_return);
-
         return res.status(200).render('./admin/documentos/solicitacao/etapa_documentos', { layout: false, solicitacao: solicitacao_return })
 
+    },
+
+    async delete(req, res) {
+
+        const id  = req.body.id;
+
+        await Solicitacao.findByPk(id)
+        .then(async function (solic) {
+
+            var notDestroy = ['SOLICITADO', 'FINALIZADO'];
+
+            if(notDestroy.includes(solic.status)) {
+                return res.status(200).send({
+                    status: false,
+                    message: 'Não é possível excluir a solicitação'
+                })
+            } else {
+
+                solic.destroy();
+
+                return res.status(200).send({
+                    status: true,
+                    message: 'Deletado com sucesso!'
+                })
+            }
+        });
     },
 
     async finalizar_solicitacao(req, res) {
@@ -102,7 +123,7 @@ module.exports = {
 
         await Solicitacao.findOne({ where: { id: solicitacoes_id } }).then(function (solic) {
             solic.update({
-                "status": "FINALIZADO",
+                "status": "SOLICITADO",
                 "dt_solicitado": Date.now()
             });
         });
@@ -135,6 +156,35 @@ module.exports = {
         return res.status(200).send({
             status: true,
             msg: "Documentos inseridos com sucesso"
+        })
+    },
+
+    async edit_solcicitacoes_documentos(req, res) {
+        var solicitacao_doc;
+    
+        await SolicitacaoDocumentos.findByPk(req.params.id).then(function(solicdoc) {
+            solicitacao_doc = JSON.parse(JSON.stringify(solicdoc, null, 2));
+        });
+
+        var anos = ['2020', '2021', '2022'];
+    
+        return res.status(200).render('./admin/documentos/solicitacao/modal_edit_solicitacoes_doc', { layout: false, solicitacao_doc: solicitacao_doc, anos: anos });
+    },
+
+    async destroy_solcicitacoes_documentos(req, res) {
+
+        const id  = req.body.id;
+
+        await SolicitacaoDocumentos.destroy({
+            where: {
+                id: id
+            }
+
+        });
+
+        return res.status(200).send({
+            status: 1,
+            message: 'Deletado com sucesso!'
         })
     },
 

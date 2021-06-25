@@ -1,56 +1,89 @@
-<div class="card card-body">
-    <input id="solicitacoes_id" type="hidden" name="solicitacoes_id" value="{{solicitacao.id}}">
-    <div class="tab">
-        <div class="row">
-            <div class="col-sm-6">
-                <div class="form-group">
-                    <label>Empresa</label>
-                    <select id="empresas_id" class="form-control select2bs4" style="width: 100%;">
-                        <option selected="selected">Selecione uma empresa</option>
-                        {{#each empresas}}
-                        <option value="{{id}}">{{razao}}</option>
-                        {{/each}}
-                    </select>
+<div class="card card-primary card-outline card-outline-tabs">
+    <div class="card-header p-0 border-bottom-0">
+        <ul class="nav nav-tabs" id="custom-tabs-four-tab" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link active" id="custom-tabs-four-empresa-tab" data-toggle="pill"
+                    href="#custom-tabs-four-empresa" role="tab" aria-controls="custom-tabs-four-empresa"
+                    aria-selected="true">Empresa</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link disabled" id="custom-tabs-four-documentos-tab" data-toggle="pill"
+                    href="#custom-tabs-four-documentos" role="tab" aria-controls="custom-tabs-four-documentos"
+                    aria-selected="false">Documentos</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link disabled" id="custom-tabs-four-historico-tab" data-toggle="pill"
+                    href="#custom-tabs-four-historico" role="tab" aria-controls="custom-tabs-four-historico"
+                    aria-selected="false">Histórico</a>
+            </li>
+        </ul>
+    </div>
+    <div class="card-body">
+        <input id="solicitacoes_id" type="hidden" name="solicitacoes_id" value="{{solicitacao.id}}">
+        <div class="tab-content" id="custom-tabs-four-tabContent">
+            <div class="tab-pane fade active show" id="custom-tabs-four-empresa" role="tabpanel"
+                aria-labelledby="custom-tabs-four-empresa-tab">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label>Empresa</label>
+                            <select id="empresas_id" class="form-control select2bs4" style="width: 100%;">
+                                <option selected="selected">Selecione uma empresa</option>
+                                {{#each empresas}}
+                                <option value="{{id}}">{{razao}}</option>
+                                {{/each}}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            <label for="descricao">Descrição da solicitação</label>
+                            <textarea id="descricao" name="descricao" class="form-control" rows="3"
+                                placeholder="Descrição do documento"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div style="overflow:auto;">
+                    <div style="float:right;">
+                        <button type="button" id="prevBtn" class="btn btn-muted"
+                            onclick="painel_solicitacoes()">Cancelar</button>
+                        <button type="button" id="nextBtn" class="btn btn-primary"
+                            onclick="store_solicitacao('etapa_empresa')">Salvar e Continuar</button>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="row mt-2">
-            <div class="col-sm-12">
-                <div class="form-group">
-                    <label for="descricao">Descrição da solicitação</label>
-                    <textarea id="descricao" name="descricao" class="form-control" rows="3"
-                        placeholder="Descrição do documento"></textarea>
-                </div>
+            <div class="tab-pane fade" id="custom-tabs-four-documentos" role="tabpanel"
+                aria-labelledby="custom-tabs-four-documentos-tab">
+                <div id="etapa_documentos"></div>
+            </div>
+            <div class="tab-pane fade" id="custom-tabs-four-historico" role="tabpanel"
+                aria-labelledby="custom-tabs-four-historico-tab">
             </div>
         </div>
-        <div style="overflow:auto;">
-            <div style="float:right;">
-                <button type="button" id="prevBtn" class="btn btn-muted"
-                    onclick="painel_solicitacoes()">Cancelar</button>
-                <button type="button" id="nextBtn" class="btn btn-primary"
-                    onclick="store_solicitacao('etapa_empresa')">Salvar e Continuar</button>
-            </div>
-        </div>
+
     </div>
-    <div id="etapa_documentos" class="tab">
-    </div>
+
 </div>
 
 <script>
 
-    var currentTab = 0;
-    showTab(currentTab);
-
-    function showTab(n) {
-        var x = document.getElementsByClassName("tab");
-        x[n].style.display = "block";
-    }
-
     $(function () {
-        show_documentos();
 
-        $('#empresas_id').val({{ solicitacao.empresas_id }})
-    $('#descricao').val({{ solicitacao.descricao }})
+    
+
+    console.log(empresas_id);
+
+    show_documentos();
+
+    $('#empresas_id').val({{ solicitacao.empresas_id }})
+    $('#descricao').val('{{solicitacao.descricao}}')
+
+
+    if($('#empresas_id').val() != "")  {
+        
+    }
 
     $('#modal-adicionar-documentos').on('hidden.bs.modal', function () {
         $("#cadastrar_documento").trigger('reset');
@@ -60,7 +93,7 @@
 
     function nextPage(n) {
 
-        var x = document.getElementsByClassName("tab");
+        var x = document.getElementsByClassName("tab-pane");
         x[currentTab].style.display = "none";
         currentTab = currentTab + n;
 
@@ -94,7 +127,20 @@
                 if (xhr.status == 200) {
                     toastr.success("Dados cadastrados com sucesso")
                     $('#etapa_documentos').html(data);
-                    nextPage(1);
+
+                    $('#custom-tabs-four-documentos-tab').removeClass("disabled");
+                    $('#custom-tabs-four-historico-tab').removeClass("disabled");
+
+                    $('#custom-tabs-four-empresa-tab').attr('aria-selected', false);
+                    $('#custom-tabs-four-empresa-tab').removeClass("active");   
+                    $('#custom-tabs-four-empresa').removeClass("active");
+                    $('#custom-tabs-four-empresa').removeClass("show");
+
+                    $('#custom-tabs-four-documentos-tab').attr('aria-selected', true);
+                    $('#custom-tabs-four-documentos-tab').addClass("active");
+                    $('#custom-tabs-four-documentos').addClass("active");
+                    $('#custom-tabs-four-documentos').addClass("show");
+                    
                 } else {
                     toastr.error(response.message)
                 }

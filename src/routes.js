@@ -11,7 +11,8 @@ const path = require('path');
 
 const uploadController = require('./controllers/UploadController');
 const companyRegister = require('./config/companyRegister')
-const transporter = require('./config/emailSend')
+const transporter = require('./config/emailSend');
+const DocumentosSolicitacoes = require('./controllers/DocumentosSolicitacoes');
 
 const router = express.Router();
 
@@ -95,12 +96,17 @@ router.delete("/admin/documentos/cadastro", DocumentoController.delete);
 router.get("/admin/documentos/solicitacao", DocumentosSolicitacoes.index);
 router.get("/admin/documentos/solicitacao/show_solicitacoes", DocumentosSolicitacoes.show_solicitacoes);
 router.get("/admin/documentos/solicitacao/create", DocumentosSolicitacoes.create);
+router.delete("/admin/documentos/solicitacao", DocumentosSolicitacoes.delete);
+
 router.get("/admin/documentos/solicitacao/show_solicitacoes_documentos", DocumentosSolicitacoes.show_solicitacoes_documentos);
 router.get("/admin/documentos/solicitacao/modal_adicionar_documentos", DocumentosSolicitacoes.modal_adicionar_documentos);
 router.post("/admin/documentos/solicitacao/store_solicitacao", DocumentosSolicitacoes.store_solicitacao);
 router.post("/admin/documentos/solicitacao/store_solicitacoes_documentos", DocumentosSolicitacoes.store_solicitacoes_documentos);
 router.post("/admin/documentos/solicitacao/finalizar_solicitacao", DocumentosSolicitacoes.finalizar_solicitacao);
 router.get("/admin/documentos/solicitacao/edit/:id", DocumentosSolicitacoes.edit);
+router.get("/admin/documentos/solicitacao/edit_solcicitacoes_documentos/:id", DocumentosSolicitacoes.edit_solcicitacoes_documentos);
+router.delete("/admin/documentos/solicitacao/destroy_solcicitacoes_documentos", DocumentosSolicitacoes.destroy_solcicitacoes_documentos);
+
 
 router.get("/admin/documentos/historico", (req, res) => {
     res.render('./admin/documentos/historico')

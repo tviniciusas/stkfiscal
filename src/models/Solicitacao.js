@@ -1,3 +1,4 @@
+const helpers = require('../helpers/helpers');
 const { Model, DataTypes } = require('sequelize');
 const { count } = require('sequelize/lib/model');
 const SolicitacaoDocumentos = require('./SolicitacaoDocumentos');
@@ -25,6 +26,24 @@ class Solicitacao extends Model {
         type: DataTypes.DATE,
         allowNull: true
       },
+      dt_solicitado_br: {
+        type: DataTypes.VIRTUAL,
+        get () {
+          if(this.getDataValue('dt_solicitado') != null)
+            return helpers.dataFormatada(this.getDataValue('dt_solicitado'))
+          else
+            return '-'
+        }
+      },
+      dt_criado_br: {
+        type: DataTypes.VIRTUAL,
+        get () {
+          if(this.getDataValue('createdAt') != null)
+            return helpers.dataFormatada(this.getDataValue('createdAt'))
+          else
+            return '-'
+        }
+      },
     },
       {
         sequelize,
@@ -37,6 +56,9 @@ class Solicitacao extends Model {
     this.hasMany(models.SolicitacaoDocumentos, { foreignKey: 'solicitacoes_id', as: 'solicitacao_documentos' })
   }
 }
+
+
+
 module.exports = Solicitacao;
 
 
