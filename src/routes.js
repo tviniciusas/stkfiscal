@@ -11,11 +11,10 @@ const path = require('path');
 
 const uploadController = require('./controllers/UploadController');
 const companyRegister = require('./config/companyRegister')
-<<<<<<< HEAD
+
 const transporter = require('./config/emailSend');
 const DocumentosSolicitacoes = require('./controllers/DocumentosSolicitacoes');
-=======
->>>>>>> 4c61724f5a416e0bceb357afc2340e650e1524e8
+
 
 const router = express.Router();
 
@@ -35,12 +34,8 @@ router.get('/list', (req,res)=> {
     res.send('listar')
 })
 
-<<<<<<< HEAD
-router.get("/upload",  (req,res) => {
-=======
-router.get("/upload", (req,res) => {
 
->>>>>>> 4c61724f5a416e0bceb357afc2340e650e1524e8
+router.get("/upload", (req,res) => {
     res.render('upload');
 })
 
@@ -50,26 +45,10 @@ router.post('/cadauto', companyRegister.registerCompany)
 
 router.post('/upload', upload.single('file'), uploadController.store)
 
-<<<<<<< HEAD
 router.get('/sendEmail', checkNotAuthenticated, (req, res) => {
-
     res.render('updatepass')
-
-    // transporter.sendMail({
-    //     from: "<thiago@masconsultoria.com.br>", 
-    //     to: "tviniciusas@gmail.com ", 
-    //     subject: "Finalize seu cadastro i-store.duckdns.org ", 
-    //     text: "Obrigado por se cadastrar em nossa plataforma", 
-    //     html: "<h1><b>Click no link abaixo para completar seu cadastro</b></h1><br><a href='http://i-store.duckdns.org/login'><button>Finalizar Cadastro</button></a>", 
-    //   }).then(info => {
-    //       res.send('Email sent')
-    //   }).catch(e => {
-    //       console.log('erro ao enviar e-mail '+ e)
-    //   })
 })
 
-=======
->>>>>>> 4c61724f5a416e0bceb357afc2340e650e1524e8
 router.delete("/logout", checkAuthenticated, LoginController.logout);
 
 router.use(checkAuthenticated);
