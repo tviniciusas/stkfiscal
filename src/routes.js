@@ -11,10 +11,14 @@ const path = require('path');
 
 const uploadController = require('./controllers/UploadController');
 const companyRegister = require('./config/companyRegister')
+<<<<<<< HEAD
 const transporter = require('./config/emailSend');
 const DocumentosSolicitacoes = require('./controllers/DocumentosSolicitacoes');
+=======
+>>>>>>> 4c61724f5a416e0bceb357afc2340e650e1524e8
 
 const router = express.Router();
+
 
 //=== Rotas Login ===//
 router.get("/register", checkNotAuthenticated, LoginController.register);
@@ -31,20 +35,22 @@ router.get('/list', (req,res)=> {
     res.send('listar')
 })
 
+<<<<<<< HEAD
 router.get("/upload",  (req,res) => {
+=======
+router.get("/upload", (req,res) => {
+
+>>>>>>> 4c61724f5a416e0bceb357afc2340e650e1524e8
     res.render('upload');
 })
 
-// router.post('/upload',  upload.single('file'), (req, res) => {
-
-//     console.log(req.file)
-// })
 
 //== Rota cadastar empresa == //
-router.get('/cadauto/:id', companyRegister.registerCompany)
+router.post('/cadauto', companyRegister.registerCompany)
 
 router.post('/upload', upload.single('file'), uploadController.store)
 
+<<<<<<< HEAD
 router.get('/sendEmail', checkNotAuthenticated, (req, res) => {
 
     res.render('updatepass')
@@ -62,6 +68,8 @@ router.get('/sendEmail', checkNotAuthenticated, (req, res) => {
     //   })
 })
 
+=======
+>>>>>>> 4c61724f5a416e0bceb357afc2340e650e1524e8
 router.delete("/logout", checkAuthenticated, LoginController.logout);
 
 router.use(checkAuthenticated);
@@ -74,6 +82,7 @@ router.get("/", (req, res) => {
 //=== Rotas Usuarios ===//
 router.get("/user", UserController.index);
 router.post("/user", UserController.store);
+router.post("/usercad", UserController.storeUserMail);
 router.put("/user/:user_id", UserController.update);
 router.delete("/user/:user_id", UserController.delete);
 
@@ -145,7 +154,5 @@ function checkNotAuthenticated(req, res, next) {
     }
     next();
 }
-
-
 
 module.exports = router;

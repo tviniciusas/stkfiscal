@@ -1,11 +1,8 @@
 const passport = require('passport');
 const bcrypt = require('bcrypt');
-
 const User = require('../models/User.js');
 const Empresa = require('../models/Empresa.js');
-
 const initializePassport = require('../config/passport');
-
 initializePassport(passport)
 
 module.exports = {
@@ -58,17 +55,40 @@ module.exports = {
             }
             
             const hashedPassword = await bcrypt.hash(req.body.password, 10);
-
             const razao = req.body.razao_social;
             const cnpj = req.body.cnpj;
-        
             const empresa = await Empresa.create({razao,cnpj});
-
             const password = hashedPassword;
             const email = req.body.email;
             const empresas_id = empresa.id;
 
             const user = await User.create({password,email,empresas_id});
+
+            res.redirect('/login')
+        
+        } catch (error) { 
+               
+            res.status(400).send({status: false, msg: error});     
+        }
+    },
+
+    async updatemail(req, res) {
+
+        try {
+
+            const email = req.params.email
+            if(req.body.password !== req.body.password_confirmation) {
+                req.flash("error","As senhas informadas não coincidem");  
+                return res.redirect('/register')     
+            }
+            const hashedPassword = await bcrypt.hash(req.body.password, 10);
+
+            const password = hashedPassword;
+
+            const user = await User.update({password : password} ,{
+                where: {
+                    email: email
+                }})
 
             res.redirect('/login')
         

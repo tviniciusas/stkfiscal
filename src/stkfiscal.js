@@ -11,7 +11,7 @@ const passport = require('passport');
 const methodOverride = require('method-override');
 require('./database')
 
-const app=express();
+const app = express();
 app.use(express.json());
 
 app.use(session({
@@ -32,7 +32,6 @@ app.use(function(req, res, next){
     delete req.session.sessionFlash;
     next();
 });
-
 
 app.use((req, res, next) =>{
     res.locals.success_msg = req.flash("success_msg")
@@ -72,7 +71,6 @@ function getMenu(user) {
 };
 
 app.use(express.urlencoded({ extended: false}))
-
 app.use('/css', express.static('css'))
 app.use('/js', express.static('js'))
 app.use('/img', express.static('img'))
@@ -81,7 +79,7 @@ app.use('/plugins', express.static('plugins'))
 app.use(routes);
 
 
-app.listen(3000, function(req, res) {
+app.listen(3000,  (req, res) => {
     console.log('Servidor rodando')
 })
 

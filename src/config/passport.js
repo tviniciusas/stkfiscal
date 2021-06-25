@@ -10,7 +10,6 @@ async function initialize(passport) {
         if(!user) {
             return done(null, false, {message: "Nenhum usuário encontrado com esse e-mail"});
         }
-
         try {
             if(await bcrypt.compare(password, user.password)) {
                 return done(null, user)
@@ -20,7 +19,6 @@ async function initialize(passport) {
         } catch (e) {
             return done(e)            
         }
-
     }
 
     passport.use(new LocalStrategy({usernameField: 'email'}, authenticateUser))
