@@ -1,0 +1,481 @@
+<style type="text/css">
+    .opaque {
+        color: gray; 
+        opacity: 0.6; 
+        width: 100%; 
+        height: 100vh;
+    }
+
+    .required {
+        color: #dc3545;
+    }
+
+    span.error {
+        display: block;
+    }
+
+    /*.disabled {
+        pointer-events: none;
+    }*/
+
+    .btn-submit {
+        width: 100px;
+    }
+
+    .btn-submit.disabled {
+        width: 130px;
+    }
+</style>
+
+{{> scripts}}
+
+<div class="row">
+    <div class="col-lg-12">
+        {{>_msg}}
+        <div class="card card-primary">
+            <div class="card-header">
+                <h3 class="card-title" style="margin-top: 5px;">Dados cadastrais</h3>
+                <div class="form-inline ml-3"> 
+                    <div class="input-group input-group-sm" style="margin-left: auto;">
+                        <input class="form-control form-control-navbar" type="search" 
+                        name="numCnpj" placeholder="Buscar CNPJ" aria-label="Buscar CNPJ" 
+                        maxlength="18">
+                        <div class="input-group-append">
+                            <button id="btn-search" class="btn btn-default" type="button" onclick="buscar()">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <form action="/empresa" method="post" role="form" id="dadosCadastrais">
+                <div class="card-body">
+                        <input type="hidden" name="id" value="{{userId}}">
+                        <input type="hidden" name="userId" value="{{usuario.id}}">
+
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label>
+                                    Nome
+                                    <span class="required">*</span>
+                                </label>
+                                <input type="text" name="nome" id="nome" class="form-control" 
+                                    placeholder="Nome da empresa" maxlength="200" 
+                                    value="{{empresa.nome}}">
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label>
+                                    Razão social
+                                    <span class="required">*</span>
+                                </label>
+                                <input type="text" name="razao" class="form-control" 
+                                    placeholder="Razão Social" maxlength="200" 
+                                    value="{{empresa.razao}}">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label>
+                                    CNPJ
+                                    <span class="required">*</span>
+                                </label>
+                                <input type="text" name="cnpj" class="form-control" 
+                                    onkeyup="onlyNumbers(this, this.value)" 
+                                    onfocusout="cnpjMask(this, this.value)"
+                                    placeholder="Número do CNPJ" minlength="14" maxlength="18" 
+                                    value="{{empresa.cnpj}}">
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label>
+                                    Inscrição estadual
+                                    <span class="required">*</span>
+                                </label>
+                                <input type="text" name="ie" class="form-control" 
+                                    onkeyup="onlyNumbers(this, this.value)"
+                                    onfocusout="ieMask(this, this.value)" 
+                                    placeholder="Inscrição estadual" minlength="9" maxlength="10" 
+                                    value="{{empresa.ie}}">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label>
+                                    E-mail
+                                    <span class="required">*</span>
+                                </label>
+                                <input type="email" name="email" class="form-control" 
+                                    id="email" autocomplete="false" maxlength="50" 
+                                    placeholder="E-mail da empresa" 
+                                    value="{{empresa.email}}">
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label>
+                                    Telefone
+                                    <span class="required">*</span>
+                                </label>
+                                <input type="tel" name="telefone" class="form-control" 
+                                placeholder="Telefone comercial" minlength="10" maxlength="15"
+                                onkeyup="onlyNumbers(this, this.value)" 
+                                onfocusout="telMask(this, this.value)"
+                                value="{{empresa.telefone}}"> 
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div  class="form-group">
+                                <label>
+                                    Estado
+                                    <span class="required">*</span>
+                                </label>
+                                <select id="estado" class="form-control select2bs4" name="estado"
+                                onchange="loadMunicipios(this.value)" style="width: 100%;">
+                                    <option value="">Selecione...</option>
+                                    {{#each estados}}
+                                        {{#if empresa}}
+                                            <option selected value="{{empresa.estado}}">
+                                                {{empresa.estado}}
+                                            </option>
+                                        {{else}}
+                                            {{#if this}}
+                                                <option value="{{this.nome}}">
+                                                    {{this.nome}}
+                                                </option>
+                                            {{/if}}
+                                        {{/if}}
+                                    {{/each}}
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <div  class="form-group">
+                                <label>
+                                    Cidade
+                                    <span class="required">*</span>
+                                </label>
+                                <select id="cidade" class="form-control select2bs4" 
+                                 style="width: 100%;" name="cidade">
+                                    <option value="">Selecione...</option>
+                                    {{#each cidades}}
+                                        {{#if empresa}}
+                                            <option selected value="{{empresa.cidade}}">
+                                                {{empresa.cidade}}
+                                            </option>
+                                        {{else}}
+                                            {{#if this}}
+                                                <option value="{{this.nome}}">
+                                                    {{this.nome}}
+                                                </option>
+                                            {{/if}}
+                                        {{/if}}
+                                    {{/each}}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-sm-12 sefaz mt-4">
+                            <h5>Atualizar senha</h5>
+                            <hr class="solid mt-0 mb-3">
+                        </div>
+                    </div>
+
+                    <div class="updatePassword">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>
+                                        Nova senha
+                                        <span class="required">*</span>
+                                    </label>
+
+                                    <div class="input-group">
+                                        <input type="password" class="form-control" placeholder="Senha" 
+                                        autocomplete="off" name="senha" value="{{password}}"
+                                        minlength="5" maxlength="20">
+
+                                        <div class="input-group-append">
+                                            <button id="btnEyePass" class="btn btn-default" type="button" 
+                                            onclick="showPassword(this)">
+                                                <i class="far fa-eye-slash"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>
+                                        Repetir senha
+                                        <span class="required">*</span>
+                                    </label>
+
+                                    <div class="input-group">
+                                        <input type="password" class="form-control" 
+                                        autocomplete="off"  placeholder="Nova senha" 
+                                        name="confirmarSenha" value="{{password}}"
+                                        minlength="5" maxlength="20">
+
+                                        <div class="input-group-append">
+                                            <button id="btnEyeConf" class="btn btn-default" type="button" 
+                                            onclick="showPassword(this)">
+                                                <i class="far fa-eye-slash"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                <!-- /.card-body -->
+                <div class="card-footer">
+                    <button type="submit" onclick="formSubmit($(this), 'Salvando...')" class="btn btn-primary btn-submit float-right">
+                        Salvar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    const Toast = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000,
+        closeButton: true
+    });
+
+    $(document).ready(function() {
+        $('#estado').val('{{empresa.estado}}');
+        $('#cidade').val('{{empresa.cidade}}');
+
+        setTimeout(function() {
+            // Paleativo contra o autocomplete
+            //{{#unless emrpesa}}
+            //    $("#dadosCadastrais").trigger('reset');
+            //{{/unless}}
+            //$("#dadoscadastrais").attr('autocomplete', 'off');
+            $('.error').remove();
+        }, 1000);
+
+        $("[name=confirmarSenha]").bind('paste', function(e) {
+            e.preventDefault();
+        });
+
+        spinnerOff($('.btn-submit', 'Salvar'));
+    });
+
+    async function formSubmit(btnInstance, spinnerText) {
+        await $("#dadosCadastrais").submit();
+        spinnerOn(btnInstance, spinnerText);
+    }
+
+    function onlyNumbers(field, value) {
+        $(field).val(value.replace(/\D/g,""));
+    }
+
+    function cnpjMask(field, value) {
+        value = value.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, "$1.$2.$3/$4-$5");
+        $(field).val(value);
+    }
+
+    function ieMask(field, value) {
+        value = value.replace(/^(\d{7})(\d{2})/, "$1-$2");
+        $(field).val(value);
+    }
+
+    function telMask(field, value) {
+        const size = value.length
+        var regExp = '';
+
+        if (size > 10) {
+            regExp = /^(\d{2})(\d{5})(\d{4})/
+        }
+        else {
+            regExp = /^(\d{2})(\d{4})(\d{4})/
+        }
+
+        $(field).val(value.replace(regExp, "($1) $2-$3"));
+    }
+
+    function showPassword(btn) {
+        var btnEye = $(btn)
+        var field = btnEye.closest('div.input-group').find('input');
+
+        if(btnEye.find('i').hasClass('fa-eye-slash')) {
+            btnEye.find('i').removeClass('fa-eye-slash').addClass('fa-eye');
+            field.prop('type', 'text');
+        }
+        else {
+            btnEye.find('i').removeClass('fa-eye').addClass('fa-eye-slash');
+            field.prop('type', 'password');
+        }
+
+    }
+
+    function passwordValidate() {
+        const password = $('[name=senha]');
+        const passwordConfirm = $('[name=confirmarSenha]');
+
+        if (password.val() != '' && password.val() != passwordConfirm.val()) {
+            $('.error').remove();
+            passwordConfirm.closest('div.form-group').append("<span class='error'>Senhas diferentes</span>");
+            $('.error').addClass('invalid-feedback');
+        }
+        else {
+            $('.error').remove();
+        }
+    }
+
+    $('[name=confirmarSenha]').keyup(function() {
+        passwordValidate();
+    });
+
+    $('[name=senha]').change(function() {
+        passwordValidate();
+    });
+
+    function adjustState() {
+        var select2 = $('#estado').siblings('.select2');
+        select2.find('.select2-selection--single').css({height: 38})
+        select2.find('.select2-selection__arrow').css({height: 36})
+    }
+
+    function adjustCounty() {
+        var select2 = $('#cidade').siblings('.select2');
+        select2.find('.select2-selection--single').css({height: 38})
+        select2.find('.select2-selection__arrow').css({height: 36})
+    }
+
+    function resetForm() {
+        $("#dadosCadastrais").trigger('reset');
+        $("input, select").val("");
+        //$("input[type=tel], input[type=email], select").val("");
+        $('#estado').select2().trigger('change');
+        adjustState();
+        $('#cidade').select2().trigger('change');
+        adjustCounty();
+    }
+
+    function resetMunicipios() {
+        $('#cidade').text('')
+        $('#cidade').append("<option value=''>Selecione...</option>");
+    }
+
+    function formDisabled(disabled) {
+        $('[name=numCnpj]').prop('disabled', disabled);
+        $("#dadosCadastrais :input").prop("disabled", disabled);
+    }
+
+    function spinnerOn(btnInstance, spinnerText = '', timeMs = 0) {
+        setTimeout(function() {
+            btnInstance.html(`<span class="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true"></span>${spinnerText}`).addClass('disabled');
+            $('.content').addClass('opaque');
+            formDisabled(true);
+        }, timeMs);
+    }
+
+    function spinnerOff(btnInstance, btnText = '', btnIcoClass = '', timeMs = 1500) {
+        setTimeout(function() {
+            $('.spinner-border').remove();
+            btnInstance.html(`<i class="fas ${btnIcoClass}"></i>${btnText}`).removeClass('disabled');
+            $('.content').removeClass('opaque');
+            $('[name=numCnpj]').val('');
+            formDisabled(false);
+        }, timeMs);
+    }
+
+    function loadMunicipios(estado) {
+        //resetMunicipios();
+        $.ajax({
+            url: "/empresa/municipios",
+            data: {
+                estado: estado
+            },
+            type: 'POST',
+            success: function(data) {
+                resetMunicipios();
+
+                $.each(data.municipios, function(key, val) {
+                    $('#cidade').append("<option value='"+val.nome+"'>"+val.nome+"</option>")
+                })
+            }
+        });
+    }
+
+    function buscar() {
+        var cnpj = $("[name='numCnpj']").val();
+        var userId = $("[name='userId']").val();
+
+        if (cnpj != '' && cnpj.length >= 14 && cnpj.length <= 18) {
+            spinnerOn($('#btn-search'), 'Aguarde...');
+
+            $.ajax({
+                url: "/empresa/buscar",
+                data: {
+                    cnpj: cnpj,
+                    userId: userId
+                },
+                type: 'POST',
+                success: function(data) {
+                    resetForm();
+                    $("[name='userId']").val(data.userId);
+                    
+                    if(data.sefaz.error_msg) {
+                        toastr.error(data.sefaz.error_msg);
+                        spinnerOff($('#btn-search'), 'fa-search', 100);
+                    }
+                    else {
+                        $('[name=nome]').val(data.sefaz.nome);
+                        $('[name=cnpj]').val(data.sefaz.cnpj);
+                        $('[name=ie]').val(data.sefaz.ie);
+                        $('[name=email]').val(data.sefaz.email.toLowerCase());
+                        $('[name=telefone]').val(data.sefaz.telefone);
+
+                        //$('#estado').val(data.sefaz.estado.id).select2();
+                        $('#estado').val(data.sefaz.estado.nome);
+                        $('#estado').select2().trigger('change');
+                        adjustState();
+
+                        setTimeout(function() {
+                            //$('#cidade').val(data.sefaz.cidade.id).select2();
+                            $('#cidade').val(data.sefaz.cidade.nome);
+                            $('#cidade').select2().trigger('change');
+                            adjustCounty();
+                        }, 1000);
+
+                        spinnerOff($('#btn-search'), 'fa-search');
+                    }
+
+                },
+                error: function (err) {
+                    console.log(err);
+                }
+            });
+        }
+    }
+</script>
