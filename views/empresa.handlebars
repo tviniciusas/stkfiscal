@@ -34,16 +34,22 @@
         {{>_msg}}
         <div class="card card-primary">
             <div class="card-header">
-                <h3 class="card-title" style="margin-top: 5px;">Dados cadastrais</h3>
-                <div class="form-inline ml-3"> 
-                    <div class="input-group input-group-sm" style="margin-left: auto;">
-                        <input class="form-control form-control-navbar" type="search" 
-                        name="numCnpj" placeholder="Buscar CNPJ" aria-label="Buscar CNPJ" 
-                        maxlength="18">
-                        <div class="input-group-append">
-                            <button id="btn-search" class="btn btn-default" type="button" onclick="buscar()">
-                                <i class="fas fa-search"></i>
-                            </button>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <h3 class="card-title" style="margin-top: 5px;">Dados cadastrais</h3>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-inline"> 
+                            <div class="input-group input-group-sm" style="margin-left: auto;">
+                                <input class="form-control form-control-navbar" type="search" 
+                                name="numCnpj" placeholder="Buscar CNPJ" aria-label="Buscar CNPJ" 
+                                maxlength="18">
+                                <div class="input-group-append">
+                                    <button id="btn-search" class="btn btn-default" type="button" onclick="buscar()">
+                                        <i class="fas fa-search"></i>
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -51,8 +57,6 @@
 
             <form action="/empresa" method="post" role="form" id="dadosCadastrais">
                 <div class="card-body">
-                        <input type="hidden" name="id" value="{{userId}}">
-                        <input type="hidden" name="userId" value="{{usuario.id}}">
 
                     <div class="row">
                         <div class="col-sm-6">
@@ -90,7 +94,7 @@
                                 <input type="text" name="cnpj" class="form-control" 
                                     onkeyup="onlyNumbers(this, this.value)" 
                                     onfocusout="cnpjMask(this, this.value)"
-                                    placeholder="Número do CNPJ" minlength="14" maxlength="18" 
+                                    placeholder="Número do CNPJ" minlength="14" maxlength="14" 
                                     value="{{empresa.cnpj}}">
                             </div>
                         </div>
@@ -104,7 +108,7 @@
                                 <input type="text" name="ie" class="form-control" 
                                     onkeyup="onlyNumbers(this, this.value)"
                                     onfocusout="ieMask(this, this.value)" 
-                                    placeholder="Inscrição estadual" minlength="9" maxlength="10" 
+                                    placeholder="Inscrição estadual" minlength="9" maxlength="9" 
                                     value="{{empresa.ie}}">
                             </div>
                         </div>
@@ -131,7 +135,7 @@
                                     <span class="required">*</span>
                                 </label>
                                 <input type="tel" name="telefone" class="form-control" 
-                                placeholder="Telefone comercial" minlength="10" maxlength="15"
+                                placeholder="Telefone comercial" minlength="10" maxlength="11"
                                 onkeyup="onlyNumbers(this, this.value)" 
                                 onfocusout="telMask(this, this.value)"
                                 value="{{empresa.telefone}}"> 
@@ -217,7 +221,7 @@
                                         <div class="input-group-append">
                                             <button id="btnEyePass" class="btn btn-default" type="button" 
                                             onclick="showPassword(this)">
-                                                <i class="far fa-eye-slash"></i>
+                                                <i class="far fa-eye"></i>
                                             </button>
                                         </div>
                                     </div>
@@ -240,7 +244,7 @@
                                         <div class="input-group-append">
                                             <button id="btnEyeConf" class="btn btn-default" type="button" 
                                             onclick="showPassword(this)">
-                                                <i class="far fa-eye-slash"></i>
+                                                <i class="far fa-eye"></i>
                                             </button>
                                         </div>
                                     </div>
@@ -251,7 +255,7 @@
                     
                 <!-- /.card-body -->
                 <div class="card-footer">
-                    <button type="submit" onclick="formSubmit($(this), 'Salvando...')" class="btn btn-primary btn-submit float-right">
+                    <button type="submit" onclick="formSubmit(event, $(this), 'Salvando...')" class="btn btn-primary btn-submit float-right">
                         Salvar
                     </button>
                 </div>
@@ -290,6 +294,7 @@
     });
 
     async function formSubmit(btnInstance, spinnerText) {
+        e.preventDefault();
         await $("#dadosCadastrais").submit();
         spinnerOn(btnInstance, spinnerText);
     }
@@ -328,11 +333,11 @@
 
         if(btnEye.find('i').hasClass('fa-eye-slash')) {
             btnEye.find('i').removeClass('fa-eye-slash').addClass('fa-eye');
-            field.prop('type', 'text');
+            field.prop('type', 'password');
         }
         else {
             btnEye.find('i').removeClass('fa-eye').addClass('fa-eye-slash');
-            field.prop('type', 'password');
+            field.prop('type', 'text');
         }
 
     }
@@ -399,10 +404,10 @@
         }, timeMs);
     }
 
-    function spinnerOff(btnInstance, btnText = '', btnIcoClass = '', timeMs = 1500) {
+    function spinnerOff(btnInstance, btnText = '', iconTag = '', timeMs = 1500) {
         setTimeout(function() {
             $('.spinner-border').remove();
-            btnInstance.html(`<i class="fas ${btnIcoClass}"></i>${btnText}`).removeClass('disabled');
+            btnInstance.html(iconTag+''+btnText).removeClass('disabled');
             $('.content').removeClass('opaque');
             $('[name=numCnpj]').val('');
             formDisabled(false);
@@ -447,7 +452,7 @@
                     
                     if(data.sefaz.error_msg) {
                         toastr.error(data.sefaz.error_msg);
-                        spinnerOff($('#btn-search'), 'fa-search', 100);
+                        spinnerOff($('#btn-search'), "", '<i class="fas fa-search"></i>', 100);
                     }
                     else {
                         $('[name=nome]').val(data.sefaz.nome);
@@ -468,7 +473,7 @@
                             adjustCounty();
                         }, 1000);
 
-                        spinnerOff($('#btn-search'), 'fa-search');
+                        spinnerOff($('#btn-search'), '<i class="fas fa-search"></i>');
                     }
 
                 },

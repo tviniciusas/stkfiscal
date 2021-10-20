@@ -1,41 +1,270 @@
-<h1>Upload de Arquivos</h1>
-<br>
-<div class="container">
+<style type="text/css">
+    .opaque {
+        color: gray; 
+        opacity: 0.6; 
+        width: 100%; 
+        height: 100vh;
+    }
+    
+    .required {
+        color: #dc3545;
+    }
+
+    .uploadspace {
+        background: #eaf4fc;
+        border: 1px dashed #0052B1;
+        min-height: 224px;
+        width: 100%;
+        border-radius: 8px;
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+        margin-bottom: 24px;
+    }
+
+    div.uploadspace .fas.fa-file-upload {
+        font-size: 30px;
+        min-width: 30px;
+        height: 30px;
+    }
+
+    .uploadspace span {
+        font-size: 80%;
+    }
+
+    input[type="file"] {
+        display: none;
+    }
+
+    div.uploadspace label {
+        padding: 20px 10px;
+        width: 180px;
+        text-align: center;
+        display: block;
+        margin-top: 10px;
+        margin-bottom: 0;
+        cursor: pointer;
+        height: 30px;
+        line-height: 0px;
+        border-radius: 10px;
+        font-size: 14px;
+        font-weight: initial !important;
+    }
+
+    div.card-body > i.far {
+        font-size: 26px;
+        min-width: 26px;
+        height: 26px;
+    }
+
+    .file-name {
+        margin-left: 10px;
+    }
+
+    .line {
+        border: 1px solid;
+        color: #0052B1;
+        margin-left: 40px;
+    }
+
+    .btn-submit {
+        width: 100px;
+    }
+
+    .btn-submit.disabled {
+        width: 130px;
+    }
+
+    .file-remove a {
+        color: #212529;
+        text-decoration: none;
+    }
+
+    .disabled {
+        pointer-events: none;
+        cursor: default;
+        text-decoration: none;
+    }
+</style>
+
+{{> scripts}}
+
+<div class="row">
+    <div class="col-lg-12">
         {{>_msg}}
- <form method="POST" enctype="multipart/form-data" action="/upload">
-<div class="mes">
-<label for="mes">Mês</label>
-<select id="mes"  name="mes" required>
-  <option value="">selecione</option>
-  <option value="1">Janeiro</option>
-  <option value="2">Fevereiro</option>
-  <option value="3">Março</option>
-  <option value="4">Abril</option>
-  <option value="5">Maio</option>
-  <option value="6">Junho</option>
-  <option value="7">Julho</option>
-  <option value="8">Agosto</option>
-  <option value="9">Setembro</option>
-  <option value="10">Outubro</option>
-  <option value="11">Novembro</option>
-  <option value="12">Dezembro</option>
-</select>
+        <div class="card card-primary">
+            <div class="card-header">
+                <h3 class="card-title" style="margin-top: 5px;">Upload de Arquivos</h3>
+            </div>
 
-<label for="ano">Ano</label>
-<select id="ano" name="ano" required>
-  <option value="">selecione</option>
-  <option value="2021">2021</option>
-  <option value="2020">2020</option>
-  <option value="2019">2019</option>
-  <option value="2018">2018</option>
-  <option value="2017">2017</option>
-  <option value="2016">2016</option>
-</select>
+            <form id="adicionarDocumento" action="/upload" method="POST" enctype="multipart/form-data">
+                <div class="card-body">
+                    
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label>
+                                    Mês
+                                    <span class="required">*</span>
+                                </label>
+                                <select id="mes" class="form-control select2bs4" name="mes" 
+                                style="width: 100%;" required="">
+                                    <option value="">Selecione...</option>
+                                    {{#each meses}}
+                                        <option value="{{this.id}}">
+                                            {{this.nome}}
+                                        </option>
+                                    {{/each}}
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label>
+                                    Ano
+                                    <span class="required">*</span>
+                                </label>
+                                <select id="ano" class="form-control select2bs4" 
+                                style="width: 100%;" name="ano" required="">
+                                    <option value="">Selecione...</option>
+                                    {{#each anos}}
+                                        <option value="{{this}}">
+                                            {{this}}
+                                        </option>
+                                    {{/each}}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="uploadspace form-group">
+                                <i class="fas fa-file-upload"></i>
+                                <label id="selecionar" class="btn btn-primary" for="file">Selecionar</label>
+                                <input type="file" class="form-control-file" 
+                                id="file" name="file" required="">
+                                <span>Formatos: .doc .docx .pdf</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3 class="card-title">Documentos</h3>
+                                    <span onclick="fileRemove();" title="Remover documentos"
+                                    class="file-remove float-right">
+                                        <a href="javascript:void(0)">X</a>
+                                    </span>
+                                </div>
+                                <div class="card-body">
+                                    <div class="form-group fileUpload">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- /.card-body -->
+                    <div class="card-footer">
+                        <button type="submit"  onclick="formSubmit(event, $(this), 'Salvando...')" 
+                        class="btn btn-primary btn-submit float-right" disabled="">
+                            Enviar
+                        </button>
+                    </div>
+            </form>
+        </div>
+    </div>
 </div>
- <input type="file" name="file" required>
- <input type="submit" class="btn btn-success"  value="Enviar">
-</form>
-</div>
-<br>
 
+<script>
+    var fileList = [];
+    //function fileRemove(index) {
+        //fileList.splice(index, 1);
+        //$('#card'+index).remove();
+    //}
 
+    function removeCards() {
+        fileList = [];
+        $('.file-remove').closest('.card-header').siblings('.card-body')
+        .find('.card').remove();
+        $('.btn-submit').attr('disabled', true);
+    }
+
+    function fileRemove() {
+        $("#file").val('');
+        removeCards();
+    }
+
+    $(document).ready(function() {
+        spinnerOff($('.btn-submit', 'Salvar'));
+    });
+
+    function formDisabled(disabled) {
+        $('.file-remove > a').removeClass('disabled');
+        if (disabled === true) {
+            $('.file-remove > a').addClass('disabled'); 
+        }
+
+        $("#adicionarDocumento input, select").prop("disabled", disabled);
+    }
+
+    function spinnerOn(btnInstance, spinnerText = '', timeMs = 0) {
+        setTimeout(function() {
+            btnInstance.html(`<span class="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true"></span>${spinnerText}`).addClass('disabled');
+            $('.content').addClass('opaque');
+            formDisabled(true);
+        }, timeMs);
+    }
+
+    function spinnerOff(btnInstance, btnText = '', iconTag = '', timeMs = 1500) {
+        setTimeout(function() {
+            $('.spinner-border').remove();
+            btnInstance.html(iconTag+''+btnText).removeClass('disabled');
+            $('.content').removeClass('opaque');
+            $('[name=numCnpj]').val('');
+            formDisabled(false);
+        }, timeMs);
+    }
+
+    async function formSubmit(e, btnInstance, spinnerText) {
+        e.preventDefault();
+        await $("#adicionarDocumento").submit();
+        spinnerOn(btnInstance, spinnerText);
+    }
+
+    $("#file").on('change', function() {
+        removeCards();
+        var fileInput = $(this);
+
+        for (var i = 0; i < fileInput.get(0).files.length; i++) {
+            //console.log(fileInput.get(0).files[i]);
+            fileList.push(fileInput.get(0).files[i]);
+
+            var fileName = fileList[i].name;
+            var  extIndex = fileName.lastIndexOf('.');
+            var fileExtension = fileName.substring(extIndex);
+
+            var icon = "<i class='far fa-file-alt'></i>"
+            if (fileExtension === '.pdf') {
+                icon = "<i class='far fa-file-pdf'></i>"
+            }
+
+            $('.fileUpload').append(`
+            <div id="card${i}" class="card"><div class="card-body">${icon}
+            <span class="file-name">${fileName}</span>
+            <div class="line"></div>
+            </div></div>`);
+        }
+
+        if(fileList.length > 0) {
+            $('.btn-submit').attr('disabled', false);
+        }
+    });
+</script>
