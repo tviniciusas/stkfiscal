@@ -1,0 +1,43 @@
+<div class="modal fade" id="modal-cadastrar-documentos">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Cadastrar documento</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="cadastrar_documento">
+                            <div class="row">
+                                <div class="col-sm-8">
+                                    <div class="form-group mb-3">
+                                        <label for="nome">Nome do documento</label>
+                                        <input type="text" id="nome" name="nome" class="form-control"
+                                            placeholder="Nome">
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group mb-3">
+                                        <label for="extensao">Extensão do arquivo</label>
+                                        <input type="text" id="extensao" name="extensao" class="form-control"
+                                            placeholder="Extensão">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="descricao">Descrição do documento</label>
+                                <textarea id="descricao" name="descricao" class="form-control" rows="3"
+                                    placeholder="Descrição do documento"></textarea>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+                        <button type="button" onclick="store_documentos()" class="btn btn-primary">Salvar</button>
+                    </div>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
