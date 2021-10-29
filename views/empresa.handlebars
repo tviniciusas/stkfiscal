@@ -78,7 +78,7 @@
                                     <span class="required">*</span>
                                 </label>
                                 <input type="text" name="razao" class="form-control" 
-                                    placeholder="Razão Social" maxlength="200" 
+                                    placeholder="Razão Social" minlength="3" maxlength="200" 
                                     value="{{empresa.razao}}">
                             </div>
                         </div>
@@ -293,7 +293,7 @@
         spinnerOff($('.btn-submit', 'Salvar'));
     });
 
-    async function formSubmit(btnInstance, spinnerText) {
+    async function formSubmit(e, btnInstance, spinnerText) {
         e.preventDefault();
         await $("#dadosCadastrais").submit();
         spinnerOn(btnInstance, spinnerText);

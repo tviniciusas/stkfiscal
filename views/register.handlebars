@@ -26,6 +26,8 @@
         body {
             background-image: linear-gradient(to bottom right, #29abe2 , #29cfe2) !important;
         }
+
+        .alert {font-size: smaller;}
     </style>
 
 </head>
@@ -48,19 +50,24 @@
         {{/if}}
        
         <div class="form-group mb-3">
-          <input type="text" id="razao_social" name="razao_social" class="form-control" placeholder="Razão Social">
+          <input type="text" id="razao_social" name="razao_social" class="form-control" 
+          placeholder="Razão Social" maxlength="200">
         </div>
         <div class="form-group mb-3">
-          <input type="text" id="cnpj" name="cnpj" class="form-control" placeholder="CNPJ/CPF">
+          <input type="text" id="cnpj" name="cnpj" class="form-control" 
+          placeholder="CNPJ" minlength="14" maxlength="18">
         </div>
         <div class="form-group mb-3">
-          <input type="email" id="email" name="email" class="form-control" placeholder="Email">
+          <input type="email" id="email" name="email" class="form-control" 
+          placeholder="Email" maxlength="50">
         </div>
         <div class="form-group mb-3">
-          <input type="password" id="password" name="password" class="form-control" placeholder="Senha">
+          <input type="password" id="password" name="password" class="form-control" 
+          placeholder="Senha" minlength="5" maxlength="20">
         </div>
         <div class="form-group mb-3">
-          <input type="password" id="password_confirmation" name="password_confirmation" class="form-control" placeholder="Confirme sua senha">
+          <input type="password" id="password_confirmation" name="password_confirmation" 
+          class="form-control" placeholder="Confirme sua senha" minlength="5" maxlength="20">
         </div>
         <div class="text-center mb-3">
           <button type="submit" class="btn btn-primary btn-block">Cadastrar</button>
@@ -90,44 +97,53 @@ $(document).ready(function () {
     rules: {
       cnpj: {
         required: true,
-        minlength: 11
+        minlength: 14,
+        maxlength: 14
       },
       razao_social: {
         required: true,
-        minlength: 3
+        minlength: 3,
+        maxlength: 200
       },
       email: {
         required: true,
         email: true,
+        maxlength: 50
       },
       password: {
         required: true,
-        minlength: 5
+        minlength: 5,
+        maxlength: 20
       },
       password_confirmation: {
         required: true,
-        minlength: 5
+        minlength: 5,
+        maxlength: 20
       },
     },
     messages: {
       cnpj: {
-        required: "Insira um CNPJ/CPF válido",
-        minlength: "Insira um CNPJ/CPF válido"
+        required: "O campo CNPJ é obrigatório.",
+        minlength: "Por favor, insira um CNPJ válido.",
+        maxlength: "Por favor, insira um CNPJ válido."
       },
       razao_social: {
-        required: "Insira uma Razão Social válida",
-        minlength: "Insira uma Razão Social válida",
+        required: "O campo Razão Social é obrigatório.",
+        minlength: "Por favor, insira uma razão social válida.",
+        maxlength: "A Razão Social deve conter no máximo 200 caracteres."
       },
       email: {
-        required: "Insira um endereço de e-mail",
-        email: "Insira um endereço de e-mail válido"
+        required: "O campo E-mail é obrigatório.",
+        email: "Por favor, insira um e-mail válido.",
+        maxlength: "O e-mail deve conter no máximo 50 caracteres."
       },
       password: {
-        required: "Insira uma senha",
-        minlength: "A sua senha deve ter no mínimo 5 caracteres"
+        required: "O campo Senha é obrigatório.",
+        minlength: "A senha deve conter no mínimo 5 caracteres."
+        maxlength: "A senha deve conter no máximo 20 caracteres."
       },
       password_confirmation: {
-        required: "Confirme sua senha",
+        required: "Por favor, confirme sua senha.",
       }
     },
     errorElement: 'span',
