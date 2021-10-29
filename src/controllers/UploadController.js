@@ -45,6 +45,8 @@ module.exports =  {
         const meses = UtilService.getMeses();
         const anos = UtilService.getAnos();
         const { mes, ano } = req.body;
+        const empresaId = req.user.empresaId
+        const userId = req.user.id;
         const file = req.file;
         var diretorio;
         var error_msg;
@@ -77,9 +79,12 @@ module.exports =  {
 
             diretorio = file.originalname;
     
-            const up = await Upload.create({ diretorio, mes, ano  }).catch(e => {
+            const up = await Upload.create({ 
+                diretorio, mes, ano, userId, empresaId 
+            }).catch(e => {
                 error_msg = 'Falha ao enviar o(s) arquivo(s). ';
-                req.flash('error_msg', error_msg + e);
+                console.log(e);
+                req.flash('error_msg', error_msg);
                 res.render('upload', {meses, anos, error_msg});
             })
             

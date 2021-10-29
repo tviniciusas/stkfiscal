@@ -17,7 +17,9 @@ class Documento extends Model {
               },
         }, { sequelize })
     }
+
+     static associate(models) {
+       this.hasMany(models.SolicitacaoDocumento, { as: 'solicitacao' });
+     }
 }
 module.exports = Documento;
-
-

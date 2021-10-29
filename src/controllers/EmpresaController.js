@@ -44,12 +44,11 @@ module.exports =  {
             var cidades;
             var empresa;
 
-            const usuario = req.user;  
-            
-            await Empresa.findByPk(usuario.empresas_id).then(data => {
-               if (data) {
-                   empresa = data.get({ plain: true });
-               }
+            const usuario = req.user; 
+            await Empresa.findByPk(usuario.empresaId).then(data => {
+                if (data) {
+                    empresa = data.get({ plain: true });
+                }
             });
 
             if (empresa) {
@@ -115,9 +114,9 @@ module.exports =  {
         
         var estados;
         var cidades;
-        var empresa;
         var password = '';
         var usuario = req.user;
+        var empresa = usuario.empresa;
         
         try {
             estados = await ApiService.getEstados();
@@ -133,15 +132,18 @@ module.exports =  {
             }
 
             const cnpj = UtilService.onlyNumbers(empresaTemp.cnpj);
-            await Empresa.findOne({
-                where: {
-                    cnpj: cnpj
-                }
-            }).then(data => {
-                if (data) {
-                    empresa = data.get({ plain: true });
-                }
-            });
+            
+            if (!empresa) {
+                await Empresa.findOne({
+                    where: {
+                        cnpj: cnpj
+                    }
+                }).then(data => {
+                    if (data) {
+                        empresa = data.get({ plain: true });
+                    }
+                });
+            }
 
             const { nome, razao, email, estado, cidade } = empresaTemp;
             const ie = UtilService.onlyNumbers(empresaTemp.ie);
@@ -163,16 +165,17 @@ module.exports =  {
                 });
             }
             
-            await User.update({
-                password: password,
-                empresas_id: empresa.id 
-            }, {
-                where: {id: usuario.id}
-            }).catch(err => {
-                throw err;
-            });
-
+            
             if (empresa) {
+                await User.update({
+                    password: password,
+                    empresaId: empresa.id
+                }, {
+                    where: {id: usuario.id}
+                }).catch(err => {
+                    throw err;
+                });
+
                 empresa.cnpj = UtilService.cnpjMask(empresa.cnpj);
                 empresa.ie = UtilService.ieMask(empresa.ie);
                 empresa.telefone = UtilService.telMask(empresa.telefone);
