@@ -1,0 +1,138 @@
+<div class="col-sm-12 mt-2">
+    <div class="card-buttons mb-3">
+        <button type="button" onclick="modal_adicionar_documentos()" class="btn btn-primary swalDefaultSuccess"><i
+                class="fas fa-plus mr-2"></i>Adicionar
+            Documentos</button>
+    </div>
+    <div class="card card-primary card-outline">
+        <div class="card-body table-responsive p-0">
+            <table id="tableSolicitacoesDocumentos" class="table table-sm table-striped text-nowrap m-0">
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Descrição</th>
+                        <th>Extensão</th>
+                        <th>Ano</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+</div>
+<div style="overflow:auto;">
+    <div style="float:right;">
+        <button type="button" id="prevBtn" class="btn btn-muted" onclick="nextPage(-1)">Voltar</button>
+        <button type="button" id="nextBtn" class="btn btn-primary" onclick="painel_solicitacoes()">Sair</button>
+        <button type="button" id="nextBtn" class="btn btn-warning" onclick="finalizar_solicitacao()">Finalizar e Solicitar</button>
+    </div>
+</div>
+
+{{> scripts}}
+
+<script>
+    $(function () {
+        show_solicitacoes_documentos();
+        $("#solicitacoes_id").val({{ solicitacao.id }})
+        
+        $('#modal-adicionar-documentos').on('hidden.bs.modal', function () {
+            $("#cadastrar_documento").trigger('reset');
+        });
+    });
+    function modal_adicionar_documentos() {
+        $.ajax({
+            url: "/admin/documentos/solicitacao/modal_adicionar_documentos",
+            type: "GET",
+            success: function (response) {
+                $('#painel_modal').html(response);
+                $('#modal-adicionar-documentos').modal('show')
+            },
+        });
+    }
+    function finalizar_solicitacao() {
+        $.ajax({
+            url: "/admin/documentos/solicitacao/finalizar_solicitacao",
+            type: "POST",
+            data: {
+                solicitacoes_id: $('#solicitacoes_id').val(),
+            },
+            beforeSend: function () {
+            },
+            success: function async(response) {
+                toastr.options.closeButton = true;
+                if (response.status) {
+                    toastr.success("Solicitação finalizada com sucesso")
+                    painel_solicitacoes();
+                } else {
+                    toastr.error(response.message)
+                }
+            },
+        });
+    }
+    function show_solicitacoes_documentos() {
+        var data = JSON.stringify({ 'solicitacoes_id': 'teste' });
+        var table = $('#tableSolicitacoesDocumentos').DataTable({
+            bInfo: false,
+            destroy: true,
+            paging: false,
+            searching: false,
+            "language": {
+                "emptyTable":
+                    "<div class='text-center text-muted p-4'>" +
+                    "<i class='icon far fa-folder-open fa-2x'></i><br>" +
+                    "<small>Nenhum documento cadastrado</small><br>" +
+                    "</div>"
+            },
+            "ajax": {
+                "url": "/admin/documentos/solicitacao/show_solicitacoes_documentos",
+                "data": function (d) {
+                    d.solicitacoes_id = $('#solicitacoes_id').val();
+                },
+            },
+            "columns": [
+                { "data": "documento.nome" },
+                { "data": "documento.descricao" },
+                { "data": "documento.extensao" },
+                { "data": "ano" },
+                {
+                    "data": null,
+                    "defaultContent": '<i style="cursor: pointer" class="text-primary icon fas fa-pen editar mr-3" data-toggle="tooltip" title="Editar"></i><i style="cursor: pointer" class="text-danger icon fas fa-trash excluir" data-toggle="tooltip" title="Excluir"></i>'
+                }
+            ]
+        });
+        $('#tableSolicitacoesDocumentos tbody').on('click', 'tr .editar', async function () {
+            var data = await table.row($(this).parents('tr')).data();
+            edit_solcicitacoes_documentos(data.id);
+        });
+        $('#tableSolicitacoesDocumentos tbody').on('click', '.excluir', async function () {
+            var data = await table.row($(this).parents('tr')).data();
+            destroy_solcicitacoes_documentos(data.id)
+        });
+        table.ajax.reload();
+    }
+    function edit_solcicitacoes_documentos(_id) {
+        $.ajax({
+            url: "/admin/documentos/solicitacao/edit_solcicitacoes_documentos/" + _id,
+            type: "GET",
+            success: function (response) {
+                
+                $('#painel_modal').html(response);
+                $('#modal-editar-solic-doc').modal('show')
+            },
+        });
+    }
+    function destroy_solcicitacoes_documentos(_id) {
+        $.ajax({
+            url: "/admin/documentos/solicitacao/destroy_solcicitacoes_documentos",
+            data: { 'id': _id },
+            type: "DELETE",
+            beforeSend: function () {
+            },
+            success: function (response) {
+                show_solicitacoes_documentos();
+                toastr.options.closeButton = true;
+                toastr.success(response.message)
+            },
+        });
+    }
+</script>

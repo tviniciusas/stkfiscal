@@ -1,0 +1,182 @@
+<div class="card card-primary card-outline card-outline-tabs">
+    <div class="card-header p-0 border-bottom-0">
+        <ul class="nav nav-tabs" id="custom-tabs-four-tab" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link active" id="custom-tabs-four-empresa-tab" data-toggle="pill"
+                    href="#custom-tabs-four-empresa" role="tab" aria-controls="custom-tabs-four-empresa"
+                    aria-selected="true">Empresa</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link disabled" id="custom-tabs-four-documentos-tab" data-toggle="pill"
+                    href="#custom-tabs-four-documentos" role="tab" aria-controls="custom-tabs-four-documentos"
+                    aria-selected="false">Documentos</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link disabled" id="custom-tabs-four-historico-tab" data-toggle="pill"
+                    href="#custom-tabs-four-historico" role="tab" aria-controls="custom-tabs-four-historico"
+                    aria-selected="false">Histórico</a>
+            </li>
+        </ul>
+    </div>
+    <div class="card-body">
+        <input id="solicitacoes_id" type="hidden" name="solicitacoes_id" value="{{solicitacao.id}}">
+        <div class="tab-content" id="custom-tabs-four-tabContent">
+            <div class="tab-pane fade active show" id="custom-tabs-four-empresa" role="tabpanel"
+                aria-labelledby="custom-tabs-four-empresa-tab">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label>Empresa</label>
+                            <select id="empresas_id" class="form-control select2bs4" style="width: 100%;">
+                                <option selected="selected">Selecione uma empresa</option>
+                                {{#each empresas}}
+                                <option value="{{id}}">{{razao}}</option>
+                                {{/each}}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            <label for="descricao">Descrição da solicitação</label>
+                            <textarea id="descricao" name="descricao" class="form-control" rows="3"
+                                placeholder="Descrição do documento"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div style="overflow:auto;">
+                    <div style="float:right;">
+                        <button type="button" id="prevBtn" class="btn btn-muted"
+                            onclick="painel_solicitacoes()">Cancelar</button>
+                        <button type="button" id="nextBtn" class="btn btn-primary"
+                            onclick="store_solicitacao('etapa_empresa')">Salvar e Continuar</button>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="custom-tabs-four-documentos" role="tabpanel"
+                aria-labelledby="custom-tabs-four-documentos-tab">
+                <div id="etapa_documentos"></div>
+            </div>
+            <div class="tab-pane fade" id="custom-tabs-four-historico" role="tabpanel"
+                aria-labelledby="custom-tabs-four-historico-tab">
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+    $(function () {
+    
+    console.log(empresas_id);
+    show_documentos();
+    $('#empresas_id').val({{ solicitacao.empresas_id }})
+    $('#descricao').val('{{solicitacao.descricao}}')
+    if($('#empresas_id').val() != "")  {
+        
+    }
+    $('#modal-adicionar-documentos').on('hidden.bs.modal', function () {
+        $("#cadastrar_documento").trigger('reset');
+    });
+    });
+    function nextPage(n) {
+        var x = document.getElementsByClassName("tab-pane");
+        x[currentTab].style.display = "none";
+        currentTab = currentTab + n;
+        showTab(currentTab);
+    }
+    function store_solicitacao(tipo) {
+        if (tipo == 'etapa_empresa') {
+            store_empresa();
+        } else {
+        }
+    }
+    function store_empresa() {
+        $.ajax({
+            url: "/admin/documentos/solicitacao/store_solicitacao",
+            type: "POST",
+            data: {
+                solicitacoes_id: $('#solicitacoes_id').val(),
+                empresas_id: $('#empresas_id').val(),
+                descricao: $('#descricao').val()
+            },
+            beforeSend: function () {
+            },
+            success: function async(data, textStatus, xhr) {
+                toastr.options.closeButton = true;
+                console.log(data)
+                if (xhr.status == 200) {
+                    toastr.success("Dados cadastrados com sucesso")
+                    $('#etapa_documentos').html(data);
+                    $('#custom-tabs-four-documentos-tab').removeClass("disabled");
+                    $('#custom-tabs-four-historico-tab').removeClass("disabled");
+                    $('#custom-tabs-four-empresa-tab').attr('aria-selected', false);
+                    $('#custom-tabs-four-empresa-tab').removeClass("active");   
+                    $('#custom-tabs-four-empresa').removeClass("active");
+                    $('#custom-tabs-four-empresa').removeClass("show");
+                    $('#custom-tabs-four-documentos-tab').attr('aria-selected', true);
+                    $('#custom-tabs-four-documentos-tab').addClass("active");
+                    $('#custom-tabs-four-documentos').addClass("active");
+                    $('#custom-tabs-four-documentos').addClass("show");
+                    
+                } else {
+                    toastr.error(response.message)
+                }
+            },
+        });
+    }
+    function modal_adicionar_documentos() {
+        $.ajax({
+            url: "/admin/documentos/solicitacao/modal_adicionar_documentos",
+            type: "GET",
+            success: function (response) {
+                $('#painel_modal').html(response);
+                $('#modal-adicionar-documentos').modal('show')
+            },
+        });
+    }
+    function show_documentos() {
+        var data = JSON.stringify({ 'solicitacoes_id': 'teste' });
+        var table = $('#tableDocumentos').DataTable({
+            bInfo: false,
+            destroy: true,
+            paging: false,
+            searching: false,
+            "language": {
+                "emptyTable":
+                    "<div class='text-center text-muted p-4'>" +
+                    "<i class='icon far fa-folder-open fa-2x'></i><br>" +
+                    "<small>Nenhum documento cadastrado</small><br>" +
+                    "<button type='button' onclick='criar_documento()' class='btn btn-outline-primary swalDefaultSuccess mt-3'><i class='fas fa-plus mr-2'></i>Cadastrar agora</button>" +
+                    "</div>"
+            },
+            "ajax": {
+                "url": "/admin/documentos/solicitacao/show_solicitacoes_documentos",
+                "data": function (d) {
+                    d.solicitacoes_id = $('#solicitacoes_id').val();
+                },
+            },
+            "columns": [
+                { "data": "id" },
+                { "data": "nome" },
+                { "data": "descricao" },
+                { "data": "extensao" },
+                {
+                    "data": null,
+                    "defaultContent": '<i style="cursor: pointer" class="text-primary icon fas fa-pen editar mr-3" data-toggle="tooltip" title="Editar"></i><i style="cursor: pointer" class="text-danger icon fas fa-trash excluir" data-toggle="tooltip" title="Excluir"></i>'
+                }
+            ]
+        });
+        $('#tableDocumentos tbody').on('click', 'tr .editar', async function () {
+            var data = await table.row($(this).parents('tr')).data();
+            edit_documento(data.id);
+        });
+        $('#tableDocumentos tbody').on('click', '.excluir', async function () {
+            var data = await table.row($(this).parents('tr')).data();
+            destroy_documento(data.id)
+        });
+        table.ajax.reload();
+    }
+</script>
