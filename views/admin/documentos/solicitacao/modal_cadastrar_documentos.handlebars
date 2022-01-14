@@ -1,3 +1,7 @@
+<style>
+    .table {word-break: break-word; white-space: pre-wrap !important;}
+</style>
+
 <div class="modal fade" id="modal-adicionar-documentos">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -13,7 +17,7 @@
                         <h3 class="card-title">Documentos Cadastrados</h3>
                         <div class="card-tools">
                             <div class="input-group input-group-sm" style="width: 200px;">
-                                <input id="inputBuscar" type="text" name="table_search" onkeyup="buscarDocumento()"
+                                <input id="inputBuscarDoc" type="text" name="table_search" onkeyup="buscarDocumento()"
                                     class="form-control float-right" placeholder="Buscar Documento">
 
                                 <div class="input-group-append">
@@ -58,8 +62,28 @@
             $("#cadastrar_documento").trigger('reset');
         });
     });
+    
+    function buscarDocumento() {
+        var input, filter, table, tr, td, i, txtValue;
+        input = document.getElementById("inputBuscarDoc");
+        filter = input.value.toUpperCase();
+        table = document.getElementById("tableDocumentos");
+        tr = table.getElementsByTagName("tr");
+
+        for (i = 0; i < tr.length; i++) {
+            td = tr[i].getElementsByTagName("td")[0];
+            if (td) {
+                txtValue = td.textContent || td.innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
+                }
+            }
+        }
+    }
+
     function modal_adicionar_documentos() {
-        console.log('aqui')
         $.ajax({
             url: "/admin/documentos/solicitacao/modal_adicionar_documentos",
             type: "GET",
@@ -83,7 +107,7 @@
                     "<button type='button' onclick='criar_documento()' class='btn btn-outline-primary swalDefaultSuccess mt-3'><i class='fas fa-plus mr-2'></i>Cadastrar agora</button>" +
                     "</div>"
             },
-            "ajax": "/admin/documentos/cadastro/show_documentos",
+            "ajax": "/admin/documentos/cadastro/show_documentos_modal",
             "columns": [
                 { "data": "nome" },
                 { "data": "descricao" },

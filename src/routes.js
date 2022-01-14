@@ -66,6 +66,7 @@ router.use("/admin", isAdmin);
 router.get("/admin/documentos/cadastro", DocumentoController.index);
 router.get("/admin/documentos/cadastro/edit/:id", DocumentoController.edit);
 router.get("/admin/documentos/cadastro/show_documentos", DocumentoController.show_documentos);
+router.get("/admin/documentos/cadastro/show_documentos_modal", DocumentoController.show_documentos_modal);
 router.post("/admin/documentos/cadastro", DocumentoController.store);
 router.delete("/admin/documentos/cadastro", DocumentoController.delete);
 router.post("/admin/documentos/totalRegistros", DocumentoController.totalRegistros);
