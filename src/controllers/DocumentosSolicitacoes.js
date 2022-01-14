@@ -2,10 +2,11 @@
 const { create, sequelize } = require('sequelize/lib/model');
 const Documento = require('../models/Documento');
 const Empresa = require('../models/Empresa');
-const Solicitacao = require('../models/Solicitacao');
+const Solicitacao = require('../models/Solicitacoes');
 const SolicitacaoDocumentos = require('../models/SolicitacaoDocumentos');
 const Helpers = require('../helpers/helpers.js');
 const Sequelize = require('sequelize');
+const UtilService = require('../services/UtilService');
 
 
 module.exports = {
@@ -16,21 +17,35 @@ module.exports = {
 
     async show_solicitacoes(req, res) {
 
-        var solicitacoes;
+        var solicitacao;
 
         await Solicitacao.findAll({
-            include: { association: 'empresa' },
-        }).then(function (solic) {
-            solicitacoes = JSON.parse(JSON.stringify(solic, null, 2));
+            include: [{ model: Empresa, as: 'empresa' }]
+        }).then(function(solic) {
+            solicitacao = JSON.parse(JSON.stringify(solic, null, 2));
+            
+            solicitacao.forEach(item => {
+                item.createdAt = UtilService.dateFormat(new Date(item.createdAt));
+                item.dt_solicitado = UtilService.dateFormat(new Date(item.dt_solicitado));
+            });
 
-            solicitacoes['displayName'] = 'John';
+            solicitacao['displayName'] = 'John';
         });
 
-        console.log(solicitacoes);
+
+        // await Solicitacao.findAll({
+        //     include: { association: 'empresa' },
+        // }).then(function (solic) {
+        //     solicitacao = JSON.parse(JSON.stringify(solic, null, 2));
+
+        //     console.log(solicitacao);
+
+        //     solicitacao['displayName'] = 'John';
+        // });
 
         return res.status(200).send({
             status: true,
-            data: solicitacoes
+            data: solicitacao
         })
     },
 
@@ -40,6 +55,8 @@ module.exports = {
             empresas = JSON.parse(JSON.stringify(emp, null, 2));
         });
 
+        console.log('Empresas: ', empresas);
+
         res.render('./admin/documentos/solicitacao/novo', { layout: false, empresas: empresas })
     },
 
@@ -48,6 +65,7 @@ module.exports = {
         var solicitacao, empresas;
 
         await Solicitacao.findOne({
+            include: [{ model: Empresa, as: 'empresa' }],
             where: { id: req.params.id }
         }).then(function (solic) {
             solicitacao = JSON.parse(JSON.stringify(solic, null, 2));
@@ -57,31 +75,41 @@ module.exports = {
             empresas = JSON.parse(JSON.stringify(emp, null, 2));
         });
 
-        return res.status(200).render('./admin/documentos/solicitacao/novo', { layout: false, empresas: empresas, solicitacao: solicitacao });
+        return res.status(200).render('./admin/documentos/solicitacao/novo', { 
+            layout: false, 
+            empresas: empresas, 
+            solicitacao: solicitacao
+        });
+    },
+
+    click_tab_documentos(req, res) {
+        return res.status(200).render('./admin/documentos/solicitacao/etapa_documentos', { layout: false })
     },
 
     async store_solicitacao(req, res) {
 
         const { solicitacoes_id, empresas_id, descricao } = req.body;
+        const dtSolicitado = new Date();
         var solicitacao_return
 
         await Solicitacao.findOne({ where: { id: solicitacoes_id } })
             .then(async function (obj) {
                 if (obj) {
 
-                    if (obj.empresas_id != empresas_id || obj.descricao != descricao) {
+                    if (obj.empresa_id != empresas_id || obj.descricao != descricao) {
                         obj.update({
-                            "empresas_id": empresas_id,
-                            "descricao": descricao,
+                            empresa_id: +empresas_id,
+                            descricao: descricao,
                         });
                     }
 
                 } else {
 
                     solicitacao_return = await Solicitacao.create({
-                        "empresas_id": empresas_id,
-                        "status": "DIGITAÇÃO",
-                        "descricao": descricao,
+                        empresa_id: +empresas_id,
+                        status: "DIGITAÇÃO",
+                        descricao: descricao,
+                        dt_solicitado: dtSolicitado
                     });
 
                     solicitacao_return = JSON.parse(JSON.stringify(solicitacao_return, null, 2));
@@ -124,8 +152,8 @@ module.exports = {
 
         await Solicitacao.findOne({ where: { id: solicitacoes_id } }).then(function (solic) {
             solic.update({
-                "status": "SOLICITADO",
-                "dt_solicitado": Date.now()
+                status: "SOLICITADO",
+                dt_solicitado: Date.now()
             });
         });
 
@@ -148,9 +176,9 @@ module.exports = {
 
         solic_ids.forEach(async function (id, i) {
             await SolicitacaoDocumentos.create({
-                "solicitacoes_id": solicitacao.id,
-                "documentos_id": id,
-                "ano": "2021"
+                solicitacao_id: solicitacao.id,
+                documento_id: id,
+                ano: "2021"
             })
         });
 
@@ -197,17 +225,13 @@ module.exports = {
 
         var solicitacoes_documentos;
 
-        console.log(req.query.solicitacoes_id);
-
         await SolicitacaoDocumentos.findAll({
-            include: { association: 'documento' },
-            where: { solicitacoes_id: req.query.solicitacoes_id }
+            subQuery: false,
+            include:  [{ model: Documento, as: 'documento' }],
+            where: { solicitacao_id: req.query.solicitacoes_id }
         }).then(function (solic) {
             solicitacoes_documentos = JSON.parse(JSON.stringify(solic, null, 2));
         });
-
-        console.log(solicitacoes_documentos);
-
 
         return res.status(200).send({
             status: true,

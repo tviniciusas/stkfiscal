@@ -2,7 +2,7 @@
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    return queryInterface.createTable('solicitacao_documento', {
+    return queryInterface.createTable('solicitacao_documentos', {
       id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
@@ -16,7 +16,7 @@ module.exports = {
       solicitacao_id: {
         type: Sequelize.INTEGER,
         allowNull: true,
-        references: {model: 'solicitar', key: 'id'},
+        references: {model: 'solicitacoes', key: 'id'},
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE'
       },
@@ -34,11 +34,15 @@ module.exports = {
       updated_at: {
         type: Sequelize.DATE,
         allowNull: false,
+      },
+      solicitaco_id: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
       }
     });
   },
 
   down: async (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('solicitacao_documento');
+    return queryInterface.dropTable('solicitacao_documentos');
   }
 };

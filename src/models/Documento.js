@@ -19,7 +19,7 @@ class Documento extends Model {
     }
 
      static associate(models) {
-       this.hasMany(models.SolicitacaoDocumento, { as: 'solicitacao' });
+       this.hasMany(models.SolicitacaoDocumentos, { as: 'solicitacao' });
      }
 }
 module.exports = Documento;

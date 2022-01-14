@@ -130,6 +130,17 @@ function getAnos() {
     return anos;
 }
 
+//Recebe um parâmetro do tipo Date e retorna uma data no 
+//formato string dd/mm/aaaa
+function dateFormat(date){
+    var day = date.getDate();
+    var month = date.getMonth()+1;
+    var year = date.getFullYear();
+    //var dateFormat = new Date(year, month, day, 0, 0, 0, 0);
+
+    return day+"/"+month+"/"+year;
+}
+
 module.exports = {
     onlyNumbers,
     orderByName,
@@ -140,5 +151,6 @@ module.exports = {
     ieMask,
     telMask, 
     getMeses,
-    getAnos
+    getAnos,
+    dateFormat
 };

@@ -1,17 +1,23 @@
+<style>
+    .table {word-break: break-word; white-space: pre-wrap !important;}
+    .acoes {white-space: nowrap !important;}
+    .card-footer.float-right {background-color: #FFFFFF;}
+</style>
+
 <div class="row">
     <div class="col-md-12">
         <div class="card-buttons mb-3">
             <button type="button" onclick="criar_documento()" class="btn btn-primary swalDefaultSuccess"><i
-                    class="fas fa-plus mr-2"></i>Cadastrar
-                novo
-                documento</button>
+            class="fas fa-plus mr-2"></i>
+                Cadastrar novo documento
+            </button>
         </div>
 
         <div id="loginPopup"></div>
 
         <div class="card card-primary card-outline">
             <div class="card-header">
-                <h3 class="card-title">Documentos Cadastrados</h3>
+                <h3 class="card-title">Documentos cadastrados</h3>
 
                 <div class="card-tools">
                     <div class="input-group input-group-sm" style="width: 200px;">
@@ -29,21 +35,22 @@
                 <table id="tableDocumentos" class="table table-sm table-striped text-nowrap m-0">
                     <thead>
                         <tr>
-                            <th>id</th>
                             <th>Nome</th>
                             <th>Descrição</th>
                             <th>Extensão</th>
-                            <th>Ações</th>
+                            <th class="acoes">Ações</th>
                         </tr>
                     </thead>
                 </table>
             </div>
             <!-- /.card-body -->
-            {{#if documentos}}
+            <div class="totalRegistros"></div>
+
+            {{!-- {{#if documentos}}
             <div class="card-footer text-muted small clearfix">Total de registros: {{documentos.length}}</div>
             {{else}}
             <div class="card-footer clearfix"></div>
-            {{/if}}
+            {{/if}} --}}
         </div>
     </div>
 </div>
@@ -108,12 +115,42 @@
         closeButton: true
     });
 
+    function totalRegistros() {
+        $.ajax({
+            url: "/admin/documentos/totalRegistros",
+            type: "POST",
+        }).done(function(data) {
+            var totalRegistros = data.totalRegistros;
+
+            $('.card-footer').remove();
+
+            if(totalRegistros > 0) {
+                $('.totalRegistros')
+                .append(`<div class="card-footer  float-right text-muted small clearfix">Total de registros: ${data.totalRegistros}</div>`);
+            }
+            else {
+                $('.totalRegistros').append('<div class="card-footer clearfix"></div>');
+            }
+        });
+    }
+
+    function index() {
+        $.ajax({
+            url: "/admin/documentos/cadastro",
+            type: "GET",
+        }).done(function(data) {
+            console.log(data);
+        });
+    }
+
     $(function () {
         show_documentos();
 
         $('#modal-cadastrar-documentos').on('hidden.bs.modal', function () {
             $("#cadastrar_documento").trigger('reset');
         });
+
+        totalRegistros();
 
     });
 
@@ -152,7 +189,6 @@
             },
             "ajax": "/admin/documentos/cadastro/show_documentos",
             "columns": [
-                { "data": "id" },
                 { "data": "nome" },
                 { "data": "descricao" },
                 { "data": "extensao" },
@@ -177,7 +213,6 @@
     }
 
     function criar_documento() {
-
         var source = $("#my-template").html();
         var template = Handlebars.compile(source);
         var html = template();
@@ -197,15 +232,18 @@
             success: function (response) {
 
                 toastr.options.closeButton = true;
+                console.log(response);
 
                 if (response.status) {
 
                     $('#modal-cadastrar-documentos').modal('hide');
                     $('.modal-backdrop').remove();
-                    
-                    toastr.success(response.message)
 
-                    show_documentos();
+                    setTimeout(function() {
+                        toastr.success(response.message);
+                        show_documentos();
+                        totalRegistros();
+                    }, 500);
 
                 } else {
 
@@ -238,7 +276,7 @@
 
 
     function destroy_documento(_id) {
-
+        console.log('destroy_documento');
         $.ajax({
             url: "/admin/documentos/cadastro",
             data: { 'id': _id },
@@ -251,8 +289,11 @@
 
                 toastr.options.closeButton = true;
                 toastr.success(response.message)
+
+                totalRegistros();
             },
         });
+
     }
 
 </script>

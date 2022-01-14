@@ -5,7 +5,7 @@ const User = require('../models/User');
 const Empresa = require('../models/Empresa');
 const Documento = require('../models/Documento');
 const Upload = require('../models/Upload.js');
-const Solicitacao = require('../models/Solicitacao');
+const Solicitacao = require('../models/Solicitacoes');
 const SolicitacaoDucumento = require('../models/SolicitacaoDocumentos');
 
 const connection = new Sequelize(dbconfig);

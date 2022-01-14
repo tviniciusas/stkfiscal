@@ -1,4 +1,4 @@
-const Solicitar = require('../models/Solicitacao.js');
+const Solicitacao = require('../models/Solicitacoes.js');
 
 
 module.exports = {
@@ -7,7 +7,7 @@ module.exports = {
 
         var solicitacoes;
 
-        await Solicitar.findAll().then(function (docs) {
+        await Solicitacao.findAll().then(function (docs) {
             solicitacoes = JSON.parse(JSON.stringify(docs, null, 2));
         });
 
@@ -18,7 +18,7 @@ module.exports = {
 
         var solicitacoes;
 
-        await Solicitar.findAll().then(function (docs) {
+        await Solicitacao.findAll().then(function (docs) {
             solicitacoes = JSON.parse(JSON.stringify(docs, null, 2));
         });
 
@@ -35,7 +35,7 @@ module.exports = {
 
         var message;
 
-        await Solicitar.findOne({ where: {id: id}})
+        await Solicitacao.findOne({ where: {id: id}})
             .then(function (obj) {
                 // update
                 if (obj) {
@@ -43,7 +43,7 @@ module.exports = {
                     obj.update({empresa, descricao, documento});
                 } else {
                     message = 'Dados cadastrados com sucesso';
-                    Solicitar.create({empresa, descricao, documento});
+                    Solicitacao.create({empresa, descricao, documento});
                 }
             }).catch(e =>{
                     message = 'Erro no cadastro ' + e.message;
@@ -60,7 +60,7 @@ module.exports = {
 
         var documento;
     
-        await Solicitar.findByPk(req.params.id).then(function(docs) {
+        await Solicitacao.findByPk(req.params.id).then(function(docs) {
             documento = JSON.parse(JSON.stringify(docs, null, 2));
         });
     
@@ -74,7 +74,7 @@ module.exports = {
 
         const id  = req.body.id;
 
-        await Solicitar.destroy({
+        await Solicitacao.destroy({
             where: {
                 id: id
             }

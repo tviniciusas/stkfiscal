@@ -94,7 +94,7 @@ class Empresa extends Model {
 
     static associate(models) {
       this.hasMany(models.User, { as: 'user' });
-      this.hasMany(models.Solicitacao, { as: 'solicitacao' });
+      this.hasMany(models.Solicitacoes, { as: 'solicitacao' });
       this.hasMany(models.Upload, { as: 'upload' });
     }
 }

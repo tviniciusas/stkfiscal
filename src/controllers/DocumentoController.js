@@ -1,7 +1,6 @@
 const Documento = require('../models/Documento');
 const User = require('../models/User');
 
-
 module.exports = {
 
     async index(req, res) {
@@ -10,13 +9,16 @@ module.exports = {
 
         await Documento.findAll().then(function (docs) {
             documentos = JSON.parse(JSON.stringify(docs, null, 2));
+            totalRegistros = documentos.length;
         });
 
-        res.render('./admin/documentos/cadastro/index', { documentos: documentos })
+        res.render('./admin/documentos/cadastro/index', { 
+            documentos: documentos
+        });
     },
 
     async show_documentos(req, res) {
-
+        
         var documentos;
 
         await Documento.findAll().then(function (docs) {
@@ -33,7 +35,6 @@ module.exports = {
 
         const {nome, descricao, extensao } = req.body;
         const id = req.body.documentos_id;
-
         var message;
 
         await Documento.findOne({ where: {id: id}})
@@ -76,12 +77,26 @@ module.exports = {
             where: {
                 id: id
             }
-
         });
 
         return res.status(200).send({
             status: 1,
             message: 'Deletado com sucesso!'
         })
+    },
+
+    async totalRegistros(req, res) {
+        var totalRegistros = 0;
+    
+        await Documento.findAll().then(function (docs) {
+            var documentos = JSON.parse(JSON.stringify(docs, null, 2));
+            totalRegistros = documentos.length;
+        });
+    
+        return res.status(200).send({
+            status: 1,
+            totalRegistros: totalRegistros
+        })
     }
+
 }

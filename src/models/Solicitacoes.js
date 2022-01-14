@@ -1,6 +1,6 @@
 const { Model, DataTypes } = require('sequelize');
 
-class Solicitacao extends Model {
+class Solicitacoes extends Model {
     static init(sequelize) {
         super.init({
             descricao: {
@@ -15,22 +15,26 @@ class Solicitacao extends Model {
               type: DataTypes.DATE,
               allowNull: false
             },
+            empresa_id: {
+              type: DataTypes.INTEGER,
+              allowNull: false
+            },
             dt_visualizado: {
               type: DataTypes.DATE,
-              allowNull: false
+              allowNull: true
             },
             dt_finalizado: {
               type: DataTypes.DATE,
-              allowNull: false
+              allowNull: true
             }
         }, { sequelize })
     }
 
     static associate(models) {
-      this.hasMany(models.SolicitacaoDocumento, { as: 'documento' });
+      this.hasMany(models.SolicitacaoDocumentos, { as: 'documento' });
       this.belongsTo(models.Empresa, { as: 'empresa' });
     }
 }
-module.exports = Solicitacao;
+module.exports = Solicitacoes;
 
 
