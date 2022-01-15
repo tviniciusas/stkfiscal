@@ -19,7 +19,7 @@ module.exports = {
       },
       dt_solicitado: {
         type: Sequelize.DATE,
-        allowNull: false
+        allowNull: true
       },
       dt_visualizado: {
         type: Sequelize.DATE,

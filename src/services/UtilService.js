@@ -138,6 +138,9 @@ function dateFormat(date){
     var year = date.getFullYear();
     //var dateFormat = new Date(year, month, day, 0, 0, 0, 0);
 
+    day = day < 10 ? "0"+day : day;
+    month = month < 10 ? "0"+month : month;
+
     return day+"/"+month+"/"+year;
 }
 

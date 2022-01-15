@@ -13,7 +13,7 @@ class Solicitacoes extends Model {
             },
             dt_solicitado: {
               type: DataTypes.DATE,
-              allowNull: false
+              allowNull: true
             },
             empresa_id: {
               type: DataTypes.INTEGER,
