@@ -1,0 +1,49 @@
+<div class="modal fade" id="modal-editar-solic-doc">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Editar Documento</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="cadastrar_documento">
+                    <div class="row">
+                        <input value="{{solicitacao_doc.id}}" type="hidden" id="documentos_id" name="documentos_id" class="form-control"
+                            placeholder="solicitacoes_doc_id">
+                        <div class="col-sm-12">
+                            <label>Ano do documento</label>
+                            <select id="ano_doc" class="form-control select2bs4" style="width: 100%;">
+                                {{#each anos}}
+                                <option value="{{this}}">{{this}}</option>
+                                {{/each}}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <label for="descricao">Observação</label>
+                                <textarea id="descricao" name="descricao" class="form-control" rows="3"
+                                    placeholder="Descrição do documento">{{descricao}}</textarea>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+                <button type="button" onclick="store_documentos()" class="btn btn-primary">Salvar</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+<script>
+    $(function () {
+        $('#ano_doc').val('{{solicitacao_doc.ano}}')
+    });
+</script>

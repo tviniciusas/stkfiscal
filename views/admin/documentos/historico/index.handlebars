@@ -1,0 +1,66 @@
+<style type="text/css"></style>
+
+{{> scripts}}
+
+<div class="card card-primary card-outline">
+    <div class="card-header">
+       <h3 class="card-title">Histórico</h3>
+    </div>
+    <div class="card-body table-responsive p-0">
+        <table id="tableSolicitacoes" class="table table-sm table-striped text-nowrap m-0"> 
+            <thead>
+                <tr>
+                    <th>Empresa</th>
+                    <th>Descrição</th>
+                    <th>Status</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                <script>
+                    function addBadge(index, status) {
+                        var label = '';
+                        switch(status) {
+                            case 'DIGITAÇÃO': 
+                                label = 'primary';
+                                break;
+                            case 'SOLICITADO': 
+                                label = 'warning';
+                                break;
+                            case 'FINALIZADO': 
+                                label = 'success';
+                                break;
+                        }
+                        
+                        $(".status"+index).find('span').addClass('badge-'+label);
+                    }
+                </script>
+                {{#each solicitacoes}}
+                    <tr>
+                        <td>{{this.empresa.razao}}</td>
+                        <td>{{this.descricao}}</td>
+                        <td name="{{@index}}" class="status{{@index}}">
+                            <span id="status{{@index}}" class="badge">{{this.status}}</span>
+                        </td>
+                        <td>
+                            <a href="/admin/documentos/show_historico/{{this.id}}">
+                                <i style="cursor: pointer" class="text-info icon fas fa-hourglass-end historico mr-2" data-toggle="tooltip" title="Ver histórico"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    <script>addBadge({{@index}}, '{{this.status}}');</script>
+                {{/each}}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    const Toast = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000,
+        closeButton: true
+    });
+</script>

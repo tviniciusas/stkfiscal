@@ -1,103 +1,56 @@
 <div class="row">
     <div class="col-md-12">
-        <div class="card-buttons mb-3">
-            <button type="button" onclick="criar_documento()" class="btn btn-primary swalDefaultSuccess"><i
-                    class="fas fa-plus mr-2"></i>Nova Solicitação</button>
-        </div>
-        <div id="loginPopup"></div>
-        <div class="card card-primary card-outline">
-            <div class="card-header">
-                <h3 class="card-title">Solicitações</h3>
-                <div class="card-tools">
-                    <div class="input-group input-group-sm" style="width: 200px;">
-                        <input id="inputBuscar" type="text" name="table_search" onkeyup="buscarDocumento()"
-                            class="form-control float-right" placeholder="Buscar Documento">
-                        <div class="input-group-append">
-                            <button type="submit" class="btn btn-default"><i class="fas fa-search"></i></button>
+        <div id="painel_show">
+            <div class="card-buttons mb-3">
+                <button type="button" onclick="criar_solicitacao()" class="btn btn-primary swalDefaultSuccess"><i
+                        class="fas fa-plus mr-2"></i>Nova Solicitação</button>
+            </div>
+            <div id="loginPopup"></div>
+            <div class="card card-primary card-outline">
+                <div class="card-header">
+                    <h3 class="card-title">Solicitações</h3>
+                    <div class="card-tools">
+                        <div class="input-group input-group-sm" style="width: 200px;">
+                            <input id="inputBuscar" type="text" name="table_search" onkeyup="buscarDocumento()"
+                                class="form-control float-right" placeholder="Buscar Documento">
+                            <div class="input-group-append">
+                                <button type="submit" class="btn btn-default"><i class="fas fa-search"></i></button>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <!-- /.card-header -->
-            <div class="card-body table-responsive p-0">
-                <table id="tableDocumentos" class="table table-sm table-striped text-nowrap m-0">
-                    <thead>
-                        <tr>
-                            <th>Empresa</th>
-                            <th>Descrição</th>
-                            <th>Documento</th>
-                        </tr>
-                    </thead>
-                </table>
-            </div>
-            <!-- /.card-body -->
-            {{#if solicitacoes}}
-            <div class="card-footer text-muted small clearfix">Total de registros: {{solicitacoes.length}}</div>
-            {{else}}
-            <div class="card-footer clearfix"></div>
-            {{/if}}
-        </div>
-    </div>
-</div>
-{{> 3}}
-<script id="my-template" type="text/x-handlebars-template">
-    <div class="modal fade" id="modal-solicitar-documentos">
-    <div class="modal-dialog modal-xl">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title">solicitar documento</h4>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form id="solicitar_documento">
-                    <div class="row">
-                        <input value="\{{id}}" type="hidden" id="solicitacoes_id" name="solicitacoes_id" class="form-control" placeholder="solicitacoes_id">
-                        <div class="col-sm-8">
-                            <div class="form-group mb-3">
-                                <label for="nome">Empresa</label>
-                                <input value="\{{empresa}}" type="text" id="nome" name="empresa" class="form-control"
-                                    placeholder="Nome">
-                            </div>
-                        </div>
-                        <div class="col-sm-4">
-                            <div class="form-group mb-3">
-                                <label for="extensao">Descrição</label>
-                                <input value="\{{descricao}}" type="text" id="extensao" name="descricao" class="form-control"
-                                    placeholder="Extensão">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="descricao">Documento</label>
-                        <textarea id="descricao" name="documento" class="form-control" rows="3"
-                            placeholder="Descrição do documento">\{{documento}}</textarea>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer justify-content-between">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
-                <button type="button" onclick="store_documentos()" class="btn btn-primary">Salvar</button>
+                <!-- /.card-header -->
+                <div class="card-body table-responsive p-0">
+                    <table id="tableSolicitacoes" class="table table-sm table-striped text-nowrap m-0">
+                        <thead>
+                            <tr>
+                                <th>Empresa</th>
+                                <th>Status</th>
+                                <th>Criado em</th>
+                                <th>Dt. Solicitação</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+                <!-- /.card-body -->
+                {{#if solicitacoes}}
+                <div class="card-footer text-muted small clearfix">Total de registros: {{solicitacoes.length}}</div>
+                {{else}}
+                <div class="card-footer clearfix"></div>
+                {{/if}}
             </div>
         </div>
-        <!-- /.modal-content -->
+        <div id="painel_create"></div>
     </div>
-    <!-- /.modal-dialog -->
 </div>
 </script>
+
+{{> scripts}}
+
 <script>
-    const Toast = Swal.mixin({
-        toast: true,
-        position: 'top-end',
-        showConfirmButton: false,
-        timer: 3000,
-        closeButton: true
-    });
-
     $(function () {
-        show_documentos();
-
+        show_solicitacoes();
         $('#modal-solicitar-documentos').on('hidden.bs.modal', function () {
             $("#solicitar_documento").trigger('reset');
         });
@@ -106,7 +59,7 @@
         var input, filter, table, tr, td, i, txtValue;
         input = document.getElementById("inputBuscar");
         filter = input.value.toUpperCase();
-        table = document.getElementById("tableDocumentos");
+        table = document.getElementById("tableSolicitacoes");
         tr = table.getElementsByTagName("tr");
         for (i = 0; i < tr.length; i++) {
             td = tr[i].getElementsByTagName("td")[0];
@@ -120,122 +73,134 @@
             }
         }
     }
-    function show_documentos() {
-        var table = $('#tableDocumentos').DataTable({
+    function show_solicitacoes() {
+        var table = $('#tableSolicitacoes').DataTable({
             bInfo: false,
             destroy: true,
             paging: false,
             searching: false,
+            fixedColumns: true,
             "language": {
-                "emptyTable": 
-                "<div class='text-center text-muted p-5'>" +
+                "emptyTable":
+                    "<div class='text-center text-muted p-5'>" +
                     "<i class='icon far fa-folder-open fa-2x'></i><br>" +
                     "<small>Nenhuma Solicitação cadastrada</small><br>" +
-                    "<button type='button' onclick='criar_documento()' class='btn btn-outline-primary swalDefaultSuccess mt-3'><i class='fas fa-plus mr-2'></i>solicitar agora</button>" +
-                "</div>"
+                    "</div>"
             },
-            "ajax": "/admin/documentos/solicitacao/show_documentos",
+            "ajax": "/admin/documentos/solicitacao/show_solicitacoes",
             "columns": [
-                { "data": "id" },
-                { "data": "empresa" },
-                { "data": "descricao" },
-                { "data": "documento" },
+                { "data": "empresa.razao" },
+                {
+                    "data": "status",
+                    "render": function (data, type, row) {
+                        dado = '';
+                        switch (data) {
+                            case "DIGITAÇÃO":
+                                dado = '<span class="badge badge-primary">' + data + '</span>';
+                                break;
+                            case "SOLICITADO":
+                                dado = '<span class="badge badge-warning">' + data + '</span>';
+                                break;
+                            case "FINALIZADO":
+                                dado = '<span class="badge badge-success">' + data + '</span>';
+                                break;
+                        }
+                        return dado;
+                    }
+                },
+                { "data": "createdAt" },
+                { "data": "dt_solicitado" },
                 {
                     "data": null,
-                    "defaultContent": '<i style="cursor: pointer" class="text-info icon fas fa-pen editar mr-3" data-toggle="tooltip" title="Editar"></i><i style="cursor: pointer" class="text-danger icon fas fa-trash excluir" data-toggle="tooltip" title="Excluir"></i>'
+                    "defaultContent": 
+                        '<i style="cursor: pointer" class="text-primary icon fas fa-search editar mr-2" data-toggle="tooltip" title="Editar"></i>' +
+                        '<i style="cursor: pointer" class="text-info icon fas fa-hourglass-end historico mr-2" data-toggle="tooltip" title="Histórico"></i>' +
+                        '<i style="cursor: pointer" class="text-danger icon fas fa-trash excluir mr-2" data-toggle="tooltip" title="Excluir"></i>'
+                        
                 }
             ]
         });
-
-        $('#tableDocumentos tbody').on('click', 'tr .editar', async function () {
+        $('#tableSolicitacoes tbody').on('click', 'tr .editar', async function () {
             var data = await table.row($(this).parents('tr')).data();
-            edit_documento(data.id);
+            edit_solicitacao(data.id);
         });
-
-        $('#tableDocumentos tbody').on('click', '.excluir', async function () {
+        $('#tableSolicitacoes tbody').on('click', 'tr .historico', async function () {
             var data = await table.row($(this).parents('tr')).data();
-            destroy_documento(data.id)
+            historic_solicitacao(data.id);
         });
-
+        $('#tableSolicitacoes tbody').on('click', '.excluir', async function () {
+            var data = await table.row($(this).parents('tr')).data();
+            destroy_solicitacao(data.id)
+        });
         table.ajax.reload();
     }
-
-    function criar_documento() {
-
-        var source = $("#my-template").html();
-        var template = Handlebars.compile(source);
-        var html = template();
-        $('#loginPopup').html(html);
-
-        $('#modal-solicitar-documentos').modal('show');
-    }
-
-    function store_documentos() {
-
-        $.ajax({
-            url: "/admin/documentos/solicitacao",
-            data: $("#solicitar_documento").serialize(),
-            type: "POST",
-            beforeSend: function () {
-            },
-            success: function (response) {
-
-                toastr.options.closeButton = true;
-
-                if (response.status) {
-
-                    $('#modal-solicitar-documentos').modal('hide');
-                    $('.modal-backdrop').remove();
-                    
-                    toastr.success(response.message)
-
-                    show_documentos();
-
-                } else {
-
-                    toastr.error(response.message)
-                }
-
-            },
-        });
-    }
-
-    function edit_documento(_id) {
-        console.log(_id);
-
+    function edit_solicitacao(_id) {
         $.ajax({
             url: "/admin/documentos/solicitacao/edit/" + _id,
             type: "GET",
             beforeSend: function () {
-
             },
             success: function (response) {
-                var source = $("#my-template").html();
-                var template = Handlebars.compile(source);
-                var html = template(response.dados);
-                $('#loginPopup').html(html);
-
-                $('#modal-solicitar-documentos').modal('show');
+                $('#painel_show').hide();
+                $('#painel_create').html(response);
+                $('#painel_create').show();
             },
         });
     }
+    function historic_solicitacao(_id) {
+        $.ajax({
+            url: "/admin/documentos/solicitacao/historico/" + _id,
+            data: { 'id': _id },
+            type: "GET",
+            beforeSend: function () {
+            },
+            success: function (response) {
+                $('#painel_show').hide();
+                $('#painel_create').html(response);
+                $('#painel_create').show();
 
-    function destroy_documento(_id) {
-
+                $('.card-footer').append(
+                    '<button class="btn btn-primary float-right">'
+                        +'<a href="/admin/documentos/solicitacao" style="color:#FFFFFF">Voltar<a/>'+
+                    '</button>'
+                );
+            },
+        });
+    }
+    function destroy_solicitacao(_id) {
         $.ajax({
             url: "/admin/documentos/solicitacao",
             data: { 'id': _id },
             type: "DELETE",
             beforeSend: function () {
-
             },
             success: function (response) {
-                show_documentos();
-
-                toastr.options.closeButton = true;
-                toastr.success(response.message)
+                if (response.status) {
+                    show_solicitacoes();
+                    toastr.options.closeButton = true;
+                    toastr.success(response.message)
+                } else {
+                    toastr.error(response.message)
+                }
             },
         });
     }
-
+    function criar_solicitacao() {
+        $.ajax({
+            url: "/admin/documentos/solicitacao/create",
+            type: "GET",
+            beforeSend: function () {
+            },
+            success: function (response) {
+                $('#painel_show').hide();
+                $('#painel_create').html(response);
+                $('#painel_create').show();
+            },
+        });
+    }
+    function painel_solicitacoes() {
+        $('#painel_create').empty();
+        $('#painel_show').show();
+        show_solicitacoes();
+    }
 </script>
