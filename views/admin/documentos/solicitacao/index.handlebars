@@ -74,7 +74,6 @@
         }
     }
     function show_solicitacoes() {
-        console.log('ok');
         var table = $('#tableSolicitacoes').DataTable({
             bInfo: false,
             destroy: true,
@@ -125,6 +124,10 @@
             var data = await table.row($(this).parents('tr')).data();
             edit_solicitacao(data.id);
         });
+        $('#tableSolicitacoes tbody').on('click', 'tr .historico', async function () {
+            var data = await table.row($(this).parents('tr')).data();
+            historic_solicitacao(data.id);
+        });
         $('#tableSolicitacoes tbody').on('click', '.excluir', async function () {
             var data = await table.row($(this).parents('tr')).data();
             destroy_solicitacao(data.id)
@@ -141,6 +144,26 @@
                 $('#painel_show').hide();
                 $('#painel_create').html(response);
                 $('#painel_create').show();
+            },
+        });
+    }
+    function historic_solicitacao(_id) {
+        $.ajax({
+            url: "/admin/documentos/solicitacao/historico/" + _id,
+            data: { 'id': _id },
+            type: "GET",
+            beforeSend: function () {
+            },
+            success: function (response) {
+                $('#painel_show').hide();
+                $('#painel_create').html(response);
+                $('#painel_create').show();
+
+                $('.card-footer').append(
+                    '<button class="btn btn-primary float-right">'
+                        +'<a href="/admin/documentos/solicitacao" style="color:#FFFFFF">Voltar<a/>'+
+                    '</button>'
+                );
             },
         });
     }

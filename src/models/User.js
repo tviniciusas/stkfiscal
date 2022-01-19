@@ -50,6 +50,7 @@ class User extends Model {
     static associate(models) {
       this.hasMany(models.Upload, { as: 'upload' });
       this.belongsTo(models.Empresa, { as: 'empresa' });
+      this.belongsTo(models.Empresa, { as: 'empresaCliente' });
     }
 }
 

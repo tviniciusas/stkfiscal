@@ -10,6 +10,7 @@ const DocumentoController = require('./controllers/DocumentoController');
 const path = require('path');
 const UploadController = require('./controllers/UploadController');
 const DocumentosSolicitacoes = require('./controllers/DocumentosSolicitacoes');
+const HistoricoController = require('./controllers/HistoricoController');
 
 const router = express.Router();
 
@@ -83,6 +84,7 @@ router.post("/admin/documentos/solicitacao/click_tab_documentos", DocumentosSoli
 router.post("/admin/documentos/solicitacao/store_solicitacoes_documentos", DocumentosSolicitacoes.store_solicitacoes_documentos);
 router.post("/admin/documentos/solicitacao/finalizar_solicitacao", DocumentosSolicitacoes.finalizar_solicitacao);
 router.get("/admin/documentos/solicitacao/edit/:id", DocumentosSolicitacoes.edit);
+router.get("/admin/documentos/solicitacao/historico/:id", DocumentosSolicitacoes.historic);
 router.get("/admin/documentos/solicitacao/edit_solcicitacoes_documentos/:id", DocumentosSolicitacoes.edit_solcicitacoes_documentos);
 router.delete("/admin/documentos/solicitacao/destroy_solcicitacoes_documentos", DocumentosSolicitacoes.destroy_solcicitacoes_documentos);
 
@@ -91,9 +93,8 @@ router.get("/admin/documentos/solicitacao", (req, res) => {
     res.render('./admin/documentos/solicitacao')
 });
 
-router.get("/admin/documentos/historico", (req, res) => {
-    res.render('./admin/documentos/historico')
-});
+router.get("/admin/documentos/historico", HistoricoController.index);
+router.get("/admin/documentos/show_historico/:solicitacaoId", HistoricoController.show_historico);
 
 router.get("/admin/usuarios", (req, res) => {
     res.render('./admin/usuarios')

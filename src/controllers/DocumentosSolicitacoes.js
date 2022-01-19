@@ -4,6 +4,7 @@ const Documento = require('../models/Documento');
 const Empresa = require('../models/Empresa');
 const Solicitacao = require('../models/Solicitacoes');
 const SolicitacaoDocumentos = require('../models/SolicitacaoDocumentos');
+const Historico = require('../models/Historico');
 const Helpers = require('../helpers/helpers.js');
 const Sequelize = require('sequelize');
 const UtilService = require('../services/UtilService');
@@ -21,7 +22,11 @@ module.exports = {
         var solicitacao;
 
         await Solicitacao.findAll({
-            include: [{ model: Empresa, as: 'empresa' }]
+            include: [{ model: Empresa, as: 'empresa' }],
+            order: [
+                ['dt_solicitado', 'DESC'],
+                ['created_at', 'DESC'],
+            ]
         }).then(function(solic) {
             solicitacao = JSON.parse(JSON.stringify(solic, null, 2));
             
@@ -82,6 +87,29 @@ module.exports = {
             solicitacao: solicitacao
         });
     },
+    
+    async historic(req, res) {
+
+        var solicitacaoId = req.params.id;
+        var historicos;
+
+        await Historico.findAll({
+            where: {solicitacao_id: solicitacaoId},
+            order: [
+                ['id', 'DESC']
+            ]
+        }).then(function (hist) {
+            historicos = JSON.parse(JSON.stringify(hist, null, 2));
+            historicos.forEach(item => {
+                item.data_hora = UtilService.dateFormat(new Date(item.data_hora), true);
+            });
+        });
+
+        return res.status(200).render('./admin/documentos/historico/historico', { 
+            layout: false, 
+            historicos: historicos
+        });
+    },
 
     click_tab_documentos(req, res) {
         return res.status(200).render('./admin/documentos/solicitacao/etapa_documentos', { layout: false })
@@ -90,7 +118,12 @@ module.exports = {
     async store_solicitacao(req, res) {
 
         const { solicitacoes_id, empresas_id, descricao } = req.body;
-        var solicitacao_return
+        var solicitacao_return;
+        var razaoSocial;
+
+        await Empresa.findByPk(empresas_id).then(function(emp) {
+            razaoSocial = emp.razao;
+        });
 
         await Solicitacao.findOne({ where: { id: solicitacoes_id } })
             .then(async function (obj) {
@@ -100,6 +133,14 @@ module.exports = {
                         obj.update({
                             empresa_id: +empresas_id,
                             descricao: descricao,
+                        }).then(function(solic) {
+                            Historico.create({
+                                data_hora: new Date(),
+                                empresa: razaoSocial,
+                                descricao: solic.descricao,
+                                status: solic.status,
+                                solicitacao_id: solic.id
+                            })
                         });
                     }
 
@@ -107,10 +148,19 @@ module.exports = {
 
                     var status = StatusEnum.DIGITACAO.descricao;
 
-                    solicitacao_return = await Solicitacao.create({
+                    await Solicitacao.create({
                         empresa_id: +empresas_id,
                         status: status,
                         descricao: descricao
+                    }).then(function(solic) {
+                        solicitacao_return = solic;
+                        Historico.create({
+                            data_hora: new Date(),
+                            empresa: razaoSocial,
+                            descricao: solic.descricao,
+                            status: solic.status,
+                            solicitacao_id: solic.id
+                        })
                     });
 
                     solicitacao_return = JSON.parse(JSON.stringify(solicitacao_return, null, 2));
@@ -154,12 +204,32 @@ module.exports = {
 
         const { solicitacoes_id } = req.body;
         var status = StatusEnum.SOLICITADO.descricao;
+        var emrpesaId = req.user.empresaId;
+        var razaoSocial;
 
-        await Solicitacao.findOne({ where: { id: solicitacoes_id } }).then(function (solic) {
-            solic.update({
-                status: status,
-                dt_solicitado: Date.now()
-            });
+        await Empresa.findByPk(emrpesaId).then(function(emp) {
+            razaoSocial = emp.razao;
+        });
+
+        // await Solicitacao.findOne({ where: { id: solicitacoes_id } }).then(function (solic) {
+        //     solic.update({
+        //         status: status,
+        //         dt_solicitado: Date.now()
+        //     });
+        // });
+        var solicitacao = await Solicitacao.findByPk(solicitacoes_id );
+
+        solicitacao.update({
+            status: status,
+            dt_solicitado: Date.now()
+        }).then(function(solic) {
+            Historico.create({
+                data_hora: new Date(),
+                empresa: razaoSocial,
+                descricao: solic.descricao,
+                status: solic.status,
+                solicitacao_id: solic.id
+            })
         });
 
         return res.status(200).send({

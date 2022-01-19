@@ -131,17 +131,28 @@ function getAnos() {
 }
 
 //Recebe um parâmetro do tipo Date e retorna uma data no 
-//formato string dd/mm/aaaa
-function dateFormat(date){
+//formato string dd/mm/aaaa ou dd/mm/aaa hh:mm:ss
+function dateFormat(date, showTime = false){
     var day = date.getDate();
     var month = date.getMonth()+1;
     var year = date.getFullYear();
+    var hour = date.getHours();
+    var minutes = date.getMinutes();
+    var seconds = date.getSeconds();
     //var dateFormat = new Date(year, month, day, 0, 0, 0, 0);
 
     day = day < 10 ? "0"+day : day;
     month = month < 10 ? "0"+month : month;
+    hour = hour < 10 ? "0"+hour : hour;
+    minutes = minutes < 10 ? "0"+minutes : minutes;
+    seconds = seconds < 10 ? "0"+seconds : seconds;
 
-    return day+"/"+month+"/"+year;
+    if (showTime) {
+        return `${day}/${month}/${year} ${hour}:${minutes}:${seconds}`;
+    }
+    else {
+        return `${day}/${month}/${year}`;
+    }
 }
 
 module.exports = {

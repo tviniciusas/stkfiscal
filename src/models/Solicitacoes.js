@@ -33,6 +33,7 @@ class Solicitacoes extends Model {
     static associate(models) {
       this.hasMany(models.SolicitacaoDocumentos, { as: 'documento' });
       this.belongsTo(models.Empresa, { as: 'empresa' });
+      this.hasMany(models.Historico, { as: 'historico' });
     }
 }
 module.exports = Solicitacoes;
