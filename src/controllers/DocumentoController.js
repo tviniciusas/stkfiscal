@@ -1,7 +1,7 @@
 const Documento = require('../models/Documento');
 const SolicitacaoDocumentos = require('../models/SolicitacaoDocumentos');
 const User = require('../models/User');
-const documentoService = require('../services/documentoService');
+const DocumentoService = require('../services/DocumentoService');
 
 module.exports = {
 
@@ -41,7 +41,7 @@ module.exports = {
         documentos = await Documento.findAll();
         solicitacaoDocumentos = await SolicitacaoDocumentos.findAll();
 
-        documentos = documentoService.filtrarDocumentos(documentos, solicitacaoDocumentos);
+        documentos = DocumentoService.filtrarDocumentos(documentos, solicitacaoDocumentos);
         documentos = JSON.parse(JSON.stringify(documentos, null, 2));
 
         return res.status(200).send({

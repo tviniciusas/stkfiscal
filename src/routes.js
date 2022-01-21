@@ -96,9 +96,11 @@ router.get("/admin/documentos/solicitacao", (req, res) => {
 router.get("/admin/documentos/historico", HistoricoController.index);
 router.get("/admin/documentos/show_historico/:solicitacaoId", HistoricoController.show_historico);
 
-router.get("/admin/usuarios", (req, res) => {
-    res.render('./admin/usuarios')
-});
+router.get("/admin/usuarios", UserController.index_admin);
+router.get("/admin/usuarios/edit/:id", UserController.edit_admin);
+router.get("/admin/usuarios/update", UserController.update_admin);
+router.get("/user/delete/:user_id", UserController.delete_modal);
+router.delete("/admin/usuarios/delete", UserController.delete_admin);
 
 //=== Função middlewer's ===//
 

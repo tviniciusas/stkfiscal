@@ -1,36 +1,310 @@
-<h1>Cadastro de usuários</h1>
-{{>_msg}}
-<br>
-<form action="/usercad" method="post">
-<div class="row g-3">
-    <div class="col-sm-3">
-    <input type="text" class="form-control" name="name" id="nome" placeholder="Nome" >
-  </div>
-  <div class="col-sm-3">
-    <input type="text" class="form-control" name="email" id="email" placeholder="Email" >
-  </div>
-   <div class="col-sm-3">
-       <button type="submit" class="btn btn-primary">Cadastrar</button>
+<style type="text/css">
+</style>
+
+{{> scripts}}
+
+<div class="row">
+  <div class="col-md-12">
+    <div class="card-buttons mb-3">
+        <button type="button" onclick="cadastrar_usuario()" class="btn btn-primary swalDefaultSuccess"><i
+        class="fas fa-plus mr-2"></i>
+            Cadastrar novo usuario
+        </button>
+    </div>
+
+    <div id="loginPopup"></div>
+
+    <div class="card card-primary card-outline">
+      <div class="card-header">
+        <h3 class="card-title">Usuários</h3>
+      </div>
+      <div class="card-body table-responsive p-0">
+        <table id="tableUsers" class="table table-sm table-striped text-nowrap m-0"> 
+          <thead>
+            <tr>
+                <th>Nome</th>
+                <th>E-mail</th>
+                <th>Empresa</th>
+                <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            <script>
+              function editDesabled(index, empresaClienteId) {
+                if(empresaClienteId) {
+                  var _this = $('.userEdit'+index);
+                  _this.attr('href', '#');
+                  _this.find('.editar').attr('style', 'color: #cccccc !important');
+                }
+              }
+            </script>
+            {{#if usuarios}}
+              {{#each usuarios}}
+                <tr>
+                  <td>{{this.name}}</td>
+                  <td>{{this.email}}</td>
+                  <td>{{this.empresaCliente.razao}}</td>
+                  <td>
+                    <a class="userEdit{{@index}}" href="#" onclick="editar_usuario({{this.id}})">
+                        <i style="cursor: pointer" class="text-primary icon fas fa-search editar mr-2" data-toggle="tooltip" title="Editar"></i>
+                    </a>
+
+                    <a href="#" onclick="deletar_usuario({{this.id}})">
+                        <i style="cursor: pointer" class="text-danger icon fas fa-trash excluir mr-2" data-toggle="tooltip" title="Excluir"></i>
+                    </a>
+                  </td>
+                </tr>
+                <script>editDesabled({{@index}}, {{this.empresaCliente.id}});</script>
+              {{/each}}
+            {{else}} 
+              <tr>
+                <td class="dataTables_empty" colspan="4">
+                  <div class='text-center text-muted p-4'>
+                    <i class='icon far fa-folder-open fa-2x'></i><br>
+                    <small>Nenhum documento cadastrado</small><br>
+                    <button type='button' onclick='cadastrar_usuario()' 
+                    class='btn btn-outline-primary swalDefaultSuccess mt-3'>
+                      <i class='fas fa-plus mr-2'></i>Cadastrar agora
+                    </button>
+                  </div>
+                </td>
+              </tr>
+          {{/if}}
+          </tbody>
+        </table>
+      </div>
+    </div>
   </div>
 </div>
-</div>
-</form>
-<br>
-<br>
-<div>
-<table class="table">
-  <thead>
-    <tr>
-        <td></td>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-        <td></td>
-    </tr>
-    <tr>
-        <td></td>
-    </tr>
-  </tbody>
-</table>
-</div>
+
+<script id="my-template" type="text/x-handlebars-template">
+  <div class="modal fade" id="modal-cadastrar-usuarios">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title"></h4>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form id="cadastrar_usuario">
+            <input value="\{{id}}" type="hidden" id="usuarioId" name="usuarioId" class="form-control">
+            <div class="row">
+              <div class="col-sm-12">
+                <div class="form-group mb-3">
+                  <label for="name">Nome</label>
+                  <input value="\{{name}}" type="text" id="name" name="name" class="form-control"
+                      placeholder="Nome do usuário">
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-sm-12">
+                <div class="form-group mb-3">
+                  <label for="email">E-mail</label>
+                  <input value="\{{email}}" type="text" id="email" name="email" class="form-control"
+                      placeholder="E-mail">
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+            <button type="button" id="btn-create" onclick="store_usuarios(event)" class="btn btn-primary">Salvar</button>
+            <button type="button" id="btn-update" onclick="update_usuarios(event)" class="btn btn-primary">Editar</button>
+        </div>
+      </div>
+      <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+  </div>
+</script>
+
+<script id="delete-template" type="text/x-handlebars-template">
+  <div class="modal fade" id="modal-deletar-usuarios">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Excluir usuário</h4>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form id="deletar_usuario">
+            <input value="\{{id}}" type="hidden" id="usuarioId" name="usuarioId" class="form-control">
+            <div class="row">
+              <div class="col-sm-12">
+                <div class="form-group mb-3">
+                  <p>Deseja realmente excluir o usuário <strong> \{{name}}</strong>?</p>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+            <button type="button" onclick="delete_usuario(event)" class="btn btn-danger">Excluir</button>
+        </div>
+      </div>
+      <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+  </div>
+</script>
+
+<script>
+    const Toast = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000,
+        closeButton: true
+    });
+</script>
+
+<script>
+  function index_admin() {
+    $.ajax({
+      url: '/admin/usuarios',
+      type: 'GET'
+    }).done(function(data) {
+      location.reload();
+    });
+  }
+
+  function cadastrar_usuario() {
+    var source = $("#my-template").html();
+    var template = Handlebars.compile(source);
+    var html = template();
+
+    $('#loginPopup').html(html);
+
+    $('.modal-title').append('Cadastrar usuário');
+    $('#btn-update').hide();
+
+    $('#modal-cadastrar-usuarios').modal('show');
+  }
+
+  function editar_usuario(id) {
+    $.ajax({
+      url: "/admin/usuarios/edit/"+id,
+      type: "GET",
+      beforeSend: function () {
+
+      },
+      success: function (response) {
+        var source = $("#my-template").html();
+        var template = Handlebars.compile(source);
+        var html = template(response.usuario);
+
+        $('#loginPopup').html(html);
+
+        $('.modal-title').append('Editar usuário');
+        $('#btn-create').hide();
+
+        $('#modal-cadastrar-usuarios').modal('show');
+      },
+    });
+  }
+
+  function store_usuarios() {
+    $.ajax({
+      url: "/usercad",
+      data: $("#cadastrar_usuario").serialize(),
+      type: "POST",
+      success: function (response) {
+        toastr.options.closeButton = true;
+
+        if(response.status) {
+
+          $('#modal-cadastrar-usuarios').modal('hide');
+          $('.modal-backdrop').remove();
+
+          toastr.success(response.message);
+          
+          setTimeout(function() {
+            index_admin();
+          }, 200);
+        } 
+        else {
+          toastr.error(response.message)
+        }
+      },
+      error: function (error) {
+          toastr.error(error.responseJSON.message);
+      }
+    });
+  }
+
+  function update_usuarios() {
+    $.ajax({
+      url: "/admin/usuarios/update",
+      data: $("#cadastrar_usuario").serialize(),
+      type: "GET",
+      success: function (response) {
+        toastr.options.closeButton = true;
+
+        console.log('response: ', response);
+
+        if(response.status) {
+
+          $('#modal-cadastrar-usuarios').modal('hide');
+          $('.modal-backdrop').remove();
+
+          toastr.success(response.message);
+          index_admin();
+        } 
+        else {
+          toastr.error(response.message);
+        }
+      },
+      error: function (error) {
+          toastr.error(error.responseJSON.message);
+      }
+    });
+  }
+
+  function deletar_usuario(id) {
+    $.ajax({
+      url: "/user/delete/"+id,
+      type: "GET",
+      beforeSend: function () {
+
+      },
+      success: function (response) {
+        var source = $("#delete-template").html();
+        var template = Handlebars.compile(source);
+        var html = template(response.usuario);
+
+        $('#loginPopup').html(html);
+        $('#modal-deletar-usuarios').modal('show');
+      },
+    });
+  }
+
+  function delete_usuario() {
+        $.ajax({
+            url: "/admin/usuarios/delete",
+            data: $("#deletar_usuario").serialize(),
+            type: "DELETE",
+            beforeSend: function () {
+
+            },
+            success: function (response) {
+                toastr.options.closeButton = true;
+
+                $('#modal-deletar-usuarios').modal('hide');
+                $('.modal-backdrop').remove();
+
+                toastr.success(response.msg);
+                setTimeout(function() {
+                  index_admin();
+                }, 500);
+            },
+        });
+    }
+</script>
