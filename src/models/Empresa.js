@@ -89,6 +89,11 @@ class Empresa extends Model {
           type: DataTypes.STRING,
           allowNull: true
         },
+        empresa_cliente: {
+            type: DataTypes.BOOLEAN,
+            allowNull: true,
+            default: false
+        },
       }, { sequelize })
     }
 

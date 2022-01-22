@@ -33,7 +33,7 @@
               function editDesabled(index, empresaClienteId) {
                 if(empresaClienteId) {
                   var _this = $('.userEdit'+index);
-                  _this.attr('href', '#');
+                  _this.attr('href', '#void');
                   _this.find('.editar').attr('style', 'color: #cccccc !important');
                 }
               }
@@ -45,7 +45,7 @@
                   <td>{{this.email}}</td>
                   <td>{{this.empresaCliente.razao}}</td>
                   <td>
-                    <a class="userEdit{{@index}}" href="#" onclick="editar_usuario({{this.id}})">
+                    <a class="userEdit{{@index}}" href="#" onclick="editar_usuario({{this.id}}, {{this.empresaCliente.id}})">
                         <i style="cursor: pointer" class="text-primary icon fas fa-search editar mr-2" data-toggle="tooltip" title="Editar"></i>
                     </a>
 
@@ -189,26 +189,28 @@
     $('#modal-cadastrar-usuarios').modal('show');
   }
 
-  function editar_usuario(id) {
-    $.ajax({
-      url: "/admin/usuarios/edit/"+id,
-      type: "GET",
-      beforeSend: function () {
+  function editar_usuario(id, empresaClienteId) {
+    if(!empresaClienteId) {
+      $.ajax({
+        url: "/admin/usuarios/edit/"+id,
+        type: "GET",
+        beforeSend: function () {
 
-      },
-      success: function (response) {
-        var source = $("#my-template").html();
-        var template = Handlebars.compile(source);
-        var html = template(response.usuario);
+        },
+        success: function (response) {
+          var source = $("#my-template").html();
+          var template = Handlebars.compile(source);
+          var html = template(response.usuario);
 
-        $('#loginPopup').html(html);
+          $('#loginPopup').html(html);
 
-        $('.modal-title').append('Editar usuário');
-        $('#btn-create').hide();
+          $('.modal-title').append('Editar usuário');
+          $('#btn-create').hide();
 
-        $('#modal-cadastrar-usuarios').modal('show');
-      },
-    });
+          $('#modal-cadastrar-usuarios').modal('show');
+        },
+      });
+    }
   }
 
   function store_usuarios() {

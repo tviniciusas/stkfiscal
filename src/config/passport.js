@@ -29,11 +29,19 @@ async function initialize(passport) {
 
             var usuario = user.get();
 
-            await Empresa.findByPk(usuario.empresas_id).then(function(empresa) {
-                if(empresa) {
-                    usuario.empresa = empresa.get({ plain: true });
-                }
-              });
+            if (usuario.admin) {
+                await Empresa.findByPk(usuario.empresaId).then(function(empresa) {
+                    if(empresa) {
+                        usuario.empresa = empresa.get({ plain: true });
+                    }
+                });
+            } else {
+                await Empresa.findByPk(usuario.empresaClienteId).then(function(empresa) {
+                    if(empresa) {
+                        usuario.empresaCliente = empresa.get({ plain: true });
+                    }
+                });
+            }
 
             if (usuario) {
                 done(null, usuario);

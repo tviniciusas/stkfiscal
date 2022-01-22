@@ -1,5 +1,6 @@
 const Documento = require('../models/Documento');
 const SolicitacaoDocumentos = require('../models/SolicitacaoDocumentos');
+const Solicitacoes = require('../models/Solicitacoes');
 const User = require('../models/User');
 const DocumentoService = require('../services/DocumentoService');
 
@@ -35,11 +36,14 @@ module.exports = {
     
     async show_documentos_modal(req, res) {
         
-        var documentos;
+        var solicitacao_id = req.params.solicitacaoId;
         var solicitacaoDocumentos;
+        var documentos;
 
         documentos = await Documento.findAll();
-        solicitacaoDocumentos = await SolicitacaoDocumentos.findAll();
+        solicitacaoDocumentos = await SolicitacaoDocumentos.findAll({
+            where: {solicitacaoId: solicitacao_id}
+        });
 
         documentos = DocumentoService.filtrarDocumentos(documentos, solicitacaoDocumentos);
         documentos = JSON.parse(JSON.stringify(documentos, null, 2));

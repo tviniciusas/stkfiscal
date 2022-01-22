@@ -67,7 +67,7 @@ router.use("/admin", isAdmin);
 router.get("/admin/documentos/cadastro", DocumentoController.index);
 router.get("/admin/documentos/cadastro/edit/:id", DocumentoController.edit);
 router.get("/admin/documentos/cadastro/show_documentos", DocumentoController.show_documentos);
-router.get("/admin/documentos/cadastro/show_documentos_modal", DocumentoController.show_documentos_modal);
+router.get("/admin/documentos/cadastro/show_documentos_modal/:solicitacaoId", DocumentoController.show_documentos_modal);
 router.post("/admin/documentos/cadastro", DocumentoController.store);
 router.delete("/admin/documentos/cadastro", DocumentoController.delete);
 router.post("/admin/documentos/totalRegistros", DocumentoController.totalRegistros);
@@ -78,7 +78,7 @@ router.get("/admin/documentos/solicitacao/create", DocumentosSolicitacoes.create
 router.delete("/admin/documentos/solicitacao", DocumentosSolicitacoes.delete);
 
 router.get("/admin/documentos/solicitacao/show_solicitacoes_documentos", DocumentosSolicitacoes.show_solicitacoes_documentos);
-router.get("/admin/documentos/solicitacao/modal_adicionar_documentos", DocumentosSolicitacoes.modal_adicionar_documentos);
+router.get("/admin/documentos/solicitacao/modal_adicionar_documentos/:solicitacaoId", DocumentosSolicitacoes.modal_adicionar_documentos);
 router.post("/admin/documentos/solicitacao/store_solicitacao", DocumentosSolicitacoes.store_solicitacao);
 router.post("/admin/documentos/solicitacao/click_tab_documentos", DocumentosSolicitacoes.click_tab_documentos);
 router.post("/admin/documentos/solicitacao/store_solicitacoes_documentos", DocumentosSolicitacoes.store_solicitacoes_documentos);

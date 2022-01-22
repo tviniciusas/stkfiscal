@@ -149,6 +149,12 @@ module.exports =  {
                 throw message;
             }
 
+            const usuario = await User.findByPk(user_id);
+            if (usuario && usuario.empresaClienteId) {
+                message = "Não é posível atualizar os dados deste usuário, pois o mesmo já atualizou seus dados."; 
+                throw message;
+            }
+
             const findMail = await User.findOne({where: {email: email}});
             if(findMail && findMail.id !== +user_id) {
                 message = "E-mail já cadastrado."; 

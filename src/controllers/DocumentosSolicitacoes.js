@@ -6,9 +6,10 @@ const Solicitacao = require('../models/Solicitacoes');
 const SolicitacaoDocumentos = require('../models/SolicitacaoDocumentos');
 const Historico = require('../models/Historico');
 const Helpers = require('../helpers/helpers.js');
-const Sequelize = require('sequelize');
+const { Op } = require("sequelize");
 const UtilService = require('../services/UtilService');
 const StatusEnum  = require('../enums/StatusEnum');
+const User = require('../models/User');
 
 
 module.exports = {
@@ -58,8 +59,11 @@ module.exports = {
     },
 
     async create(req, res) {
+        var empresas;
 
-        await Empresa.findAll().then(function (emp) {
+        await Empresa.findAll({
+            where: {empresa_cliente: true}
+        }).then(function (emp) {
             empresas = JSON.parse(JSON.stringify(emp, null, 2));
         });
 
@@ -294,7 +298,8 @@ module.exports = {
     },
 
     async modal_adicionar_documentos(req, res) {
-        res.render('./admin/documentos/solicitacao/modal_cadastrar_documentos', { layout: false })
+        var solicitacaoId = req.params.solicitacaoId;
+        res.render('./admin/documentos/solicitacao/modal_cadastrar_documentos', { solicitacaoId: solicitacaoId, layout: false })
     },
 
     async show_solicitacoes_documentos(req, res) {

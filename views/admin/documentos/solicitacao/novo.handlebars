@@ -165,8 +165,10 @@
         });
     }
     function modal_adicionar_documentos() {
+        var solicitacoes_id = $("#solicitacoes_id").val();
+
         $.ajax({
-            url: "/admin/documentos/solicitacao/modal_adicionar_documentos",
+            url: "/admin/documentos/solicitacao/modal_adicionar_documentos/"+solicitacoes_id,
             type: "GET",
             success: function (response) {
                 $('#painel_modal').html(response);
