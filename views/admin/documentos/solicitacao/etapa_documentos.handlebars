@@ -1,7 +1,3 @@
-<style>
-    .table {word-break: break-word; white-space: pre-wrap !important;}
-</style>
-
 <div class="col-sm-12 mt-2">
     <div class="card-buttons mb-3">
         <button type="button" onclick="modal_adicionar_documentos()" class="btn btn-primary swalDefaultSuccess"><i
@@ -47,7 +43,6 @@
     });
     function modal_adicionar_documentos() {
         var solicitacoes_id = $("#solicitacoes_id").val();
-        console.log('modal_adicionar_documentos');
 
         $.ajax({
             url: "/admin/documentos/solicitacao/modal_adicionar_documentos/"+solicitacoes_id,

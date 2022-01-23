@@ -379,19 +379,6 @@ module.exports = {
             { solicitacoes: solicitacoes }
         );
     },
+    
 
-    async modal_upload(req, res) {
-        const solicitacaoId = req.params.id;
-
-        const meses = UtilService.getMeses();
-        const anos = UtilService.getAnos();
-
-        res.render('./modal_upload', { 
-            solicitacaoId: solicitacaoId, meses: meses, anos: anos, layout: false 
-        });
-    },
-
-    solicitacao_redirect(req, res) {
-        res.redirect('./solicitacao');
-    }
 }

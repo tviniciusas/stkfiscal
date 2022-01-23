@@ -1,0 +1,64 @@
+<style type="text/css"></style>
+
+{{> scripts}}
+
+<div class="card card-primary card-outline">
+    <div class="card-header">
+        <h1 class="card-title">Finalizar solicitação</h1>
+    </div>
+    <div class="card-body table-responsive p-0">
+        <table class="table table-sm table-striped text-nowrap m-0">
+            <thead>
+                <tr>
+                    <th>Empresa</th>
+                    <th>Descrição</th>
+                    <th>Dt. Solicitação</th>
+                    <th>Dt. Atendimento</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#if solicitacoes}}
+                    {{#each solicitacoes}}
+                        <tr>
+                            <td>{{this.empresa.nome}}</td>
+                            <td>{{this.descricao}}</td>
+                            <td>{{this.dt_solicitado}}</td>
+                            <td>{{this.dt_atendido}}</td>
+                            <td>
+                                <a href="#" onclick="modal_finalizar({{this.id}})">
+                                    <i style="cursor: pointer" class="text-info icon fas fa-clipboard-check historico mr-2" data-toggle="tooltip" title="Finalizar"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    {{/each}}
+                {{else}}
+                    <tr>
+                        <td class="dataTables_empty" colspan="5">
+                        <div class='text-center text-muted p-4'>
+                            <i class='icon far fa-folder-open fa-2x'></i><br>
+                            <small>Nenhuma solicitação atendida</small><br>
+                        </div>
+                        </td>
+                    </tr>
+                {{/if}}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div id="painel_modal"></div>
+
+<script>
+    function modal_finalizar(solicitacaoId) {
+        console.log('ok')
+        $.ajax({
+            url: "/admin/documentos/finalizar/modal_finalizar/"+solicitacaoId,
+            type: "GET",
+            success: function (response) {
+                $('#painel_modal').html(response);
+                $('#modal-finalizar').modal('show');
+            },
+        });
+    }
+</script>

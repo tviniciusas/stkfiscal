@@ -21,7 +21,7 @@ module.exports = {
         type: Sequelize.DATE,
         allowNull: true
       },
-      dt_visualizado: {
+      dt_atendido: {
         type: Sequelize.DATE,
         allowNull: true
       },

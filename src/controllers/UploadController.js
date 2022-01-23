@@ -114,6 +114,17 @@ module.exports =  {
 
     },
 
+    async modal_upload(req, res) {
+        const solicitacaoId = req.params.id;
+
+        const meses = UtilService.getMeses();
+        const anos = UtilService.getAnos();
+
+        res.render('./modal_upload', { 
+            solicitacaoId: solicitacaoId, meses: meses, anos: anos, layout: false 
+        });
+    },
+
     async store_modal_upload(req, res) {
         const meses = UtilService.getMeses();
         const anos = UtilService.getAnos();
@@ -161,7 +172,7 @@ module.exports =  {
             var solic;
 
             if (solicitacao) {
-                solic = await solicitacao.update({status: status});
+                solic = await solicitacao.update({status: status, dt_atendido: new Date()});
             }
 
             if (solic) {

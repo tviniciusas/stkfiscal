@@ -211,16 +211,6 @@
         });
     }
 
-    function refrach(solicitacaoId) {
-        $.ajax({
-            url: '/solicitacao_redirect',
-            type: 'GET',
-            success: function(response) {
-                console.log(response);
-            },
-        });
-    }
-
     var fileList = [];
     //function fileRemove(index) {
         //fileList.splice(index, 1);
@@ -307,7 +297,7 @@
             contentType: false,
             processData: false,
             error: function (error) {
-                toastr.error(error.responseJSON);
+                toastr.error(error.responseJSON.message);
             }
         });
     });

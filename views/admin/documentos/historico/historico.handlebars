@@ -1,6 +1,5 @@
 <!-- jQuery -->
 <script src="../../../../plugins/jquery/jquery.min.js"></script>
-<script src="../../../../plugins/datatables/jquery.dataTables.min.js" type="text/javascript"></script>
 
 <style type="text/css">
     .canvas {
@@ -100,3 +99,18 @@
     </div>
     <div class="card-footer"></div>
 </div>
+
+<script>
+    //O menu Documentos havia parado de expandir
+    $(document).ready(function() {
+        $('.expansive').on('click', function() {
+            var _this = $(this);
+            if (_this.hasClass('menu-open')) {
+                _this.removeClass('menu-open');
+            }
+            else {
+                _this.addClass('menu-open');
+            }
+        })
+    });
+</script>
