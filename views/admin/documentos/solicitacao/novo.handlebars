@@ -30,19 +30,19 @@
                             <select id="empresas_id" name="empresas_id" class="form-control select2bs4" 
                             style="width: 100%;">
                                 <option value="">Selecione...</option>
-                                {{#if solicitacao.empresa.id}}
-                                    <option selected value="{{solicitacao.empresa.id}}">
-                                        {{solicitacao.empresa.razao}}
-                                    </option>
-                                {{else}}
-                                    {{#each empresas}}
+                                {{#each empresas}}
+                                    {{#if solicitacao.empresa}}
+                                        <option selected value="{{solicitacao.empresa.id}}">
+                                            {{solicitacao.empresa.nome}}
+                                        </option>
+                                    {{else}}
                                         {{#if this}}
                                             <option value="{{this.id}}">
-                                                {{this.razao}}
+                                                {{this.nome}}
                                             </option>
                                         {{/if}}
-                                    {{/each}}
-                                {{/if}}
+                                    {{/if}}
+                                {{/each}}
                             </select>
                         </div>
                     </div>
@@ -80,43 +80,37 @@
 
 <script>
     $(function () {
-
-    var solicitacaoId = $('#solicitacoes_id').val();
-    if(solicitacaoId) {
-        $('#custom-tabs-four-documentos-tab').removeClass("disabled");
-    }
-
-    $('#custom-tabs-four-documentos-tab').on('click', function() {
+        var solicitacaoId = $('#solicitacoes_id').val();
         if(solicitacaoId) {
-            click_tab_documentos();
+            $('#custom-tabs-four-documentos-tab').removeClass("disabled");
         }
-    });
 
-    function click_tab_documentos() {
-        console.log('click_tab_documentos');
-        $.ajax({
-            url: "/admin/documentos/solicitacao/click_tab_documentos",
-            type: "POST",
-            success: function(data) {
-                $('#etapa_documentos').html(data);
-                $('#custom-tabs-four-documentos-tab').attr('aria-selected', true);
-                $('#custom-tabs-four-documentos-tab').addClass("active");
-                $('#custom-tabs-four-documentos').addClass("active");
-                $('#custom-tabs-four-documentos').addClass("show");
-            },
+        $('#custom-tabs-four-documentos-tab').on('click', function() {
+            if(solicitacaoId) {
+                click_tab_documentos();
+            }
         });
-    }
-    
-    console.log(empresas_id);
-    show_documentos();
-    $('#empresas_id').val({{ solicitacao.empresas_id }})
-    $('#descricao').val('{{solicitacao.descricao}}')
-    if($('#empresas_id').val() != "")  {
+
+        function click_tab_documentos() {
+            $.ajax({
+                url: "/admin/documentos/solicitacao/click_tab_documentos",
+                type: "POST",
+                success: function(data) {
+                    $('#etapa_documentos').html(data);
+                    $('#custom-tabs-four-documentos-tab').attr('aria-selected', true);
+                    $('#custom-tabs-four-documentos-tab').addClass("active");
+                    $('#custom-tabs-four-documentos').addClass("active");
+                    $('#custom-tabs-four-documentos').addClass("show");
+                },
+            });
+        }
         
-    }
-    $('#modal-adicionar-documentos').on('hidden.bs.modal', function () {
-        $("#cadastrar_documento").trigger('reset');
-    });
+        show_documentos();
+        $('#empresas_id').val({{ solicitacao.empresas_id }})
+        $('#descricao').val('{{solicitacao.descricao}}')
+        $('#modal-adicionar-documentos').on('hidden.bs.modal', function () {
+            $("#cadastrar_documento").trigger('reset');
+        });
     });
     function nextPage(n) {
         var x = document.getElementsByClassName("tab-pane");

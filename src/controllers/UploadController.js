@@ -1,6 +1,11 @@
-const Upload = require('../models/Upload.js');
 const file = require('../config/Upload');
 const User = require('../models/User.js');
+const Upload = require('../models/Upload.js');
+const Empresa = require('../models/Empresa');
+const Solicitacao = require('../models/Solicitacoes.js');
+const SolicitacaoDocumentos = require('../models/SolicitacaoDocumentos');
+const Historico = require('../models/Historico');
+const StatusEnum = require('../enums/StatusEnum.js');
 const UtilService = require('../services/UtilService.js');
 
 function fieldsValidate(mes, ano) {
@@ -107,7 +112,92 @@ module.exports =  {
             });
         }
 
+    },
+
+    async store_modal_upload(req, res) {
+        const meses = UtilService.getMeses();
+        const anos = UtilService.getAnos();
+        const { mes, ano, solicitacaoId } = req.body;
+        const empresaId = req.user.empresaClienteId;
+        const userId = req.user.id;
+        const file = req.file;
+        var diretorio;
+        var message;
+        var razaoSocial;
+        var solicitacoes;
+
+        try {
+
+            if (file === undefined) {
+                message = 'Nenhum arquivo selecionado';
+                throw message;
+            }
+
+            message = fieldsValidate(mes, ano);
+            if (message != '') {
+                throw message;
+            }
+
+            message = filesValidate(file);
+            if (message != '') {
+                throw message;
+            }
+
+            await Empresa.findByPk(empresaId).then(function(emp) {
+                razaoSocial = emp.razao;
+            });
+            
+            diretorio = file.originalname;
+    
+            await Upload.create({ 
+                diretorio, mes, ano, userId, empresaId, solicitacaoId
+            }).catch(e => {
+                message = 'Falha ao enviar o(s) arquivo(s). ';
+                throw message;
+            });
+
+            const solicitacao = await Solicitacao.findByPk(solicitacaoId);
+            const status = StatusEnum.ATENDIDO.descricao;
+            var solic;
+
+            if (solicitacao) {
+                solic = await solicitacao.update({status: status});
+            }
+
+            if (solic) {
+                await Historico.create({
+                    data_hora: new Date(),
+                    empresa: razaoSocial,
+                    descricao: solic.descricao,
+                    status: solic.status,
+                    solicitacao_id: solic.id
+                })
+            }
+            
+            message = 'Arquivo enviado com sucesso!';
+
+            // return res.status(200).render('./solicitacao', { 
+            //     solicitacoes: solicitacoes,
+            //     status: 'success',
+            //     message: message
+            // });
+
+            return res.status(200).send({
+                status: 'success',
+                message: message
+            });
+        } catch (error) {
+            //return res.status(400).redirect('../solicitacao');
+            // return res.status(400).render('./solicitacao', { 
+            //     solicitacoes: solicitacoes,
+            //     status: 'error',
+            //     message: message
+            // });
+            res.status(400).send({
+                status: 'error',
+                message: error
+            });
+        }
+
     }
 }
-
-

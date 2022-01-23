@@ -34,7 +34,8 @@ router.get('/list', (req,res)=> {
 //     res.render('upload');
 // })
 router.get("/upload", UploadController.index);
-router.post('/upload', upload.single('file'), UploadController.store)
+router.post('/modal/upload', upload.single('file'), UploadController.store_modal_upload);
+router.post('/upload', upload.single('file'), UploadController.store);
 //router.post('/upload', upload.array('file', 10), UploadController.store);
 
 router.delete("/logout", checkAuthenticated, LoginController.logout);
@@ -59,6 +60,11 @@ router.post("/empresa/municipios", EmpresaController.county);
 router.post("/empresa", EmpresaController.store);
 router.put("/empresa/:idemp", EmpresaController.update);
 router.delete("/empresa/:idemp", EmpresaController.delete);
+
+//=== Rotas Solicitacao ===//
+router.get("/solicitacao", DocumentosSolicitacoes.solicitacao_index);
+router.get("/atender_solicitacao/:id", DocumentosSolicitacoes.modal_upload);
+router.get("/solicitacao_redirect", DocumentosSolicitacoes.solicitacao_redirect);
 
 //=== Rotas Admin ===//
 router.use("/admin", isAdmin);

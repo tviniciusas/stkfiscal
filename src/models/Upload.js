@@ -32,11 +32,15 @@ class Upload extends Model {
               }
             },
             user_id: {
-              type: DataTypes.STRING,
+              type: DataTypes.INTEGER,
               allowNull: true
             },
             empresa_id: {
-              type: DataTypes.STRING,
+              type: DataTypes.INTEGER,
+              allowNull: true
+            },
+            solicitacao_id: {
+              type: DataTypes.INTEGER,
               allowNull: true
             },
             file_id: {
@@ -49,6 +53,7 @@ class Upload extends Model {
     static associate(models) {
       this.belongsTo(models.Empresa, { as: 'empresa' });
       this.belongsTo(models.User, { as: 'user' });
+      this.belongsTo(models.Solicitacoes, { as: 'solicitacao' });
     }
 }
 

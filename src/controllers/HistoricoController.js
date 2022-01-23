@@ -18,7 +18,6 @@ module.exports = {
             include: [
                 { model: Empresa, as: 'empresa' }
             ],
-            where: {empresa_id: empresaId},
             order: [
                 ['dt_solicitado', 'DESC'],
                 ['created_at', 'DESC'],
