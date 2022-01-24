@@ -44,14 +44,6 @@ class User extends Model {
               }
             }
           },
-          empresa_id: {
-            type: DataTypes.INTEGER,
-            allowNull: false
-          },
-          empresa_cliente_id: {
-            type: DataTypes.INTEGER,
-            allowNull: true
-          }
         }, { sequelize })
     }
 

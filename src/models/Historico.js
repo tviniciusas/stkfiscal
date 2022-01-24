@@ -19,10 +19,6 @@ class Historico extends Model {
               type: DataTypes.STRING,
               allowNull: false
             },
-            solicitacao_id: {
-              type: DataTypes.INTEGER,
-              allowNull: false
-            }
         }, { sequelize })
     }
 

@@ -181,7 +181,7 @@ module.exports =  {
                     empresa: razaoSocial,
                     descricao: solic.descricao,
                     status: solic.status,
-                    solicitacao_id: solic.id
+                    solicitacaoId: solic.id
                 })
             }
             

@@ -112,7 +112,6 @@ module.exports =  {
             cidade: req.body.cidade 
         };
         
-        const empresa_cliente = true;
         var estados;
         var cidades;
         var password = '';
@@ -174,7 +173,7 @@ module.exports =  {
             }
             else {
                 await Empresa.create({ 
-                    nome, razao, cnpj, ie, telefone, email, estado, cidade, empresa_cliente
+                    nome, razao, cnpj, ie, telefone, email, estado, cidade
                 }).then(async empr => {
                     empresa = empr;
                     

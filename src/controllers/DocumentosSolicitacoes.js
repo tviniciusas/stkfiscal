@@ -5,7 +5,6 @@ const Empresa = require('../models/Empresa');
 const Solicitacao = require('../models/Solicitacoes');
 const SolicitacaoDocumentos = require('../models/SolicitacaoDocumentos');
 const Historico = require('../models/Historico');
-const Helpers = require('../helpers/helpers.js');
 const { Op } = require("sequelize");
 const UtilService = require('../services/UtilService');
 const StatusEnum  = require('../enums/StatusEnum');
@@ -80,12 +79,6 @@ module.exports = {
             empresas = JSON.parse(JSON.stringify(emp, null, 2));
         });
 
-        // await Empresa.findAll({
-        //     where: {empresa_cliente: true}
-        // }).then(function (emp) {
-        //     empresas = JSON.parse(JSON.stringify(emp, null, 2));
-        // });
-
         res.render('./admin/documentos/solicitacao/novo', { layout: false, empresas: empresas })
     },
 
@@ -158,54 +151,63 @@ module.exports = {
         var solicitacao_return;
         var razaoSocial;
 
-        await Empresa.findByPk(empresas_id).then(function(emp) {
-            razaoSocial = emp.razao;
-        });
+        try {
 
-        await Solicitacao.findOne({ where: { id: solicitacoes_id } })
-            .then(async function (obj) {
-                if (obj) {
-
-                    if (obj.empresa_id != empresas_id || obj.descricao != descricao) {
-                        obj.update({
-                            empresa_id: +empresas_id,
-                            descricao: descricao,
+            await Empresa.findByPk(empresas_id).then(function(emp) {
+                razaoSocial = emp.razao;
+            });
+    
+            await Solicitacao.findOne({ where: { id: solicitacoes_id } })
+                .then(async function (obj) {
+                    if (obj) {
+    
+                        if (obj.empresaId != empresas_id || obj.descricao != descricao) {
+                            obj.update({
+                                empresaId: +empresas_id,
+                                descricao: descricao,
+                            }).then(function(solic) {
+                                Historico.create({
+                                    data_hora: new Date(),
+                                    empresa: razaoSocial,
+                                    descricao: solic.descricao,
+                                    status: solic.status,
+                                    solicitacaoId: solic.id
+                                })
+                            });
+                        }
+    
+                    } else {
+    
+                        var status = StatusEnum.DIGITACAO.descricao;
+    
+                        await Solicitacao.create({
+                            empresaId: +empresas_id,
+                            status: status,
+                            descricao: descricao
                         }).then(function(solic) {
+                            solicitacao_return = JSON.parse(JSON.stringify(solic, null, 2));
+    
                             Historico.create({
                                 data_hora: new Date(),
                                 empresa: razaoSocial,
                                 descricao: solic.descricao,
                                 status: solic.status,
-                                solicitacao_id: solic.id
+                                solicitacaoId: solic.id
                             })
                         });
                     }
-
-                } else {
-
-                    var status = StatusEnum.DIGITACAO.descricao;
-
-                    await Solicitacao.create({
-                        empresa_id: +empresas_id,
-                        status: status,
-                        descricao: descricao
-                    }).then(function(solic) {
-                        solicitacao_return = solic;
-                        Historico.create({
-                            data_hora: new Date(),
-                            empresa: razaoSocial,
-                            descricao: solic.descricao,
-                            status: solic.status,
-                            solicitacao_id: solic.id
-                        })
-                    });
-
-                    solicitacao_return = JSON.parse(JSON.stringify(solicitacao_return, null, 2));
-                }
-            })
-
-        return res.status(200).render('./admin/documentos/solicitacao/etapa_documentos', { layout: false, solicitacao: solicitacao_return })
-
+                })
+    
+            return res.status(200).render('./admin/documentos/solicitacao/etapa_documentos', { 
+                layout: false, solicitacao: solicitacao_return 
+            });
+            
+        } catch (error) {
+            console.log(error);
+            return res.status(400).render('./admin/documentos/solicitacao/etapa_documentos', { 
+                layout: false, solicitacao: solicitacao_return 
+            });
+        }
     },
 
     async delete(req, res) {
@@ -241,22 +243,16 @@ module.exports = {
 
         const { solicitacoes_id } = req.body;
         var status = StatusEnum.SOLICITADO.descricao;
-        var emrpesaId = req.user.empresaClienteId;
         var razaoSocial;
+
+        var solicitacao = await Solicitacao.findByPk(solicitacoes_id );
+        var emrpesaId = solicitacao.empresaId;
 
         await Empresa.findByPk(emrpesaId).then(function(emp) {
             razaoSocial = emp.razao;
         });
 
-        // await Solicitacao.findOne({ where: { id: solicitacoes_id } }).then(function (solic) {
-        //     solic.update({
-        //         status: status,
-        //         dt_solicitado: Date.now()
-        //     });
-        // });
-        var solicitacao = await Solicitacao.findByPk(solicitacoes_id );
-
-        solicitacao.update({
+        await solicitacao.update({
             status: status,
             dt_solicitado: Date.now()
         }).then(function(solic) {
@@ -265,7 +261,7 @@ module.exports = {
                 empresa: razaoSocial,
                 descricao: solic.descricao,
                 status: solic.status,
-                solicitacao_id: solic.id
+                solicitacaoId: solic.id
             })
         });
 
@@ -289,8 +285,8 @@ module.exports = {
 
         solic_ids.forEach(async function (id, i) {
             await SolicitacaoDocumentos.create({
-                solicitacao_id: solicitacao.id,
-                documento_id: id,
+                solicitacaoId: solicitacao.id,
+                documentoId: id,
                 ano: ano
             })
         });
@@ -310,7 +306,9 @@ module.exports = {
 
         var anos = UtilService.getAnos();
     
-        return res.status(200).render('./admin/documentos/solicitacao/modal_edit_solicitacoes_doc', { layout: false, solicitacao_doc: solicitacao_doc, anos: anos });
+        return res.status(200).render('./admin/documentos/solicitacao/modal_edit_solicitacoes_doc', { 
+            layout: false, solicitacao_doc: solicitacao_doc, anos: anos 
+        });
     },
 
     async destroy_solcicitacoes_documentos(req, res) {
@@ -345,7 +343,7 @@ module.exports = {
         await SolicitacaoDocumentos.findAll({
             subQuery: false,
             include:  [{ model: Documento, as: 'documento' }],
-            where: { solicitacao_id: req.query.solicitacoes_id }
+            where: { solicitacaoId: req.query.solicitacoes_id }
         }).then(function (solic) {
             solicitacoes_documentos = JSON.parse(JSON.stringify(solic, null, 2));
         });

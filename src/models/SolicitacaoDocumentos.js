@@ -7,14 +7,6 @@ class SolicitacaoDocumentos extends Model {
                 type: DataTypes.STRING,
                 allowNull: false
             },
-            solicitacao_id: {
-                type: DataTypes.INTEGER,
-                allowNull: true
-            },
-            documento_id: {
-                type: DataTypes.INTEGER,
-                allowNull: true
-            }
         }, { sequelize })
     }
 
