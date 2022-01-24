@@ -62,10 +62,6 @@
         closeButton: true
     });
 
-    $(document).ready(function() {
-        console.log('READY!!!');
-    });
-
     function atender_solicitacao(solicitacaoId) {
         $.ajax({
             url: './atender_solicitacao/'+solicitacaoId,

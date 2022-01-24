@@ -1,10 +1,6 @@
-const Sequelize = require('sequelize');
 const Historico = require('../models/Historico');
-const Documento = require('../models/Documento');
 const Empresa = require('../models/Empresa');
-const SolicitacaoDocumentos = require('../models/SolicitacaoDocumentos');
 const Solicitacao  = require('../models/Solicitacoes');
-const StatusEnum = require('../enums/StatusEnum');
 const UtilService = require('../services/UtilService');
 
 module.exports = {
@@ -66,9 +62,10 @@ module.exports = {
             });
         });
 
-        res.render('./admin/documentos/historico/historico', { 
+        res.render('./admin/documentos/historico/modal_historico', { 
             historicos: historicos, 
-            isAdmin: isAdmin
+            isAdmin: isAdmin,
+            layout: false
         });
     }
     

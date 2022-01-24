@@ -73,8 +73,8 @@ router.get("/solicitacao", DocumentosSolicitacoes.solicitacao_index);
 router.get("/solicitacao/em-processo", SolicitacaoController.em_processo);
 router.get("/solicitacao/finalizado", SolicitacaoController.finalizado);
 
-// router.get("/documentos/historico", HistoricoController.index);
-// router.get("/documentos/show_historico/:solicitacaoId", HistoricoController.show_historico);
+router.get("/documentos/historico", HistoricoController.index);
+router.get("/documentos/show_historico/:solicitacaoId", HistoricoController.show_historico);
 
 
 //=== Rotas Admin ===//

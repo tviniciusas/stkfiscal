@@ -10,8 +10,9 @@
         <table id="tableSolicitacoes" class="table table-sm table-striped text-nowrap m-0"> 
             <thead>
                 <tr>
-                    <th>Empresa</th>
+                    <th class="admin">Empresa</th>
                     <th>Descrição</th>
+                    <th>Dt. Solicitado</th>
                     <th>Status</th>
                     <th>Ações</th>
                 </tr>
@@ -40,15 +41,16 @@
                 </script>
                 {{#each solicitacoes}}
                     <tr>
-                        <td>{{this.empresa.razao}}</td>
+                        <td class="admin">{{this.empresa.razao}}</td>
                         <td>{{this.descricao}}</td>
+                        <td>{{this.dt_solicitado}}</td>
                         <td name="{{@index}}" class="status{{@index}}">
                             <span id="status{{@index}}" class="badge">{{this.status}}</span>
                         </td>
                         <td>
-                            <a href="/admin/documentos/show_historico/{{this.id}}">
-                                <i style="cursor: pointer" class="text-info icon fas fa-hourglass-end historico mr-2" data-toggle="tooltip" title="Ver histórico"></i>
-                            </a>
+                            <i style="cursor: pointer" data-id="{{this.id}}"
+                            class="text-info icon fas fa-hourglass-end historico mr-2" 
+                            data-toggle="tooltip" title="Ver histórico"></i>
                         </td>
                     </tr>
                     <script>addBadge({{@index}}, '{{this.status}}');</script>
@@ -58,12 +60,38 @@
     </div>
 </div>
 
+<div id="painel_modal"></div>
+
 <script>
-    const Toast = Swal.mixin({
-        toast: true,
-        position: 'top-end',
-        showConfirmButton: false,
-        timer: 3000,
-        closeButton: true
+    $(document).ready(function() {
+        var isAdmin = {{isAdmin}};
+
+        if (!isAdmin) {
+            $('.admin').hide();
+        }
+        else {
+            $('.notAdmin').hide();
+        }
+
+        $('.historico').on('click', function() {
+            var solicitacaoId = $(this).attr('data-id');
+            var url = '/admin/documentos/show_historico/'+solicitacaoId;
+
+            if(!isAdmin) {
+                url = '/documentos/show_historico/'+solicitacaoId
+            }
+
+            console.log(url);
+            console.log(solicitacaoId);
+
+            $.ajax({
+                url: url,
+                type: 'GET',
+                success: function(response) {
+                    $('#painel_modal').html(response);
+                    $('#modal-historico').modal('show');
+                },
+            });
+        })
     });
 </script>
