@@ -10,30 +10,48 @@ const UtilService = require('../services/UtilService');
 module.exports = {
 
     async index(req, res) {
-        var empresaId = req.user.empresaId;
+        var empresaId = req.user.empresaClienteId;
+        var isAdmin = req.user.admin;
         var solicitacoes;
 
-        await Solicitacao.findAll({
-            subQuery: false,
-            include: [
-                { model: Empresa, as: 'empresa' }
-            ],
-            order: [
-                ['dt_solicitado', 'DESC'],
-                ['created_at', 'DESC'],
-            ]
-        }).then(function (solic) {
-            solicitacoes = JSON.parse(JSON.stringify(solic, null, 2));
-        });
+        if (isAdmin) {
+            await Solicitacao.findAll({
+                include: [{ model: Empresa, as: 'empresa' }],
+                order: [
+                    ['dt_solicitado', 'DESC'],
+                    ['created_at', 'DESC'],
+                ]
+            }).then(function (solic) {
+                solicitacoes = JSON.parse(JSON.stringify(solic, null, 2));
+                solicitacoes.forEach(item => {
+                    item.dt_solicitado = UtilService.dateFormat(new Date(item.dt_solicitado));
+                });
+            });
+        }
+        else {
+            await Solicitacao.findAll({
+                where: {empresaId: empresaId},
+                order: [
+                    ['dt_solicitado', 'DESC'],
+                    ['created_at', 'DESC'],
+                ]
+            }).then(function (solic) {
+                solicitacoes = JSON.parse(JSON.stringify(solic, null, 2));
+                solicitacoes.forEach(item => {
+                    item.dt_solicitado = UtilService.dateFormat(new Date(item.dt_solicitado));
+                });
+            });
+        }
 
         res.render('./admin/documentos/historico/index', { 
-            solicitacoes: solicitacoes
+            solicitacoes: solicitacoes,
+            isAdmin: isAdmin
         });
     },
 
     async show_historico(req, res) {
-        
         var solicitacaoId = req.params.solicitacaoId;
+        var isAdmin = req.user.admin;
         var historicos;
 
         await Historico.findAll({
@@ -49,7 +67,8 @@ module.exports = {
         });
 
         res.render('./admin/documentos/historico/historico', { 
-            historicos: historicos
+            historicos: historicos, 
+            isAdmin: isAdmin
         });
     }
     

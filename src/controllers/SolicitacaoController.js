@@ -1,4 +1,7 @@
 const Solicitacao = require('../models/Solicitacoes.js');
+const StatusEnum = require('../enums/StatusEnum');
+const { Op, Utils } = require('sequelize');
+const UtilService = require('../services/UtilService');
 
 
 module.exports = {
@@ -84,5 +87,64 @@ module.exports = {
             status: 1,
             message: 'Deletado com sucesso!'
         })
+    },
+
+    async em_processo(req, res) {
+        const empresaId = req.user.empresaClienteId;
+        const solicitado = StatusEnum.SOLICITADO.descricao;
+        const atendido = StatusEnum.ATENDIDO.descricao;
+        var solicitacoes;
+
+        await Solicitacao.findAll({
+            where: {
+                [Op.or]: [
+                    {status: solicitado}, 
+                    {status: atendido}
+                ],
+                empresaId: empresaId
+            },
+            order: [
+                ['dt_solicitado', 'DESC'],
+                ['dt_atendido', 'DESC'],
+            ]
+        }).then(solic => {
+            solicitacoes = JSON.parse(JSON.stringify(solic, null, 2));
+
+            solicitacoes.forEach(item => {
+                item.dt_solicitado = UtilService.dateFormat(new Date(item.dt_solicitado));
+                item.dt_atendido = UtilService.dateFormat(new Date(item.dt_atendido));
+            });
+        })
+
+        res.render('./em_processo', { solicitacoes: solicitacoes });
+    },
+
+    async finalizado(req, res) {
+        const empresaId = req.user.empresaClienteId;
+        const status = StatusEnum.FINALIZADO.descricao;
+        var solicitacoes;
+
+        await Solicitacao.findAll({
+            where: {
+                status: status,
+                empresaId: empresaId
+            },
+            order: [
+                ['dt_finalizado', 'DESC'],
+                ['dt_atendido', 'DESC'],
+                ['dt_solicitado', 'DESC'],
+            ]
+        }).then(solic => {
+            solicitacoes = JSON.parse(JSON.stringify(solic, null, 2));
+
+            solicitacoes.forEach(item => {
+                item.dt_solicitado = UtilService.dateFormat(new Date(item.dt_solicitado));
+                item.dt_atendido = UtilService.dateFormat(new Date(item.dt_atendido));
+                item.dt_finalizado = UtilService.dateFormat(new Date(item.dt_finalizado));
+            });
+        })
+
+        res.render('./finalizado', { solicitacoes: solicitacoes });
     }
+
 }

@@ -13,6 +13,8 @@ const DocumentosSolicitacoes = require('./controllers/DocumentosSolicitacoes');
 const HistoricoController = require('./controllers/HistoricoController');
 const Upload = require('./models/Upload');
 const FinalizarController = require('./controllers/FinalizarController');
+const Solicitacoes = require('./models/Solicitacoes');
+const SolicitacaoController = require('./controllers/SolicitacaoController');
 
 const router = express.Router();
 
@@ -64,6 +66,17 @@ router.post("/empresa", EmpresaController.store);
 router.put("/empresa/:idemp", EmpresaController.update);
 router.delete("/empresa/:idemp", EmpresaController.delete);
 
+
+router.get("/solicitacao", DocumentosSolicitacoes.solicitacao_index);
+
+
+router.get("/solicitacao/em-processo", SolicitacaoController.em_processo);
+router.get("/solicitacao/finalizado", SolicitacaoController.finalizado);
+
+// router.get("/documentos/historico", HistoricoController.index);
+// router.get("/documentos/show_historico/:solicitacaoId", HistoricoController.show_historico);
+
+
 //=== Rotas Admin ===//
 router.use("/admin", isAdmin);
 
@@ -91,7 +104,6 @@ router.get("/admin/documentos/solicitacao/edit/:id", DocumentosSolicitacoes.edit
 router.get("/admin/documentos/solicitacao/historico/:id", DocumentosSolicitacoes.historic);
 router.get("/admin/documentos/solicitacao/edit_solcicitacoes_documentos/:id", DocumentosSolicitacoes.edit_solcicitacoes_documentos);
 router.delete("/admin/documentos/solicitacao/destroy_solcicitacoes_documentos", DocumentosSolicitacoes.destroy_solcicitacoes_documentos);
-router.get("/solicitacao", DocumentosSolicitacoes.solicitacao_index);
 
 
 router.get("/admin/documentos/solicitacao", (req, res) => {

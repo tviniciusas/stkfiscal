@@ -241,7 +241,7 @@ module.exports = {
 
         const { solicitacoes_id } = req.body;
         var status = StatusEnum.SOLICITADO.descricao;
-        var emrpesaId = req.user.empresaId;
+        var emrpesaId = req.user.empresaClienteId;
         var razaoSocial;
 
         await Empresa.findByPk(emrpesaId).then(function(emp) {
