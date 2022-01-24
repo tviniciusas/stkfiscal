@@ -19,7 +19,7 @@ class Solicitacoes extends Model {
               type: DataTypes.INTEGER,
               allowNull: false
             },
-            dt_visualizado: {
+            dt_atendido: {
               type: DataTypes.DATE,
               allowNull: true
             },
@@ -34,6 +34,7 @@ class Solicitacoes extends Model {
       this.hasMany(models.SolicitacaoDocumentos, { as: 'documento' });
       this.belongsTo(models.Empresa, { as: 'empresa' });
       this.hasMany(models.Historico, { as: 'historico' });
+      this.hasMany(models.Upload, { as: 'upload' });
     }
 }
 module.exports = Solicitacoes;

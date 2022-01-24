@@ -1,0 +1,142 @@
+<style type="text/css"></style>
+
+{{> scripts}}
+
+<div class="modal fade" id="modal-finalizar">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Finalizar</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="card card-primary card-outline">
+                    <div class="card-header">
+                        <h3 class="card-title">Solicitação</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-12">
+                                <strong>Empresa:</strong>
+                                <p>{{solicitacao.empresa.nome}}</p>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-12">
+                                <strong>Descrição:</strong>
+                                <p>{{solicitacao.descricao}}</p>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-6">
+                                <strong>Data solicitação:</strong>
+                                <p>{{solicitacao.dt_solicitado}}</p>
+                            </div>
+                            <div class="col-6">
+                                <strong>Data atendimento:</strong>
+                                <p>{{solicitacao.dt_atendido}}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card card-primary card-outline">
+                    <div class="card-header">
+                        <h3 class="card-title">Documentos solicitados</h3>
+                    </div>
+                    <div class="card-body table-responsive p-0">
+                        <table class="table table-sm table-striped text-nowrap text-break m-0">
+                            <thead>
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>Descrição</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{#each documentos}}
+                                    <tr>
+                                        <td>{{this.nome}}{{this.extencao}}</td>
+                                        <td>{{this.descricao}}</td>
+                                    </tr>
+                                {{/each}}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="card card-primary card-outline">
+                    <div class="card-header">
+                        <h3 class="card-title">Documentos enviados</h3>
+                    </div>
+                    <div class="card-body table-responsive p-0">
+                        <table class="table table-sm table-striped text-nowrap text-break m-0">
+                            <thead>
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>Mês</th>
+                                    <th>Ano</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{#each uploads}}
+                                    <tr>
+                                        <td>{{this.diretorio}}</td>
+                                        <td>{{this.mes}}</td>
+                                        <td>{{this.ano}}</td>
+                                        <td>
+                                            <a href="#">
+                                                <i style="cursor: pointer" class="text-info icon fas fa-file-download mr-2" data-toggle="tooltip" title="Baixar"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {{/each}}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+                <button type="button" onclick="finalizar({{solicitacao.id}})"
+                    class="btn btn-primary">Finalizar</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+<script>
+    function finalizar(solicitacaoId) {
+        console.log('finalizar: ', solicitacaoId)
+        $.ajax({
+            url: '/admin/documentos/finalizar',
+            data: {solicitacaoId: solicitacaoId},
+            type: "POST",
+            success: function(response) {
+                toastr.options.closeButton = true;
+
+                if (response.status) {
+                    toastr.success(response.message);
+
+                    setTimeout(() => {
+                        $('#modal-finalizar').modal('hide');
+                        $('.modal-backdrop').remove();
+                        window.location.reload();
+                    }, 1500);
+
+                } else {
+                    toastr.error(response.message)
+                }
+            },
+            error: function (error) {
+                toastr.error(error.responseJSON.message);
+            }
+        });
+    }
+</script>

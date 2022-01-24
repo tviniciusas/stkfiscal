@@ -11,6 +11,10 @@ const path = require('path');
 const UploadController = require('./controllers/UploadController');
 const DocumentosSolicitacoes = require('./controllers/DocumentosSolicitacoes');
 const HistoricoController = require('./controllers/HistoricoController');
+const Upload = require('./models/Upload');
+const FinalizarController = require('./controllers/FinalizarController');
+const Solicitacoes = require('./models/Solicitacoes');
+const SolicitacaoController = require('./controllers/SolicitacaoController');
 
 const router = express.Router();
 
@@ -34,7 +38,9 @@ router.get('/list', (req,res)=> {
 //     res.render('upload');
 // })
 router.get("/upload", UploadController.index);
-router.post('/upload', upload.single('file'), UploadController.store)
+router.get("/atender_solicitacao/:id", UploadController.modal_upload);
+router.post('/modal/upload', upload.single('file'), UploadController.store_modal_upload);
+router.post('/upload', upload.single('file'), UploadController.store);
 //router.post('/upload', upload.array('file', 10), UploadController.store);
 
 router.delete("/logout", checkAuthenticated, LoginController.logout);
@@ -60,6 +66,17 @@ router.post("/empresa", EmpresaController.store);
 router.put("/empresa/:idemp", EmpresaController.update);
 router.delete("/empresa/:idemp", EmpresaController.delete);
 
+
+router.get("/solicitacao", DocumentosSolicitacoes.solicitacao_index);
+
+
+router.get("/solicitacao/em-processo", SolicitacaoController.em_processo);
+router.get("/solicitacao/finalizado", SolicitacaoController.finalizado);
+
+router.get("/documentos/historico", HistoricoController.index);
+router.get("/documentos/show_historico/:solicitacaoId", HistoricoController.show_historico);
+
+
 //=== Rotas Admin ===//
 router.use("/admin", isAdmin);
 
@@ -67,7 +84,7 @@ router.use("/admin", isAdmin);
 router.get("/admin/documentos/cadastro", DocumentoController.index);
 router.get("/admin/documentos/cadastro/edit/:id", DocumentoController.edit);
 router.get("/admin/documentos/cadastro/show_documentos", DocumentoController.show_documentos);
-router.get("/admin/documentos/cadastro/show_documentos_modal", DocumentoController.show_documentos_modal);
+router.get("/admin/documentos/cadastro/show_documentos_modal/:solicitacaoId", DocumentoController.show_documentos_modal);
 router.post("/admin/documentos/cadastro", DocumentoController.store);
 router.delete("/admin/documentos/cadastro", DocumentoController.delete);
 router.post("/admin/documentos/totalRegistros", DocumentoController.totalRegistros);
@@ -78,7 +95,7 @@ router.get("/admin/documentos/solicitacao/create", DocumentosSolicitacoes.create
 router.delete("/admin/documentos/solicitacao", DocumentosSolicitacoes.delete);
 
 router.get("/admin/documentos/solicitacao/show_solicitacoes_documentos", DocumentosSolicitacoes.show_solicitacoes_documentos);
-router.get("/admin/documentos/solicitacao/modal_adicionar_documentos", DocumentosSolicitacoes.modal_adicionar_documentos);
+router.get("/admin/documentos/solicitacao/modal_adicionar_documentos/:solicitacaoId", DocumentosSolicitacoes.modal_adicionar_documentos);
 router.post("/admin/documentos/solicitacao/store_solicitacao", DocumentosSolicitacoes.store_solicitacao);
 router.post("/admin/documentos/solicitacao/click_tab_documentos", DocumentosSolicitacoes.click_tab_documentos);
 router.post("/admin/documentos/solicitacao/store_solicitacoes_documentos", DocumentosSolicitacoes.store_solicitacoes_documentos);
@@ -96,9 +113,16 @@ router.get("/admin/documentos/solicitacao", (req, res) => {
 router.get("/admin/documentos/historico", HistoricoController.index);
 router.get("/admin/documentos/show_historico/:solicitacaoId", HistoricoController.show_historico);
 
-router.get("/admin/usuarios", (req, res) => {
-    res.render('./admin/usuarios')
-});
+router.get("/admin/documentos/finalizar", FinalizarController.index);
+router.get("/admin/documentos/finalizar/modal_finalizar/:solicitacaoId", FinalizarController.modal_finalizar);
+router.post("/admin/documentos/finalizar", FinalizarController.store);
+
+router.get("/admin/usuarios", UserController.index_admin);
+router.get("/admin/usuarios/edit/:id", UserController.edit_admin);
+router.get("/admin/usuarios/update", UserController.update_admin);
+router.get("/user/delete/:user_id", UserController.delete_modal);
+router.delete("/admin/usuarios/delete", UserController.delete_admin);
+
 
 //=== Função middlewer's ===//
 

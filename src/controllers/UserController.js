@@ -1,16 +1,42 @@
 const User = require('../models/User.js')
-const bcrypt = require('bcrypt')
-const transporter = require('../config/emailSend')
+const Empresa = require('../models/Empresa');
+const SendMailService = require('../services/SendMailService');
+const bcrypt = require('bcrypt');
 
 module.exports =  {
 
     async index(req, res) {
-
         const users = await User.findAll();
         if(users == '' || users == null) {
             return res.status(200).send({message: "Nenhum usuário cadastrado"});
         }
         return res.status(200).send({users});
+    },
+
+    async index_admin(req, res) {
+        const empresaId = req.user.empresaId;
+        var usuarios;
+
+        await User.findAll({
+            subQuery: false,
+            include:  [
+                { model: Empresa, as: 'empresa' },
+                { model: Empresa, as: 'empresaCliente' }
+            ],
+            where: {
+                empresaId: empresaId,
+                admin: false
+            },
+            order: [
+                ['name', 'ASC']
+            ]
+        }).then(function(users) {
+            usuarios = users;
+        });
+
+        res.render('./admin/usuarios/index', { 
+            usuarios: usuarios
+        });
     },
 
     async store(req, res) {
@@ -37,41 +63,53 @@ module.exports =  {
     async storeUserMail(req, res, next) {
         const name = req.body.name;
         const email = req.body.email;
+        const empresa_id = req.user.empresaId;
+        var message = 'Falha ao atualizar usuário';
 
         try {
 
             if (name === null || name === '') {
-                throw 'O campo Nome é obrigatório.'
+                message = 'O campo Nome é obrigatório.';
+                throw message;
             }
 
             if (email === null || email === '') {
-                throw 'O campo E-mail é obrigatório.'
+                message = 'O campo E-mail é obrigatório.';
+                throw message;
             }
 
             const findMail = await User.findOne({where: {email: email}});
             if(findMail) {
-                throw "E-mail já cadastrado.";  
+                message = 'E-mail já cadastrado.';
+                throw message;  
             }
 
             const hashedPassword = await bcrypt.hash('mudarsenha', 10)
             const password = hashedPassword;
-            const user = await User.create({name, password, email})
-            transporter.sendMail({
-                from: "<istok@stokfiscal.com.br>", 
-                to: email, 
-                subject: "Finalize seu cadastro i-store.duckdns.org ", 
-                text: "Obrigado por se cadastrar em nossa plataforma", 
-                html: "<h1><b>Click no link abaixo para completar seu cadastro</b></h1><br><a href='http://i-store.duckdns.org/login'><button>Finalizar Cadastro</button></a>", 
-              }).then(info => {
-                  req.flash('success_msg', 'Cliente cadastrado.');
-                  res.redirect('admin/usuarios');
-              }).catch(e => {
-                  console.log('erro ao enviar e-mail: '+ e)
-              })
+
+            await User.create({
+                name: name, 
+                password: password, 
+                email: email, 
+                empresa_id: empresa_id
+            }).then(function(data) {
+                SendMailService.sendMail(name, email);
+                message = 'Dados alterados com sucesso';
+
+                return res.status(200).send({
+                    status: 'success',
+                    message: message
+                })
+            });
+            
         } catch (error) {  
-            var error_msg = error.errors ? error.errors[0].message : error;
-            req.flash('error_msg', error_msg);
-            res.redirect('admin/usuarios');          
+            return res.status(500).send({
+                status: 'error',
+                message: message
+            })
+            // var error_msg = error.errors ? error.errors[0].message : error;
+            // req.flash('error_msg', error_msg);
+            // res.redirect('admin/usuarios');          
             //res.status(400).send({status: false, msg: error});     
         }
     },
@@ -84,10 +122,91 @@ module.exports =  {
         return res.status(200).send({status: true, msg: "Dados atualizados com sucesso."});
     },
 
+    async edit_admin(req, res) {
+        var usuario = await User.findByPk(req.params.id);
+    
+        return res.status(200).send({
+            status: true,
+            usuario: usuario
+        })
+    },
+    
+    async update_admin(req, res) {
+        const user_id = req.query.usuarioId;
+        const name = req.query.name;
+        const email = req.query.email;
+        var message = 'Falha ao atualizar usuário';
+
+        try {
+
+            if (name === null || name === '') {
+                message = 'O campo Nome é obrigatório.';
+                throw message;
+            }
+
+            if (email === null || email === '') {
+                message = 'O campo E-mail é obrigatório.';
+                throw message;
+            }
+
+            const usuario = await User.findByPk(user_id);
+            if (usuario && usuario.empresaClienteId) {
+                message = "Não é posível atualizar os dados deste usuário, pois o mesmo já atualizou seus dados."; 
+                throw message;
+            }
+
+            const findMail = await User.findOne({where: {email: email}});
+            if(findMail && findMail.id !== +user_id) {
+                message = "E-mail já cadastrado."; 
+                throw message;
+            }
+
+            await User.update({
+                name: name, 
+                email: email
+            }, {
+                where: {
+                    id: user_id
+                }
+            }).then(function(data) {
+                SendMailService.sendMail(name, email);
+                message = 'Dados alterados com sucesso';
+
+                return res.status(200).send({
+                    status: 'success',
+                    message: message
+                })
+            });
+            
+        } catch (error) {  
+            return res.status(500).send({
+                status: 'error',
+                message: message
+            })  
+        }
+    },
+
+    async delete_modal(req, res) {
+        var usuario = await User.findByPk(req.params.user_id);
+    
+        return res.status(200).send({
+            status: true,
+            usuario: usuario
+        })
+    },
+
     async delete(req, res) {
         const { user_id } = req.params;
         
         await User.destroy({where: {id: user_id}});
         return res.status(200).send({status: true, msg: "Usuário deletado com sucesso."});
+    },
+    
+    async delete_admin(req, res) {
+        const user_id = req.body.usuarioId;
+        
+        await User.destroy({where: {id: user_id}});
+        return res.status(200).send({status: true, msg: "Usuário deletado com sucesso."});
     }
+
 }

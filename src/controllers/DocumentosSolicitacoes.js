@@ -6,9 +6,10 @@ const Solicitacao = require('../models/Solicitacoes');
 const SolicitacaoDocumentos = require('../models/SolicitacaoDocumentos');
 const Historico = require('../models/Historico');
 const Helpers = require('../helpers/helpers.js');
-const Sequelize = require('sequelize');
+const { Op } = require("sequelize");
 const UtilService = require('../services/UtilService');
 const StatusEnum  = require('../enums/StatusEnum');
+const User = require('../models/User');
 
 
 module.exports = {
@@ -58,10 +59,32 @@ module.exports = {
     },
 
     async create(req, res) {
+        var empresas;
 
-        await Empresa.findAll().then(function (emp) {
+        await User.findAll({
+            include: [{model: Empresa, as: 'empresaCliente'}],
+            where: {
+                empresaClienteId: {
+                    [Op.not]: null
+                },
+                admin: false
+            }
+        }).then(function(user) {
+            var emp = [];
+            user.forEach(u => {
+                emp.push(u.empresaCliente);
+            });
+
+            emp = UtilService.orderByName(emp);
+
             empresas = JSON.parse(JSON.stringify(emp, null, 2));
         });
+
+        // await Empresa.findAll({
+        //     where: {empresa_cliente: true}
+        // }).then(function (emp) {
+        //     empresas = JSON.parse(JSON.stringify(emp, null, 2));
+        // });
 
         res.render('./admin/documentos/solicitacao/novo', { layout: false, empresas: empresas })
     },
@@ -77,7 +100,21 @@ module.exports = {
             solicitacao = JSON.parse(JSON.stringify(solic, null, 2));
         });
 
-        await Empresa.findAll().then(function (emp) {
+        await User.findAll({
+            include: [{model: Empresa, as: 'empresaCliente'}],
+            where: {
+                empresaClienteId: {
+                    [Op.not]: null
+                },
+                admin: false
+            }
+        }).then(function(user) {
+            var emp = [];
+            user.forEach(u => {
+                emp.push(u.empresaCliente);
+            });
+
+            emp = UtilService.orderByName(emp);
             empresas = JSON.parse(JSON.stringify(emp, null, 2));
         });
 
@@ -204,7 +241,7 @@ module.exports = {
 
         const { solicitacoes_id } = req.body;
         var status = StatusEnum.SOLICITADO.descricao;
-        var emrpesaId = req.user.empresaId;
+        var emrpesaId = req.user.empresaClienteId;
         var razaoSocial;
 
         await Empresa.findByPk(emrpesaId).then(function(emp) {
@@ -294,7 +331,11 @@ module.exports = {
     },
 
     async modal_adicionar_documentos(req, res) {
-        res.render('./admin/documentos/solicitacao/modal_cadastrar_documentos', { layout: false })
+        var solicitacaoId = req.params.solicitacaoId;
+
+        res.render('./admin/documentos/solicitacao/modal_cadastrar_documentos', { 
+            solicitacaoId: solicitacaoId, layout: false 
+        });
     },
 
     async show_solicitacoes_documentos(req, res) {
@@ -314,4 +355,30 @@ module.exports = {
             data: solicitacoes_documentos
         })
     },
+
+    async solicitacao_index(req, res) {
+
+        const empresaId = req.user.empresaCliente.id;
+        const status = StatusEnum.SOLICITADO.descricao;
+        var solicitacoes;
+
+        await Solicitacao.findAll({
+            include: [{model: SolicitacaoDocumentos, as: 'documento'}],
+            where: { 
+                empresaId:  empresaId,
+                status: status
+            }
+        }).then(solic => {
+            solicitacoes = JSON.parse(JSON.stringify(solic, null, 2));
+            solicitacoes.forEach(item => {
+                item.dt_solicitado = UtilService.dateFormat(new Date(item.dt_solicitado));
+            });
+        });
+
+        return res.status(200).render('./solicitacao', 
+            { solicitacoes: solicitacoes }
+        );
+    },
+    
+
 }

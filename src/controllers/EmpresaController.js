@@ -45,7 +45,7 @@ module.exports =  {
             var empresa;
 
             const usuario = req.user; 
-            await Empresa.findByPk(usuario.empresaId).then(data => {
+            await Empresa.findByPk(usuario.empresaClienteId).then(data => {
                 if (data) {
                     empresa = data.get({ plain: true });
                 }
@@ -112,19 +112,34 @@ module.exports =  {
             cidade: req.body.cidade 
         };
         
+        const empresa_cliente = true;
         var estados;
         var cidades;
         var password = '';
         var usuario = req.user;
-        var empresa = usuario.empresa;
+        var empresa = usuario.empresaCliente;
         
         try {
             estados = await ApiService.getEstados();
             cidades = await ApiService.getMunicipiosByEstado(empresaTemp.estado);
 
-            const error = fieldsValidate(empresaTemp);
+            var error = fieldsValidate(empresaTemp);
             if (error != '') {
                 throw error;
+            }
+
+            const findMail = await Empresa.findOne({where: {email: empresaTemp.email}});
+            if (empresa) {
+                if(findMail && findMail.id !== empresa.empresaId) {
+                    error = "E-mail já cadastrado."; 
+                    throw error;
+                }
+            }
+            else {
+                if(findMail) {
+                    error = "E-mail já cadastrado."; 
+                    throw error;
+                }
             }
 
             if (req.body.senha && req.body.confirmarSenha) {
@@ -158,13 +173,19 @@ module.exports =  {
                 });
             }
             else {
-                empresa = await Empresa.create({ 
-                    nome, razao, cnpj, ie, telefone, email, estado, cidade
+                await Empresa.create({ 
+                    nome, razao, cnpj, ie, telefone, email, estado, cidade, empresa_cliente
+                }).then(async empr => {
+                    empresa = empr;
+                    
+                    await User.update(
+                        { empresaClienteId: empr.id },
+                        { where: {id: usuario.id} }
+                    );
                 }).catch(err => {
                     throw err;
                 });
             }
-            
             
             if (empresa) {
                 await User.update({

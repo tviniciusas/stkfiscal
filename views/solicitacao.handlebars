@@ -1,0 +1,75 @@
+<style type="text/css">
+</style>
+
+{{> scripts}}
+
+<div class="row">
+  <div class="col-md-12">
+    <div class="card card-primary">
+      <div class="card-header">
+        <h3 class="card-title">Solicitações</h3>
+      </div>
+      <div class="card-body table-responsive p-0">
+        <table id="atender-solicitacao" class="table table-sm table-striped text-nowrap m-0"> 
+          <thead>
+            <tr>
+                <th>Descrição</th>
+                <th>Data solicitação</th>
+                <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{#if solicitacoes}}
+              {{#each solicitacoes}}
+                <tr>
+                  <td>{{this.descricao}}</td>
+                  <td>{{this.dt_solicitado}}</td>
+                  <td>
+                    {{!-- <a href="/upload" >
+                        <i style="cursor: pointer" class="text-primary icon fas fa-file-import mr-2" data-toggle="tooltip" title="Atender solicitacao"></i>
+                    </a> --}}
+                    <a href="#" onclick="atender_solicitacao({{this.id}})">
+                        <i style="cursor: pointer" class="text-primary icon fas fa-file-import mr-2" data-toggle="tooltip" title="Atender solicitacao"></i>
+                    </a>
+                  </td>
+                </tr>
+              {{/each}}
+            {{else}} 
+              <tr>
+                <td class="dataTables_empty" colspan="4">
+                  <div class='text-center text-muted p-4'>
+                    <i class='icon far fa-folder-open fa-2x'></i><br>
+                    <small>Nenhuma solicitação realizada</small><br>
+                  </div>
+                </td>
+              </tr>
+          {{/if}}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="painel_modal"></div>
+
+<script>
+    const Toast = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000,
+        closeButton: true
+    });
+
+    function atender_solicitacao(solicitacaoId) {
+        $.ajax({
+            url: './atender_solicitacao/'+solicitacaoId,
+            type: 'GET',
+            success: function(response) {
+                $('#painel_modal').html(response);
+                $('#modal-upload').modal('show');
+            },
+        });
+    }
+</script>

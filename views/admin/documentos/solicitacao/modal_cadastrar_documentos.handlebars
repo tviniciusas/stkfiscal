@@ -1,12 +1,8 @@
-<style>
-    .table {word-break: break-word; white-space: pre-wrap !important;}
-</style>
-
 <div class="modal fade" id="modal-adicionar-documentos">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title">Adicionar Documento</h4>
+                <h4 class="modal-title">Adicionar documento</h4>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -27,6 +23,7 @@
                         </div>
                     </div>
                     <!-- /.card-header -->
+                    <input type="hidden" id="solicitacoes_id" name="solicitacoes_id" value="{{solicitacaoId}}">
                     <div class="card-body table-responsive p-0">
                         <table id="tableDocumentos" class="table table-sm table-striped text-nowrap m-0">
                             <thead>
@@ -84,8 +81,10 @@
     }
 
     function modal_adicionar_documentos() {
+        var solicitacoes_id = $("#solicitacoes_id").val();
+
         $.ajax({
-            url: "/admin/documentos/solicitacao/modal_adicionar_documentos",
+            url: "/admin/documentos/solicitacao/modal_adicionar_documentos/"+solicitacoes_id,
             type: "GET",
             success: function (response) {
                 $('#painel_modal').html(response);
@@ -94,6 +93,7 @@
         });
     }
     function show_documentos() {
+        var solicitacoes_id = $("#solicitacoes_id").val();
         var table = $('#tableDocumentos').DataTable({
             bInfo: false,
             destroy: true,
@@ -107,7 +107,7 @@
                     "<button type='button' onclick='criar_documento()' class='btn btn-outline-primary swalDefaultSuccess mt-3'><i class='fas fa-plus mr-2'></i>Cadastrar agora</button>" +
                     "</div>"
             },
-            "ajax": "/admin/documentos/cadastro/show_documentos_modal",
+            "ajax": "/admin/documentos/cadastro/show_documentos_modal/"+solicitacoes_id,
             "columns": [
                 { "data": "nome" },
                 { "data": "descricao" },
