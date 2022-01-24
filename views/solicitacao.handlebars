@@ -1,4 +1,5 @@
 <style type="text/css">
+    .table td, .table th { border-top: none; }
 </style>
 
 {{> scripts}}
@@ -7,45 +8,48 @@
   <div class="col-md-12">
     <div class="card card-primary">
       <div class="card-header">
-        <h3 class="card-title">Solicitações</h3>
+        <h3 class="card-title">Solicitados</h3>
       </div>
-      <div class="card-body table-responsive p-0">
-        <table id="atender-solicitacao" class="table table-sm table-striped text-nowrap m-0"> 
-          <thead>
-            <tr>
-                <th>Descrição</th>
-                <th>Dt. solicitado</th>
-                <th>Ações</th>
-            </tr>
-          </thead>
-          <tbody>
-            {{#if solicitacoes}}
-              {{#each solicitacoes}}
+      <div class="card-body">
+        <div class="row">
+          <div class="col table-responsive">
+            <table id="atender-solicitacao" class="table table-sm table-striped m-0"> 
+              <thead class="text-nowrap">
                 <tr>
-                  <td>{{this.descricao}}</td>
-                  <td>{{this.dt_solicitado}}</td>
-                  <td>
-                    {{!-- <a href="/upload" >
-                        <i style="cursor: pointer" class="text-primary icon fas fa-file-import mr-2" data-toggle="tooltip" title="Atender solicitacao"></i>
-                    </a> --}}
-                    <a href="#" onclick="atender_solicitacao({{this.id}})">
-                        <i style="cursor: pointer" class="text-primary icon fas fa-file-import mr-2" data-toggle="tooltip" title="Atender solicitacao"></i>
-                    </a>
-                  </td>
+                    <th>Descrição</th>
+                    <th>Dt. solicitado</th>
+                    <th>Ações</th>
                 </tr>
-              {{/each}}
-            {{else}} 
-              <tr>
-                <td class="dataTables_empty" colspan="4">
-                  <div class='text-center text-muted p-4'>
-                    <i class='icon far fa-folder-open fa-2x'></i><br>
-                    <small>Nenhuma solicitação realizada</small><br>
-                  </div>
-                </td>
-              </tr>
-          {{/if}}
-          </tbody>
-        </table>
+              </thead>
+              <tbody>
+                {{#if solicitacoes}}
+                  {{#each solicitacoes}}
+                    <tr>
+                      <td>{{this.descricao}}</td>
+                      <td>{{this.dt_solicitado}}</td>
+                      <td>
+                        {{!-- <a href="/upload" >
+                            <i style="cursor: pointer" class="text-primary icon fas fa-file-import mr-2" data-toggle="tooltip" title="Atender solicitacao"></i>
+                        </a> --}}
+                        <i style="cursor: pointer" class="text-primary atender icon fas fa-file-import mr-2" 
+                        data-toggle="tooltip" data-id={{this.id}} title="Atender solicitacao"></i>
+                      </td>
+                    </tr>
+                  {{/each}}
+                {{else}} 
+                  <tr>
+                    <td class="dataTables_empty" colspan="4">
+                      <div class='text-center text-muted p-4'>
+                        <i class='icon far fa-folder-open fa-2x'></i><br>
+                        <small>Nenhuma solicitação realizada</small><br>
+                      </div>
+                    </td>
+                  </tr>
+                {{/if}}
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -62,14 +66,16 @@
         closeButton: true
     });
 
-    function atender_solicitacao(solicitacaoId) {
-        $.ajax({
-            url: './atender_solicitacao/'+solicitacaoId,
-            type: 'GET',
-            success: function(response) {
-                $('#painel_modal').html(response);
-                $('#modal-upload').modal('show');
-            },
-        });
-    }
+    $('.atender').on('click', function() {
+      var solicitacaoId = $(this).attr('data-id');
+
+      $.ajax({
+          url: './atender_solicitacao/'+solicitacaoId,
+          type: 'GET',
+          success: function(response) {
+              $('#painel_modal').html(response);
+              $('#modal-upload').modal('show');
+          },
+      });
+    });
 </script>
