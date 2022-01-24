@@ -91,7 +91,7 @@
                                 <div class="status{{@index}}">
                                     <strong>Status:</strong> <span class="badge">{{this.status}}</span>
                                 </div>
-                                <div><strong>Empresa:</strong> {{this.empresa}}</div>
+                                <div class="admin"><strong>Empresa:</strong> {{this.empresa}}</div>
                                 <div><strong>Descrição:</strong> {{this.descricao}}</div>
                             </div>
                         </div>
@@ -107,3 +107,13 @@
     </div>
     <!-- /.modal-dialog -->
 </div>
+
+<script>
+    $(document).ready(function() {
+        var isAdmin = {{isAdmin}};
+
+        if (!isAdmin) {
+            $('.admin').hide();
+        }
+    });
+</script>

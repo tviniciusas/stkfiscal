@@ -1,4 +1,6 @@
-<style type="text/css"></style>
+<style type="text/css">
+    .table td, .table th { border-top: none; }
+</style>
 
 {{> scripts}}
 
@@ -6,57 +8,72 @@
     <div class="card-header">
        <h3 class="card-title">Histórico</h3>
     </div>
-    <div class="card-body table-responsive p-0">
-        <table id="tableSolicitacoes" class="table table-sm table-striped text-nowrap m-0"> 
-            <thead>
-                <tr>
-                    <th class="admin">Empresa</th>
-                    <th>Descrição</th>
-                    <th>Dt. Solicitado</th>
-                    <th>Status</th>
-                    <th>Ações</th>
-                </tr>
-            </thead>
-            <tbody>
-                <script>
-                    function addBadge(index, status) {
-                        var label = '';
-                        switch(status) {
-                            case 'DIGITAÇÃO': 
-                                label = 'primary';
-                                break;
-                            case 'SOLICITADO': 
-                                label = 'warning';
-                                break;
-                            case 'ATENDIDO': 
-                                label = 'info';
-                                break;
-                            case 'FINALIZADO': 
-                                label = 'success';
-                                break;
-                        }
-                        
-                        $(".status"+index).find('span').addClass('badge-'+label);
-                    }
-                </script>
-                {{#each solicitacoes}}
-                    <tr>
-                        <td class="admin">{{this.empresa.razao}}</td>
-                        <td>{{this.descricao}}</td>
-                        <td>{{this.dt_solicitado}}</td>
-                        <td name="{{@index}}" class="status{{@index}}">
-                            <span id="status{{@index}}" class="badge">{{this.status}}</span>
-                        </td>
-                        <td>
-                            <i style="cursor: pointer" data-id="{{this.id}}"
-                            class="text-info icon fas fa-hourglass-end historico mr-2" 
-                            data-toggle="tooltip" title="Ver histórico"></i>
-                        </td>
-                    </tr>
-                    <script>addBadge({{@index}}, '{{this.status}}');</script>
-                {{/each}}
-            </tbody>
-        </table>
+    <div class="card-body">
+        <div class="row">
+            <div class="col table-responsive">
+                <table id="tableSolicitacoes" class="table table-sm table-striped m-0"> 
+                    <thead class="text-nowrap">
+                        <tr>
+                            <th class="admin">Empresa</th>
+                            <th>Descrição</th>
+                            <th>Dt. Solicitado</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <script>
+                            function addBadge(index, status) {
+                                var label = '';
+                                switch(status) {
+                                    case 'DIGITAÇÃO': 
+                                        label = 'primary';
+                                        break;
+                                    case 'SOLICITADO': 
+                                        label = 'warning';
+                                        break;
+                                    case 'ATENDIDO': 
+                                        label = 'info';
+                                        break;
+                                    case 'FINALIZADO': 
+                                        label = 'success';
+                                        break;
+                                }
+                                
+                                $(".status"+index).find('span').addClass('badge-'+label);
+                            }
+                        </script>
+                        {{#if solicitacoes}}
+                            {{#each solicitacoes}}
+                                <tr>
+                                    <td class="admin">{{this.empresa.razao}}</td>
+                                    <td>{{this.descricao}}</td>
+                                    <td>{{this.dt_solicitado}}</td>
+                                    <td name="{{@index}}" class="status{{@index}}">
+                                        <span id="status{{@index}}" class="badge">{{this.status}}</span>
+                                    </td>
+                                    <td>
+                                        <i style="cursor: pointer" data-id="{{this.id}}"
+                                        class="text-info icon fas fa-hourglass-end historico mr-2" 
+                                        data-toggle="tooltip" title="Ver histórico"></i>
+                                    </td>
+                                </tr>
+                                <script>addBadge({{@index}}, '{{this.status}}');</script>
+                            {{/each}}
+                        {{else}} 
+                            <tr>
+                                <td class="dataTables_empty" colspan="4">
+                                <div class='text-center text-muted p-4'>
+                                    <i class='icon far fa-folder-open fa-2x'></i><br>
+                                    <small>Nenhum histórico para ser exibido</small><br>
+                                </div>
+                                </td>
+                            </tr>
+                        {{/if}}
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -67,6 +84,7 @@
         var isAdmin = {{isAdmin}};
 
         if (!isAdmin) {
+            $('.card').removeClass('card-outline');
             $('.admin').hide();
         }
         else {

@@ -112,63 +112,65 @@ module.exports =  {
             cidade: req.body.cidade 
         };
         
-        var estados;
-        var cidades;
-        var password = '';
+        var password;
         var usuario = req.user;
         var empresa = usuario.empresaCliente;
+
+        var message;
         
         try {
-            estados = await ApiService.getEstados();
-            cidades = await ApiService.getMunicipiosByEstado(empresaTemp.estado);
-
-            var error = fieldsValidate(empresaTemp);
-            if (error != '') {
-                throw error;
+            message = fieldsValidate(empresaTemp);
+            if (message != '') {
+                throw message;
             }
 
             const findMail = await Empresa.findOne({where: {email: empresaTemp.email}});
             if (empresa) {
-                if(findMail && findMail.id !== empresa.empresaId) {
-                    error = "E-mail já cadastrado."; 
-                    throw error;
+                if(findMail && findMail.id !== empresa.id) {
+                    message = "E-mail já cadastrado."; 
+                    throw message;
                 }
             }
             else {
                 if(findMail) {
-                    error = "E-mail já cadastrado."; 
-                    throw error;
+                    message = "E-mail já cadastrado."; 
+                    throw message;
                 }
             }
 
             if (req.body.senha && req.body.confirmarSenha) {
                 password = await bcrypt.hash(req.body.confirmarSenha, 10);
             }
+            else if (!empresa) {
+                message = "O campo senha é obrigatório"; 
+                throw message;
+            }
 
             const cnpj = UtilService.onlyNumbers(empresaTemp.cnpj);
-            
-            if (!empresa) {
-                await Empresa.findOne({
-                    where: {
-                        cnpj: cnpj
-                    }
-                }).then(data => {
-                    if (data) {
-                        empresa = data.get({ plain: true });
-                    }
-                });
-            }
 
             const { nome, razao, email, estado, cidade } = empresaTemp;
             const ie = UtilService.onlyNumbers(empresaTemp.ie);
             const telefone = UtilService.onlyNumbers(empresaTemp.telefone);
 
             if (empresa) {
+
+                if (!password) {
+                    password = usuario.password;
+                }
+
                 await Empresa.update(
                     { nome, razao, cnpj, ie, telefone, email, estado, cidade },
                     { where: {id: empresa.id} }
-                ).catch(err => {
-                    throw err;
+                ).then(async empr => {
+                    await User.update({ 
+                        empresaClienteId: empr.id,
+                        password: password,
+                    },{ 
+                        where: {id: usuario.id} 
+                    });
+                }).catch(err => {
+                    message = 'Falha ao atualizar dados do usuário';
+                    throw message;
                 });
             }
             else {
@@ -177,48 +179,34 @@ module.exports =  {
                 }).then(async empr => {
                     empresa = empr;
                     
-                    await User.update(
-                        { empresaClienteId: empr.id },
-                        { where: {id: usuario.id} }
-                    );
+                    await User.update({ 
+                        empresaClienteId: empr.id,
+                        password: password,
+                    },{ 
+                        where: {id: usuario.id} 
+                    });
                 }).catch(err => {
-                    throw err;
+                    message = 'Falha ao atualizar dados do usuário';
+                    throw message;
                 });
             }
             
             if (empresa) {
-                await User.update({
-                    password: password,
-                    empresaId: empresa.id
-                }, {
-                    where: {id: usuario.id}
-                }).catch(err => {
-                    throw err;
-                });
-
                 empresa.cnpj = UtilService.cnpjMask(empresa.cnpj);
                 empresa.ie = UtilService.ieMask(empresa.ie);
                 empresa.telefone = UtilService.telMask(empresa.telefone);
             }
             
-            var success_msg = 'Empresa cadastrada com sucesso';
-            req.flash('success_msg', success_msg);
-            res.status(200).render('empresa', {
-                empresa,
-                estados,
-                cidades,
-                success_msg
+            var message = 'Empresa cadastrada com sucesso';
+
+            return res.status(200).send({
+                status: 'success',
+                message: message
             });
         } catch (error) {
-            var error_msg = error.errors ? error.errors[0].message : error;
-            var empresa = empresaTemp;
-            //console.log('error: usuario.id: ', usuario.id);
-            req.flash('error_msg', error_msg);
-            res.status(400).render('empresa', {
-                empresa,
-                estados,
-                cidades,
-                error_msg
+            return res.status(400).send({
+                status: 'error',
+                message: error
             });
         }
     },

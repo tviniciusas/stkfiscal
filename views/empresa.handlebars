@@ -293,10 +293,37 @@
         spinnerOff($('.btn-submit', 'Salvar'));
     });
 
-    async function formSubmit(e, btnInstance, spinnerText) {
+    //async function formSubmit(e, btnInstance, spinnerText) {
+    //    e.preventDefault();
+    //    await $("#dadosCadastrais").submit();
+    //    spinnerOn(btnInstance, spinnerText);
+    //}
+
+    function formSubmit(e, btnInstance, spinnerText) {
         e.preventDefault();
-        await $("#dadosCadastrais").submit();
         spinnerOn(btnInstance, spinnerText);
+
+        $.ajax({
+            url: '/empresa',
+            type: 'POST',
+            data: $("#dadosCadastrais").serialize(),
+            success: function(response) {
+                toastr.options.closeButton = true;
+
+                $("[name='senha']").val('');
+                $("[name='confirmarSenha']").val('');
+
+                toastr.success(response.message);
+
+                spinnerOff(btnInstance, 'Salvar');
+            },
+            error: function (error) {
+                $("[name='senha']").val('');
+                $("[name='confirmarSenha']").val('');
+                toastr.error(error.responseJSON.message);
+                spinnerOff(btnInstance, 'Salvar');
+            }
+        });
     }
 
     function onlyNumbers(field, value) {
