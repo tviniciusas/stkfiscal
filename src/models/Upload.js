@@ -31,18 +31,6 @@ class Upload extends Model {
                 }
               }
             },
-            user_id: {
-              type: DataTypes.INTEGER,
-              allowNull: true
-            },
-            empresa_id: {
-              type: DataTypes.INTEGER,
-              allowNull: true
-            },
-            solicitacao_id: {
-              type: DataTypes.INTEGER,
-              allowNull: true
-            },
             file_id: {
               type: DataTypes.STRING,
               allowNull: true

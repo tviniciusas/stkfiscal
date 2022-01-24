@@ -41,11 +41,6 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: true,
       },
-      empresa_cliente: {
-          type: Sequelize.BOOLEAN,
-          allowNull: true,
-          default: false
-      },
       created_at: {
         type: Sequelize.DATE,
         allowNull: false,

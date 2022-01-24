@@ -15,10 +15,6 @@ class Solicitacoes extends Model {
               type: DataTypes.DATE,
               allowNull: true
             },
-            empresa_id: {
-              type: DataTypes.INTEGER,
-              allowNull: false
-            },
             dt_atendido: {
               type: DataTypes.DATE,
               allowNull: true

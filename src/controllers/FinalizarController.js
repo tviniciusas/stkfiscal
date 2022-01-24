@@ -110,7 +110,7 @@ module.exports =  {
                 empresa: razaoSocial,
                 descricao: solicitacao.descricao,
                 status: solicitacao.status,
-                solicitacao_id: solicitacao.id
+                solicitacaoId: solicitacao.id
             })
     
             message = 'Solicitacao finalizada com sucesso!';
