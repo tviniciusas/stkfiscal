@@ -64,11 +64,11 @@ module.exports = {
             .then(function (obj) {
                 // update
                 if (obj) {
-                    message = 'Dados alterados com sucesso';
                     obj.update({nome, descricao, extensao});
+                    message = 'Dados alterados com sucesso';
                 } else {
-                    message = 'Dados cadastrados com sucesso';
                     Documento.create({nome, descricao, extensao});
+                    message = 'Dados cadastrados com sucesso';
                 }
             })
 
@@ -89,6 +89,15 @@ module.exports = {
         return res.status(200).send({
             status: true,
             dados: documento
+        })
+    },
+
+    async delete_modal(req, res) {
+        var documento = await Documento.findByPk(req.params.documentoId);
+    
+        return res.status(200).send({
+            status: true,
+            documento: documento
         })
     },
 

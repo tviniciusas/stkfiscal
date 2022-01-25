@@ -86,6 +86,7 @@ router.get("/admin/documentos/cadastro/edit/:id", DocumentoController.edit);
 router.get("/admin/documentos/cadastro/show_documentos", DocumentoController.show_documentos);
 router.get("/admin/documentos/cadastro/show_documentos_modal/:solicitacaoId", DocumentoController.show_documentos_modal);
 router.post("/admin/documentos/cadastro", DocumentoController.store);
+router.get("/admin/documentos/delete/:documentoId", DocumentoController.delete_modal);
 router.delete("/admin/documentos/cadastro", DocumentoController.delete);
 router.post("/admin/documentos/totalRegistros", DocumentoController.totalRegistros);
 

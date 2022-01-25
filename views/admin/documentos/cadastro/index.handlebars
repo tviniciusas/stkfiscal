@@ -1,5 +1,6 @@
-<style>
+<style type="text/css">
     .card-footer.float-right {background-color: #FFFFFF;}
+    .table td, .table th { border-top: none; }
 </style>
 
 <div class="row">
@@ -7,7 +8,7 @@
         <div class="card-buttons mb-3">
             <button type="button" onclick="criar_documento()" class="btn btn-primary swalDefaultSuccess"><i
             class="fas fa-plus mr-2"></i>
-                Cadastrar novo documento
+                Novo documento
             </button>
         </div>
 
@@ -29,17 +30,21 @@
                 </div>
             </div>
             <!-- /.card-header -->
-            <div class="card-body table-responsive p-0">
-                <table id="tableDocumentos" class="table table-sm table-striped text-nowrap m-0">
-                    <thead>
-                        <tr>
-                            <th>Nome</th>
-                            <th>Descrição</th>
-                            <th>Extensão</th>
-                            <th>Ações</th>
-                        </tr>
-                    </thead>
-                </table>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col table-responsive">
+                        <table id="tableDocumentos" class="table table-sm table-striped m-0">
+                            <thead class="text-nowrap">
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>Descrição</th>
+                                    <th>Extensão</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
             </div>
             <!-- /.card-body -->
             <div class="totalRegistros"></div>
@@ -58,7 +63,7 @@
 <script id="my-template" type="text/x-handlebars-template">
 
     <div class="modal fade" id="modal-cadastrar-documentos">
-    <div class="modal-dialog modal-xl">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title">Cadastrar documento</h4>
@@ -101,6 +106,38 @@
     </div>
     <!-- /.modal-dialog -->
 </div>
+</script>
+
+<script id="delete-documento-template" type="text/x-handlebars-template">
+  <div class="modal fade" id="modal-deletar-documento">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Excluir documento</h4>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form id="deletar_documento">
+            <div class="row">
+              <div class="col-sm-12">
+                <div class="form-group mb-3">
+                  <p>Deseja realmente excluir <strong> \{{nome}}</strong>?</p>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+            <button type="button" onclick="destroy_documento(\{{id}})" class="btn btn-danger">Excluir</button>
+        </div>
+      </div>
+      <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+  </div>
 </script>
 
 <script>
@@ -204,7 +241,7 @@
 
         $('#tableDocumentos tbody').on('click', '.excluir', async function () {
             var data = await table.row($(this).parents('tr')).data();
-            destroy_documento(data.id)
+            deletar_documento(data.id);
         });
 
         table.ajax.reload();
@@ -269,6 +306,23 @@
         });
     }
 
+    function deletar_documento(id) {
+        $.ajax({
+            url: "/admin/documentos/delete/"+id,
+            type: "GET",
+            beforeSend: function () {
+
+            },
+            success: function (response) {
+                var source = $("#delete-documento-template").html();
+                var template = Handlebars.compile(source);
+                var html = template(response.documento);
+
+                $('#loginPopup').html(html);
+                $('#modal-deletar-documento').modal('show');
+            },
+        });
+    }
 
     function destroy_documento(_id) {
         $.ajax({
@@ -279,12 +333,16 @@
 
             },
             success: function (response) {
-                show_documentos();
-
                 toastr.options.closeButton = true;
-                toastr.success(response.message)
 
-                totalRegistros();
+                $('#modal-deletar-documento').modal('hide');
+                $('.modal-backdrop').remove();
+
+                toastr.success(response.message);
+                setTimeout(function() {
+                    show_documentos();
+                    totalRegistros();
+                }, 1500);
             },
         });
 
