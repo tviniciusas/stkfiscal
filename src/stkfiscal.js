@@ -57,7 +57,7 @@ app.use(function (req, res, next) {
     if(req.user) {
         if(req.user.admin) {
             res.locals.user_name = 'Administrador iStok';
-        } else if(req.user.empresa_cliente_id) {
+        } else if(req.user.empresaClienteId) {
             res.locals.empresa = req.user.empresaCliente;
             res.locals.user_name = req.user.name;
         }
