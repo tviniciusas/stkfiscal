@@ -2,41 +2,42 @@
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('uploads', { 
-      id:{
+    await queryInterface.createTable('empresas', { 
+      id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
         autoIncrement: true,
         allowNull: false,
       },
-      diretorio: {
+      nome: {
         type: Sequelize.STRING,
         allowNull: true,
       },
-      mes: {
-        type: Sequelize.INTEGER,
+      razao: {
+        type: Sequelize.STRING,
         allowNull: true,
       },
-      ano: {
-        type: Sequelize.INTEGER,
+      cnpj: {
+       type: Sequelize.STRING,
+       allowNull: true,
+      },
+      ie: {
+        type: Sequelize.STRING,
         allowNull: true,
       },
-      user_id: {
-        type: Sequelize.INTEGER,
+      telefone: {
+        type: Sequelize.STRING,
         allowNull: true,
-        references: {model: 'users', key: 'id'}
       },
-      empresa_id: {
-        type: Sequelize.INTEGER,
+      email: {
+        type: Sequelize.STRING,
         allowNull: true,
-        references: {model: 'empresas', key: 'id'}
       },
-      solicitacao_id: {
-        type: Sequelize.INTEGER,
+      estado: {
+        type: Sequelize.STRING,
         allowNull: true,
-        references: {model: 'solicitacao', key: 'id'}
       },
-      file_id: {
+      cidade: {
         type: Sequelize.STRING,
         allowNull: true,
       },
@@ -47,15 +48,11 @@ module.exports = {
       updated_at: {
         type: Sequelize.DATE,
         allowNull: false,
-      },
-      solicitaco_id: {
-        type: Sequelize.INTEGER,
-        allowNull: true,
       }
     });
   },
 
   down: async (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('uploads');
+    await queryInterface.dropTable('empresas');
   }
 };

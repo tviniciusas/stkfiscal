@@ -2,50 +2,52 @@
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    return queryInterface.createTable('solicitacoes', {
+    await queryInterface.createTable('users', { 
       id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
         autoIncrement: true,
-        allowNull: false,
+        allowNull: false
       },
-      descricao: {
+      name: {
         type: Sequelize.STRING,
-        allowNull: false,
+        allowNull: true
       },
-      status: {
+      password: {
         type: Sequelize.STRING,
         allowNull: false
       },
-      dt_solicitado: {
-        type: Sequelize.DATE,
-        allowNull: true
+      email: {
+        type: Sequelize.STRING,
+        allowNull: false
       },
-      dt_atendido: {
-        type: Sequelize.DATE,
-        allowNull: true
-      },
-      dt_finalizado: {
-        type: Sequelize.DATE,
-        allowNull: true
+      admin: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
+        defaultValue: 0
       },
       empresa_id: {
         type: Sequelize.INTEGER,
-        allowNull: false,
+        allowNull: true,
+        references: {model: 'empresas', key: 'id'}
+      },
+      empresa_cliente_id: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
         references: {model: 'empresas', key: 'id'}
       },
       created_at: {
         type: Sequelize.DATE,
-        allowNull: false,
+        allowNull: false
       },
       updated_at: {
         type: Sequelize.DATE,
-        allowNull: false,
+        allowNull: false
       }
     });
   },
 
   down: async (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('solicitacoes');
+    await queryInterface.dropTable('users');
   }
 };
