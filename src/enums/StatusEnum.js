@@ -8,6 +8,24 @@ class StatusEnum {
         this.codigo = codigo;
         this.descricao = descricao;
     }
+
+    static getByDescription(description) {
+        const statusList = [
+            StatusEnum.DIGITACAO, StatusEnum.SOLICITADO, 
+            StatusEnum.ATENDIDO, StatusEnum.FINALIZADO
+        ];
+
+        var statusEnum;
+
+        statusList.forEach(status => {
+            if (status.descricao === description) {
+                statusEnum = status;
+            }
+        });
+
+        return statusEnum;
+    }
+
 }
 
 module.exports = StatusEnum;

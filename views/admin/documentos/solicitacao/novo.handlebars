@@ -125,6 +125,7 @@
         }
     }
     function store_empresa() {
+        console.log('store_empresa - novo')
         $.ajax({
             url: "/admin/documentos/solicitacao/store_solicitacao",
             type: "POST",
@@ -136,8 +137,8 @@
             beforeSend: function () {
             },
             success: function async(data, textStatus, xhr) {
+                console.log('store_empresa  - novo - sessesss')
                 toastr.options.closeButton = true;
-                console.log('etapa_documento: ', data);
                 if (xhr.status == 200) {
                     toastr.success("Dados cadastrados com sucesso")
                     $('#etapa_documentos').html(data);
@@ -156,6 +157,9 @@
                     toastr.error(response.message)
                 }
             },
+            error: function (error) {
+                toastr.error(error.responseJSON.message);
+            }
         });
     }
     function modal_adicionar_documentos() {

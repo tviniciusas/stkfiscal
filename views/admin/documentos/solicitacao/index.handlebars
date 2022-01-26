@@ -1,3 +1,8 @@
+<style type="text/css">
+    .table td, .table th { border-top: none; }
+    .disabled { color: #cccccc !important }
+</style>
+
 <div class="row">
     <div class="col-md-12">
         <div id="painel_show">
@@ -20,24 +25,29 @@
                     </div>
                 </div>
                 <!-- /.card-header -->
-                <div class="card-body table-responsive p-0">
-                    <table id="tableSolicitacoes" class="table table-sm table-striped text-nowrap m-0">
-                        <thead>
-                            <tr>
-                                <th>Empresa</th>
-                                <th>Status</th>
-                                <th>Criado em</th>
-                                <th>Dt. Solicitação</th>
-                                <th>Ações</th>
-                            </tr>
-                        </thead>
-                    </table>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col table-responsive">
+                            <table id="tableSolicitacoes" class="table table-sm table-striped m-0">
+                                <thead class="text-nowrap">
+                                    <tr>
+                                        <th>Empresa</th>
+                                        <th>Descrição</th>
+                                        <th>Status</th>
+                                        <th>Criado em</th>
+                                        <th>Dt. Solicitado</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                            </table>
+                        </div>
+                    </div>
                 </div>
                 <!-- /.card-body -->
                 {{#if solicitacoes}}
                 <div class="card-footer text-muted small clearfix">Total de registros: {{solicitacoes.length}}</div>
-                {{else}}
-                <div class="card-footer clearfix"></div>
+                {{!-- {{else}}
+                <div class="card-footer clearfix"></div> --}}
                 {{/if}}
             </div>
         </div>
@@ -48,12 +58,45 @@
 
 {{> scripts}}
 
+<script id="delete-solicitacao-template" type="text/x-handlebars-template">
+  <div class="modal fade" id="modal-deletar-solicitacao">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Excluir solicitação</h4>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form id="deletar_solicitacao">
+            <div class="row">
+              <div class="col-sm-12">
+                <div class="form-group mb-3">
+                  <p>Deseja realmente excluir <strong>\{{descricao}}</strong>?</p>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+            <button type="button" onclick="destroy_solicitacao(\{{id}})" class="btn btn-danger">Excluir</button>
+        </div>
+      </div>
+      <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+  </div>
+</script>
+
 <script>
     $(function () {
         show_solicitacoes();
         $('#modal-solicitar-documentos').on('hidden.bs.modal', function () {
             $("#solicitar_documento").trigger('reset');
         });
+        setTimeout(function(){editDisabled();}, 1000);
     });
     function buscarDocumento() {
         var input, filter, table, tr, td, i, txtValue;
@@ -90,13 +133,14 @@
             "ajax": "/admin/documentos/solicitacao/show_solicitacoes",
             "columns": [
                 { "data": "empresa.razao" },
+                { "data": "descricao" },
                 {
                     "data": "status",
                     "render": function (data, type, row) {
                         dado = '';
                         switch (data) {
                             case "DIGITAÇÃO":
-                                dado = '<span class="badge badge-primary">' + data + '</span>';
+                                dado = '<span class="badge badge-primary digitacao">' + data + '</span>';
                                 break;
                             case "SOLICITADO":
                                 dado = '<span class="badge badge-warning">' + data + '</span>';
@@ -116,16 +160,18 @@
                 {
                     "data": null,
                     "defaultContent": 
-                        '<i style="cursor: pointer" class="text-primary icon fas fa-search editar mr-2" data-toggle="tooltip" title="Editar"></i>' +
+                        '<div class="text-nowrap"><i style="cursor: pointer" class="text-primary icon fas fa-pen editar disabled mr-2" data-toggle="tooltip" title="Editar"></i>' +
                         '<i style="cursor: pointer" class="text-info icon fas fa-hourglass-end historico mr-2" data-toggle="tooltip" title="Histórico"></i>' +
-                        '<i style="cursor: pointer" class="text-danger icon fas fa-trash excluir mr-2" data-toggle="tooltip" title="Excluir"></i>'
+                        '<i style="cursor: pointer" class="text-danger icon fas fa-trash excluir mr-2" data-toggle="tooltip" title="Excluir"></i></div>'
                         
                 }
             ]
         });
         $('#tableSolicitacoes tbody').on('click', 'tr .editar', async function () {
-            var data = await table.row($(this).parents('tr')).data();
-            edit_solicitacao(data.id);
+            if (!$(this).hasClass('disabled')) {
+                var data = await table.row($(this).parents('tr')).data();
+                edit_solicitacao(data.id);
+            }
         });
         $('#tableSolicitacoes tbody').on('click', 'tr .historico', async function () {
             var data = await table.row($(this).parents('tr')).data();
@@ -133,9 +179,15 @@
         });
         $('#tableSolicitacoes tbody').on('click', '.excluir', async function () {
             var data = await table.row($(this).parents('tr')).data();
-            destroy_solicitacao(data.id)
+            deletar_solicitacao(data.id)
         });
+        
         table.ajax.reload();
+    }
+    function editDisabled() {
+        $('#tableSolicitacoes tbody').each(function() {
+            $(this).find(".digitacao").closest('tr').find('.editar').removeClass('disabled');
+        });
     }
     function edit_solicitacao(_id) {
         $.ajax({
@@ -148,6 +200,9 @@
                 $('#painel_create').html(response);
                 $('#painel_create').show();
             },
+            error: function (error) {
+                toastr.error(error.responseJSON.message);
+            }
         });
     }
     function historic_solicitacao(_id) {
@@ -170,6 +225,23 @@
             },
         });
     }
+    function deletar_solicitacao(id) {
+        $.ajax({
+            url: "/admin/solicitacao/delete/"+id,
+            type: "GET",
+            beforeSend: function () {
+
+            },
+            success: function (response) {
+                var source = $("#delete-solicitacao-template").html();
+                var template = Handlebars.compile(source);
+                var html = template(response.solicitacao);
+
+                $('#loginPopup').html(html);
+                $('#modal-deletar-solicitacao').modal('show');
+            },
+        });
+    }
     function destroy_solicitacao(_id) {
         $.ajax({
             url: "/admin/documentos/solicitacao",
@@ -178,10 +250,18 @@
             beforeSend: function () {
             },
             success: function (response) {
+                toastr.options.closeButton = true;
+
+                $('#modal-deletar-solicitacao').modal('hide');
+                $('.modal-backdrop').remove();
+
                 if (response.status) {
-                    show_solicitacoes();
-                    toastr.options.closeButton = true;
-                    toastr.success(response.message)
+                    toastr.success(response.message);
+                    setTimeout(function() {
+                        show_solicitacoes();
+                    }, 1000);
+
+                    setTimeout(function(){editDisabled();}, 1500);
                 } else {
                     toastr.error(response.message)
                 }
@@ -204,6 +284,11 @@
     function painel_solicitacoes() {
         $('#painel_create').empty();
         $('#painel_show').show();
-        show_solicitacoes();
+
+        setTimeout(function() {
+            show_solicitacoes();
+        }, 1000);
+
+        setTimeout(function(){editDisabled();}, 1500);
     }
 </script>

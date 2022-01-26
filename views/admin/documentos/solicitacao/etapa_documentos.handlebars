@@ -71,6 +71,9 @@
                     toastr.error(response.message)
                 }
             },
+            error: function (error) {
+                toastr.error(error.responseJSON.message);
+            }
         });
     }
     function show_solicitacoes_documentos() {

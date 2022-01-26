@@ -93,6 +93,7 @@ router.post("/admin/documentos/totalRegistros", DocumentoController.totalRegistr
 router.get("/admin/documentos/solicitacao", DocumentosSolicitacoes.index);
 router.get("/admin/documentos/solicitacao/show_solicitacoes", DocumentosSolicitacoes.show_solicitacoes);
 router.get("/admin/documentos/solicitacao/create", DocumentosSolicitacoes.create);
+router.get("/admin/solicitacao/delete/:solicitacaoId", DocumentosSolicitacoes.delete_modal);
 router.delete("/admin/documentos/solicitacao", DocumentosSolicitacoes.delete);
 
 router.get("/admin/documentos/solicitacao/show_solicitacoes_documentos", DocumentosSolicitacoes.show_solicitacoes_documentos);

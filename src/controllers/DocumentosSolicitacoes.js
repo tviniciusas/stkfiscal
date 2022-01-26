@@ -85,37 +85,53 @@ module.exports = {
     async edit(req, res) {
 
         var solicitacao, empresas;
+        const statusDigitacao = StatusEnum.DIGITACAO;
+        var message;
 
-        await Solicitacao.findOne({
-            include: [{ model: Empresa, as: 'empresa' }],
-            where: { id: req.params.id }
-        }).then(function (solic) {
-            solicitacao = JSON.parse(JSON.stringify(solic, null, 2));
-        });
-
-        await User.findAll({
-            include: [{model: Empresa, as: 'empresaCliente'}],
-            where: {
-                empresaClienteId: {
-                    [Op.not]: null
-                },
-                admin: false
-            }
-        }).then(function(user) {
-            var emp = [];
-            user.forEach(u => {
-                emp.push(u.empresaCliente);
+        try {
+            await Solicitacao.findOne({
+                include: [{ model: Empresa, as: 'empresa' }],
+                where: { id: req.params.id }
+            }).then(function (solic) {
+                solicitacao = JSON.parse(JSON.stringify(solic, null, 2));
             });
-
-            emp = UtilService.orderByName(emp);
-            empresas = JSON.parse(JSON.stringify(emp, null, 2));
-        });
-
-        return res.status(200).render('./admin/documentos/solicitacao/novo', { 
-            layout: false, 
-            empresas: empresas, 
-            solicitacao: solicitacao
-        });
+    
+            var retorno = StatusEnum.getByDescription(solicitacao.status)
+            if (retorno !== statusDigitacao) {
+                message = 'Não é possível atualizar esta solicitação'
+                throw message;
+            }
+    
+            await User.findAll({
+                include: [{model: Empresa, as: 'empresaCliente'}],
+                where: {
+                    empresaClienteId: {
+                        [Op.not]: null
+                    },
+                    admin: false
+                }
+            }).then(function(user) {
+                var emp = [];
+                user.forEach(u => {
+                    emp.push(u.empresaCliente);
+                });
+    
+                emp = UtilService.orderByName(emp);
+                empresas = JSON.parse(JSON.stringify(emp, null, 2));
+            });
+    
+            return res.status(200).render('./admin/documentos/solicitacao/novo', { 
+                layout: false, 
+                empresas: empresas, 
+                solicitacao: solicitacao
+            });
+            
+        } catch (error) {
+            return res.status(400).send({
+                status: 'error',
+                message: error
+            });
+        }
     },
     
     async historic(req, res) {
@@ -203,11 +219,21 @@ module.exports = {
             });
             
         } catch (error) {
-            console.log(error);
             return res.status(400).render('./admin/documentos/solicitacao/etapa_documentos', { 
                 layout: false, solicitacao: solicitacao_return 
             });
         }
+    },
+
+    async delete_modal(req, res) {
+        var solicitacao = await Solicitacao.findByPk(req.params.solicitacaoId);
+
+        solicitacao.descricao = UtilService.textTruncate(solicitacao.descricao, 30);
+    
+        return res.status(200).send({
+            status: true,
+            solicitacao: solicitacao
+        })
     },
 
     async delete(req, res) {
@@ -218,9 +244,10 @@ module.exports = {
         .then(async function (solic) {
 
             const solicitado = StatusEnum.SOLICITADO.descricao;
+            const atendido = StatusEnum.ATENDIDO.descricao;
             const finalizado = StatusEnum.FINALIZADO.descricao;
 
-            var notDestroy = [solicitado, finalizado];
+            var notDestroy = [solicitado, atendido, finalizado];
 
             if(notDestroy.includes(solic.status)) {
                 return res.status(200).send({
@@ -245,30 +272,40 @@ module.exports = {
         var status = StatusEnum.SOLICITADO.descricao;
         var razaoSocial;
 
-        var solicitacao = await Solicitacao.findByPk(solicitacoes_id );
-        var emrpesaId = solicitacao.empresaId;
+        try {
+            var solicitacao = await Solicitacao.findByPk(solicitacoes_id );
+            var emrpesaId = solicitacao.empresaId;
 
-        await Empresa.findByPk(emrpesaId).then(function(emp) {
-            razaoSocial = emp.razao;
-        });
+            await Empresa.findByPk(emrpesaId).then(function(emp) {
+                razaoSocial = emp.razao;
+            });
 
-        await solicitacao.update({
-            status: status,
-            dt_solicitado: Date.now()
-        }).then(function(solic) {
-            Historico.create({
-                data_hora: new Date(),
-                empresa: razaoSocial,
-                descricao: solic.descricao,
-                status: solic.status,
-                solicitacaoId: solic.id
-            })
-        });
+            await solicitacao.update({
+                status: status,
+                dt_solicitado: Date.now()
+            }).then(function(solic) {
+                Historico.create({
+                    data_hora: new Date(),
+                    empresa: razaoSocial,
+                    descricao: solic.descricao,
+                    status: solic.status,
+                    solicitacaoId: solic.id
+                })
+            });
 
-        return res.status(200).send({
-            status: true,
-            msg: "Solicitação concluída com sucesso!"
-        });
+            return res.status(200).send({
+                status: true,
+                msg: "Solicitação concluída com sucesso!"
+            });
+            
+        } catch (error) {
+            return res.status(400).send({
+                status: true,
+                msg: error
+            });
+        }
+
+        
     },
 
     async store_solicitacoes_documentos(req, res) {

@@ -155,6 +155,17 @@ function dateFormat(date, showTime = false){
     }
 }
 
+function textTruncate(texto, maxNumberCharacters) {
+    var shortText = texto;
+
+    if (texto.length > maxNumberCharacters-3) {
+        shortText = shortText.substring(0, maxNumberCharacters)
+        .split(" ").slice(0, -1).join(" ") + "...";
+    }
+    
+    return shortText;
+}
+
 module.exports = {
     onlyNumbers,
     orderByName,
@@ -166,5 +177,6 @@ module.exports = {
     telMask, 
     getMeses,
     getAnos,
-    dateFormat
+    dateFormat,
+    textTruncate
 };
