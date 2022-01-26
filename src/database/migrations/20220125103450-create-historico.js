@@ -29,7 +29,6 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {model: 'solicitacoes', key: 'id'},
-        onUpdate: 'CASCADE',
         onDelete: 'CASCADE'
       },
       created_at: {
