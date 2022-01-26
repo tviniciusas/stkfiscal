@@ -1,8 +1,22 @@
 const Documento = require('../models/Documento');
 const SolicitacaoDocumentos = require('../models/SolicitacaoDocumentos');
-const Solicitacoes = require('../models/Solicitacoes');
-const User = require('../models/User');
 const DocumentoService = require('../services/DocumentoService');
+
+function fieldsValidate(documento) {
+    var msg = '';
+
+    if (documento.nome === null || documento.nome === '') {
+        msg = 'O campo Nome é obrigatório';
+    }
+    else if (documento.extensao === null || documento.extensao === '') {
+        msg = 'O campo Extensão é obrigatório';
+    }
+    else if (documento.descricao === null || documento.descricao === '') {
+        msg = 'O campo Descrição é obrigatório';
+    }
+    
+    return msg;   
+} 
 
 module.exports = {
 
@@ -56,26 +70,59 @@ module.exports = {
 
     async store(req, res) {
 
-        const {nome, descricao, extensao } = req.body;
+        const documento = { 
+            nome: req.body.nome,
+            descricao: req.body.descricao, 
+            extensao: req.body.extensao,
+        };
         const id = req.body.documentos_id;
         var message;
 
-        await Documento.findOne({ where: {id: id}})
-            .then(function (obj) {
+        try {
+
+            message = fieldsValidate(documento);
+            if (message !== '') {
+                throw message;
+            }
+
+            await Documento.findOne({ where: {id: id}})
+            .then(async function (obj) {
                 // update
                 if (obj) {
-                    obj.update({nome, descricao, extensao});
-                    message = 'Dados alterados com sucesso';
+                    await obj.update({
+                        nome: documento.nome, 
+                        descricao: documento.descricao, 
+                        extensao: documento.extensao
+                    }).then(doc => {
+                        message = 'Dados atualizados com sucesso';
+                    }).catch(error => {
+                        message = 'Falha ao atualizar documento';
+                        throw message;
+                    });
                 } else {
-                    Documento.create({nome, descricao, extensao});
-                    message = 'Dados cadastrados com sucesso';
+                    await Documento.create({
+                        nome: documento.nome, 
+                        descricao: documento.descricao, 
+                        extensao: documento.extensao
+                    }).then(doc => {
+                        message = 'Dados cadastrados com sucesso';
+                    }).catch(error => {
+                        message = 'Falha ao cadastrar documento';
+                        throw message;
+                    });
                 }
             })
 
-        return res.status(200).send({
-            status: 'success',
-            message: message
-        })
+            return res.status(200).send({
+                status: 'success',
+                message: message
+            });
+        } catch (error) {
+            return res.status(400).send({
+                status: 'error',
+                message: error
+            });
+        }
     },
 
     async edit(req, res) {

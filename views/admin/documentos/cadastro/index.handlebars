@@ -1,6 +1,8 @@
 <style type="text/css">
-    .card-footer.float-right {background-color: #FFFFFF;}
+    .card-footer.float-right { background-color: #FFFFFF; }
     .table td, .table th { border-top: none; }
+    .required { color: #dc3545; }
+    .opaque { color: gray; opacity: 0.6; width: 100%; height: 100vh; }
 </style>
 
 <div class="row">
@@ -32,7 +34,7 @@
             <!-- /.card-header -->
             <div class="card-body">
                 <div class="row">
-                    <div class="col table-responsive">
+                    <div class="col-12 table-responsive">
                         <table id="tableDocumentos" class="table table-sm table-striped m-0">
                             <thead class="text-nowrap">
                                 <tr>
@@ -74,32 +76,42 @@
             <div class="modal-body">
                 <form id="cadastrar_documento">
                     <div class="row">
-                        <input value="\{{id}}" type="hidden" id="documentos_id" name="documentos_id" class="form-control" placeholder="documentos_id">
+                        <input value="\{{id}}" type="hidden" id="documentos_id" name="documentos_id" class="form-control">
                         <div class="col-sm-8">
                             <div class="form-group mb-3">
-                                <label for="nome">Nome do documento</label>
+                                <label for="nome">
+                                    Nome
+                                    <span class="required">*</span>
+                                </label>
                                 <input value="\{{nome}}" type="text" id="nome" name="nome" class="form-control"
-                                    placeholder="Nome">
+                                    placeholder="Nome do documento" maxlength="150">
                             </div>
                         </div>
                         <div class="col-sm-4">
                             <div class="form-group mb-3">
-                                <label for="extensao">Extensão do arquivo</label>
+                                <label for="extensao">
+                                    Extensão
+                                    <span class="required">*</span>
+                                </label>
                                 <input value="\{{extensao}}" type="text" id="extensao" name="extensao" class="form-control"
-                                    placeholder="Extensão">
+                                    placeholder="Extensão do arquivo" minlength="3" maxlength="5">
                             </div>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="descricao">Descrição do documento</label>
-                        <textarea id="descricao" name="descricao" class="form-control" rows="3"
+                        <label for="descricao">
+                            Descrição
+                            <span class="required">*</span>
+                        </label>
+                        <textarea id="descricao" name="descricao" class="form-control" rows="3" maxlength="400"
                             placeholder="Descrição do documento">\{{descricao}}</textarea>
                     </div>
                 </form>
             </div>
-            <div class="modal-footer justify-content-between">
+            <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
-                <button type="button" onclick="store_documentos()" class="btn btn-primary">Salvar</button>
+                <button type="button" onclick="store_documentos(event, $(this), 'Salvando...')" 
+                class="btn btn-primary">Salvar</button>
             </div>
         </div>
         <!-- /.modal-content -->
@@ -149,6 +161,27 @@
         timer: 3000,
         closeButton: true
     });
+
+    function formDisabled(disabled) {
+        $("#cadastrar_documento :input").prop("disabled", disabled);
+    }
+
+    function spinnerOn(btnInstance, spinnerText = '', timeMs = 0) {
+        setTimeout(function() {
+            btnInstance.html(`<span class="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true"></span>${spinnerText}`).addClass('disabled');
+            $('.content').addClass('opaque');
+            formDisabled(true);
+        }, timeMs);
+    }
+
+    function spinnerOff(btnInstance, btnText = '', iconTag = '', timeMs = 1500) {
+        setTimeout(function() {
+            $('.spinner-border').remove();
+            btnInstance.html(iconTag+''+btnText).removeClass('disabled');
+            $('.content').removeClass('opaque');
+            formDisabled(false);
+        }, timeMs);
+    }
 
     function totalRegistros() {
         $.ajax({
@@ -229,7 +262,7 @@
                 { "data": "extensao" },
                 {
                     "data": null,
-                    "defaultContent": '<i style="cursor: pointer" class="text-info icon fas fa-pen editar mr-3" data-toggle="tooltip" title="Editar"></i><i style="cursor: pointer" class="text-danger icon fas fa-trash excluir" data-toggle="tooltip" title="Excluir"></i>'
+                    "defaultContent": '<div  class="text-nowrap"><i style="cursor: pointer" class="text-info icon fas fa-pen editar mr-3" data-toggle="tooltip" title="Editar"></i><i style="cursor: pointer" class="text-danger icon fas fa-trash excluir" data-toggle="tooltip" title="Excluir"></i></div>'
                 }
             ]
         });
@@ -256,7 +289,9 @@
         $('#modal-cadastrar-documentos').modal('show');
     }
 
-    function store_documentos() {
+    function store_documentos(e, btnInstance, spinnerText) {
+        e.preventDefault();
+        spinnerOn(btnInstance, spinnerText);
 
         $.ajax({
             url: "/admin/documentos/cadastro",
@@ -269,22 +304,25 @@
                 toastr.options.closeButton = true;
 
                 if (response.status) {
+                    toastr.success(response.message);
 
                     $('#modal-cadastrar-documentos').modal('hide');
                     $('.modal-backdrop').remove();
 
                     setTimeout(function() {
-                        toastr.success(response.message);
                         show_documentos();
                         totalRegistros();
-                    }, 500);
-
+                    }, 1500);
                 } else {
-
                     toastr.error(response.message)
                 }
 
+                spinnerOff(btnInstance, 'Salvar');
             },
+            error: function (error) {
+                toastr.error(error.responseJSON.message);
+                spinnerOff(btnInstance, 'Salvar');
+            }
         });
     }
 
