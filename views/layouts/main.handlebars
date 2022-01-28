@@ -44,13 +44,13 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <!-- Right navbar links -->
     <ul class="navbar-nav ml-auto">
       <!-- Refresh button -->
-      <li class="nav-item">
+      {{!-- <li class="nav-item">
         <a class="nav-link" href="#">
           <i class="fas fa-sync-alt"></i>
         </a>
-      </li>
+      </li> --}}
       <!-- Messages Dropdown Menu -->
-      <li class="nav-item dropdown">
+      {{!-- <li class="nav-item dropdown">
         <a class="nav-link" data-toggle="dropdown" href="#">
           <i class="far fa-comment"></i>
         </a>
@@ -105,9 +105,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
           <div class="dropdown-divider"></div>
           <a href="#" class="dropdown-item dropdown-footer">See All Messages</a>
         </div>
-      </li>
+      </li> --}}
       <!-- Notifications Dropdown Menu -->
-      <li class="nav-item dropdown">
+      {{!-- <li class="nav-item dropdown">
         <a class="nav-link" data-toggle="dropdown" href="#">
           <i class="far fa-bell"></i>
           <span class="badge badge-danger navbar-badge">15</span>
@@ -132,20 +132,20 @@ scratch. This page gets rid of all links and provides the needed markup only.
           <div class="dropdown-divider"></div>
           <a href="#" class="dropdown-item dropdown-footer">See All Notifications</a>
         </div>
-      </li>
+      </li> --}}
       <!-- Profile Dropdown Menu -->
       <li class="profile-button nav-item dropdown">
         <a class="nav-link" data-toggle="dropdown" href="#">
-        <div class="d-flex h-100">
-          <img src="/img/user2-160x160.jpg" class="img-circle h-100 mr-2" alt="User Image">
-          <div class="info">
-            <span>{{user_name}}</span>
+          <div class="d-flex h-100">
+            <img src="/img/user2-160x160.jpg" class="img-circle h-100 mr-2" alt="User Image">
+            <div class="info">
+              <span>{{user_name}}</span>
+            </div>
           </div>
-        </div>
-      </a>
-              <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+        </a>
+        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
           <span class="dropdown-header">{{user_name}}</span>
-          <div class="dropdown-divider"></div>
+          {{!-- <div class="dropdown-divider"></div>
           <a href="#" class="dropdown-item">
             <i class="fas fa-file-signature mr-2"></i> Plano
           </a>
@@ -160,7 +160,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
           <div class="dropdown-divider"></div>
           <a href="#" class="dropdown-item">
             <i class="fas fa-calculator mr-2"></i> Financeiro
-          </a>
+          </a> --}}
           <div class="dropdown-divider"></div>
           <form name="logout" action="/logout?_method=DELETE" method="POST">
             <a  href="javascript:logout.submit()" class="dropdown-item">
