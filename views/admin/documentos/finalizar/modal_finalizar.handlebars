@@ -1,4 +1,6 @@
-<style type="text/css"></style>
+<style type="text/css">
+    .table td, .table th { border-top: none; }
+</style>
 
 {{> scripts}}
 
@@ -48,23 +50,27 @@
                     <div class="card-header">
                         <h3 class="card-title">Documentos solicitados</h3>
                     </div>
-                    <div class="card-body table-responsive p-0">
-                        <table class="table table-sm table-striped text-nowrap text-break m-0">
-                            <thead>
-                                <tr>
-                                    <th>Nome</th>
-                                    <th>Descrição</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {{#each documentos}}
-                                    <tr>
-                                        <td>{{this.nome}}{{this.extencao}}</td>
-                                        <td>{{this.descricao}}</td>
-                                    </tr>
-                                {{/each}}
-                            </tbody>
-                        </table>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col table-responsive">
+                                <table class="table table-sm table-striped text-break">
+                                    <thead class="text-nowrap">
+                                        <tr>
+                                            <th>Nome</th>
+                                            <th>Descrição</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {{#each documentos}}
+                                            <tr>
+                                                <td>{{this.nome}}{{this.extencao}}</td>
+                                                <td>{{this.descricao}}</td>
+                                            </tr>
+                                        {{/each}}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -72,31 +78,34 @@
                     <div class="card-header">
                         <h3 class="card-title">Documentos enviados</h3>
                     </div>
-                    <div class="card-body table-responsive p-0">
-                        <table class="table table-sm table-striped text-nowrap text-break m-0">
-                            <thead>
-                                <tr>
-                                    <th>Nome</th>
-                                    <th>Mês</th>
-                                    <th>Ano</th>
-                                    <th>Ações</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {{#each uploads}}
-                                    <tr>
-                                        <td>{{this.diretorio}}</td>
-                                        <td>{{this.mes}}</td>
-                                        <td>{{this.ano}}</td>
-                                        <td>
-                                            <a href="#">
-                                                <i style="cursor: pointer" class="text-info icon fas fa-file-download mr-2" data-toggle="tooltip" title="Baixar"></i>
-                                            </a>
-                                        </td>
-                                    </tr>
-                                {{/each}}
-                            </tbody>
-                        </table>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col table-responsive">
+                                <table class="table table-sm table-striped text-break">
+                                    <thead class="text-nowrap">
+                                        <tr>
+                                            <th>Nome</th>
+                                            <th>Mês</th>
+                                            <th>Ano</th>
+                                            <th>Ações</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {{#each uploads}}
+                                            <tr>
+                                                <td>{{this.diretorio}}</td>
+                                                <td>{{this.mes}}</td>
+                                                <td>{{this.ano}}</td>
+                                                <td>
+                                                    <i style="cursor: pointer" class="text-info icon fas fa-file-download download mr-2" 
+                                                    data-toggle="tooltip" title="Baixar" onclick="download({{this.id}})"></i>
+                                                </td>
+                                            </tr>
+                                        {{/each}}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -113,7 +122,6 @@
 
 <script>
     function finalizar(solicitacaoId) {
-        console.log('finalizar: ', solicitacaoId)
         $.ajax({
             url: '/admin/documentos/finalizar',
             data: {solicitacaoId: solicitacaoId},
@@ -138,5 +146,20 @@
                 toastr.error(error.responseJSON.message);
             }
         });
+    }
+
+    function download(id) {
+        //$.ajax({
+        //    url: '/admin/documentos/download',
+        //    data: {uploadId: id},
+        //    type: "POST",
+        //    success: function(response) {
+        //        toastr.options.closeButton = true;
+        //        toastr.success(response.message);
+        //    },
+        //    error: function (error) {
+        //        toastr.error(error.responseJSON.message);
+        //    }
+        //});
     }
 </script>

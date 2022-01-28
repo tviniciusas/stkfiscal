@@ -6,6 +6,7 @@ const Upload = require('../models/Upload');
 const Historico = require('../models/Historico');
 const StatusEnum = require('../enums/StatusEnum');
 const UtilService = require('../services/UtilService');
+//const DownloadService = require('../services/DownloadService');
 
 module.exports =  {
 
@@ -126,6 +127,30 @@ module.exports =  {
                 message: error
             });
         }
-    }
+    },
+
+    // async download(req, res) {
+    //     const uploadId = req.body.uploadId;
+    //     var message;
+
+    //     try {
+    //         const upload = await Upload.findByPk(uploadId);
+
+    //         const url = 'https://www.pexels.com/pt-br/foto/papel-de-parede-4k-wallpaper-4k-animal-bicho-10556334/';
+    //         message = DownloadService.downloadFile(url);
+
+    //         message = 'Download realizado com sucesso!';
+    
+    //         return res.status(200).send({
+    //             status: 'success',
+    //             message: message
+    //         });
+    //     } catch (error) {
+    //         res.status(400).send({
+    //             status: 'error',
+    //             message: error
+    //         });
+    //     }
+    // }
 
 }

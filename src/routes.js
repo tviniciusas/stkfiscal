@@ -118,6 +118,7 @@ router.get("/admin/documentos/show_historico/:solicitacaoId", HistoricoControlle
 router.get("/admin/documentos/finalizar", FinalizarController.index);
 router.get("/admin/documentos/finalizar/modal_finalizar/:solicitacaoId", FinalizarController.modal_finalizar);
 router.post("/admin/documentos/finalizar", FinalizarController.store);
+router.post("/admin/documentos/download", FinalizarController.download);
 
 router.get("/admin/usuarios", UserController.index_admin);
 router.get("/admin/usuarios/edit/:id", UserController.edit_admin);
