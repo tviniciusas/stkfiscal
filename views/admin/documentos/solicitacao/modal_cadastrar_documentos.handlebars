@@ -24,21 +24,25 @@
                     </div>
                     <!-- /.card-header -->
                     <input type="hidden" id="solicitacoes_id" name="solicitacoes_id" value="{{solicitacaoId}}">
-                    <div class="card-body table-responsive p-0">
-                        <table id="tableDocumentos" class="table table-sm table-striped text-nowrap m-0">
-                            <thead>
-                                <tr>
-                                    <th>Nome</th>
-                                    <th>Descrição</th>
-                                    <th>Extensão</th>
-                                    <th>Adicionar</th>
-                                </tr>
-                            </thead>
-                        </table>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col table-responsive">
+                                <table id="tableDocumentos" class="table table-sm table-striped">
+                                    <thead class="text-nowrap">
+                                        <tr>
+                                            <th>Nome</th>
+                                            <th>Descrição</th>
+                                            <th>Extensão</th>
+                                            <th>Adicionar</th>
+                                        </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="modal-footer justify-content-between">
+            <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
                 <button type="button" onclick="store_solicitacoes_documentos()"
                     class="btn btn-primary">Adicionar</button>
@@ -136,6 +140,7 @@
         documentos.pop(id);
     }
     function store_solicitacoes_documentos() {
+        console.log('store_solicitacoes_documentos');
         $.ajax({
             url: "/admin/documentos/solicitacao/store_solicitacoes_documentos",
             data: {
@@ -147,15 +152,32 @@
             },
             success: function (response) {
                 toastr.options.closeButton = true;
+                console.log('reponseeee: ', response);
                 if (response.status) {
-                    toastr.success(response.msg)
+
+                    if (response.docAdd) {
+                        toastr.success(response.msg)
+                    }
+
                     $('#modal-adicionar-documentos').modal('hide');
                     $('.modal-backdrop').remove();
-                    show_solicitacoes_documentos();
+
+                    setTimeout(function() {
+                        show_solicitacoes_documentos();
+                    }, 1000);
+
+                    if (response.docAdd) {
+                        $('.btn-solicitar').removeClass('disabled');
+                    }
+
+                    console.log(response)
                 } else {
                     toastr.error(response.msg)
                 }
             },
+            error: function (error) {
+                toastr.error(error.responseJSON.message);
+            }
         });
     }
 </script>

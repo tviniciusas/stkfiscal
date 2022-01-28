@@ -10,6 +10,18 @@ const UtilService = require('../services/UtilService');
 const StatusEnum  = require('../enums/StatusEnum');
 const User = require('../models/User');
 
+function fieldsValidate(empresaId, descricao) {
+    var msg = '';
+
+    if (!empresaId) {
+        msg = 'O campo Empresa é obrigatório';
+    }
+    else if (!descricao.trim()) {
+        msg = 'O campo Descricao é obrigatório';
+    }
+    
+    return msg;   
+} 
 
 module.exports = {
 
@@ -24,8 +36,9 @@ module.exports = {
         await Solicitacao.findAll({
             include: [{ model: Empresa, as: 'empresa' }],
             order: [
-                ['dt_solicitado', 'DESC'],
+                ['status', 'ASC'],
                 ['created_at', 'DESC'],
+                ['dt_solicitado', 'DESC']
             ]
         }).then(function(solic) {
             solicitacao = JSON.parse(JSON.stringify(solic, null, 2));
@@ -36,8 +49,6 @@ module.exports = {
                     item.dt_solicitado = UtilService.dateFormat(new Date(item.dt_solicitado));
                 }
             });
-
-            solicitacao['displayName'] = 'John';
         });
 
 
@@ -157,8 +168,10 @@ module.exports = {
         });
     },
 
-    click_tab_documentos(req, res) {
-        return res.status(200).render('./admin/documentos/solicitacao/etapa_documentos', { layout: false })
+    async click_tab_documentos(req, res) {
+        return res.status(200).render('./admin/documentos/solicitacao/etapa_documentos', { 
+            layout: false 
+        })
     },
 
     async store_solicitacao(req, res) {
@@ -166,8 +179,14 @@ module.exports = {
         const { solicitacoes_id, empresas_id, descricao } = req.body;
         var solicitacao_return;
         var razaoSocial;
+        var message = '';
 
         try {
+
+            message = fieldsValidate(empresas_id, descricao);
+            if (message !== '') {
+                throw message;
+            }
 
             await Empresa.findByPk(empresas_id).then(function(emp) {
                 razaoSocial = emp.razao;
@@ -215,12 +234,17 @@ module.exports = {
                 })
     
             return res.status(200).render('./admin/documentos/solicitacao/etapa_documentos', { 
-                layout: false, solicitacao: solicitacao_return 
+                layout: false, solicitacao: solicitacao_return, message: message 
             });
             
         } catch (error) {
-            return res.status(400).render('./admin/documentos/solicitacao/etapa_documentos', { 
-                layout: false, solicitacao: solicitacao_return 
+            if (message === '') {
+                error = error.errors[0].message
+            }
+
+            return res.status(400).send({
+                status: 'error',
+                message: error
             });
         }
     },
@@ -271,9 +295,22 @@ module.exports = {
         const { solicitacoes_id } = req.body;
         var status = StatusEnum.SOLICITADO.descricao;
         var razaoSocial;
+        var solicitacao;
 
         try {
-            var solicitacao = await Solicitacao.findByPk(solicitacoes_id );
+            //var solicitacao = await Solicitacao.findByPk(solicitacoes_id );
+            var array = []
+
+            var solicitacao = await Solicitacao.findByPk(solicitacoes_id);
+            await SolicitacaoDocumentos.findAll({
+                include: [{model: Documento, as: 'documento'}],
+                where: {solicitacaoId: solicitacoes_id}
+            }).then(sd => {
+                if (sd.length < 1) {
+                    throw 'Adicione ao menos um documento'
+                }
+            });
+
             var emrpesaId = solicitacao.empresaId;
 
             await Empresa.findByPk(emrpesaId).then(function(emp) {
@@ -295,13 +332,13 @@ module.exports = {
 
             return res.status(200).send({
                 status: true,
-                msg: "Solicitação concluída com sucesso!"
+                message: "Solicitação concluída com sucesso!"
             });
             
         } catch (error) {
             return res.status(400).send({
                 status: true,
-                msg: error
+                message: error
             });
         }
 
@@ -312,26 +349,36 @@ module.exports = {
 
         const { solicitacoes_id, solicitacoes_doc } = req.body;
         var solicitacao;
+        var documentoAdicionado = false;
 
         await Solicitacao.findByPk(solicitacoes_id).then(function (solic) {
             solicitacao = JSON.parse(JSON.stringify(solic, null, 2));
         });
 
-        var solic_ids = solicitacoes_doc.split(",");
+        var solic_ids;
+        if (solicitacoes_doc) {
+            solic_ids = solicitacoes_doc.split(",");
+        }
+
         var ano = new Date().getFullYear();
 
-        solic_ids.forEach(async function (id, i) {
-            await SolicitacaoDocumentos.create({
-                solicitacaoId: solicitacao.id,
-                documentoId: id,
-                ano: ano
-            })
-        });
+        if (solic_ids) {
+            solic_ids.forEach(async function (id, i) {
+                await SolicitacaoDocumentos.create({
+                    solicitacaoId: solicitacao.id,
+                    documentoId: id,
+                    ano: ano
+                })
+            }); 
+            
+            documentoAdicionado = true;
+        }
 
         return res.status(200).send({
             status: true,
+            docAdd: documentoAdicionado,
             msg: "Documentos inseridos com sucesso"
-        })
+        });
     },
 
     async edit_solcicitacoes_documentos(req, res) {
@@ -351,17 +398,23 @@ module.exports = {
     async destroy_solcicitacoes_documentos(req, res) {
 
         const id  = req.body.id;
-
+        
         await SolicitacaoDocumentos.destroy({
             where: {
                 id: id
             }
-
         });
-
+        
+        var count = await SolicitacaoDocumentos.findAndCountAll({
+            where: {
+                id: id
+            }
+        })
+        
         return res.status(200).send({
             status: 1,
-            message: 'Deletado com sucesso!'
+            message: 'Deletado com sucesso!',
+            count: count.count
         })
     },
 

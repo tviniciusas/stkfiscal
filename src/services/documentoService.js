@@ -5,7 +5,7 @@ function filtrarDocumentos(documentos = [], solicitacaoDocumentos = []) {
         var inserir = true;
 
         solicitacaoDocumentos.forEach(soli => {
-            if(doc.id === soli.documento_id) {
+            if(doc.id === soli.documentoId) {
                 inserir = false;
             }
         });

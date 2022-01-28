@@ -1,3 +1,7 @@
+<style type="text/css">
+    .required { color: #dc3545; }
+</style>
+
 <div class="card card-primary card-outline card-outline-tabs">
     <div class="card-header p-0 border-bottom-0">
         <ul class="nav nav-tabs" id="custom-tabs-four-tab" role="tablist">
@@ -26,21 +30,18 @@
                 <div class="row">
                     <div class="col-sm-6">
                         <div class="form-group">
-                            <label>Empresa</label>
+                            <label>
+                                Empresa
+                                <span class="required">*</span>
+                            </label>
                             <select id="empresas_id" name="empresas_id" class="form-control select2bs4" 
                             style="width: 100%;">
                                 <option value="">Selecione...</option>
                                 {{#each empresas}}
-                                    {{#if solicitacao.empresa}}
-                                        <option selected value="{{solicitacao.empresa.id}}">
-                                            {{solicitacao.empresa.nome}}
+                                    {{#if this}}
+                                        <option value="{{this.id}}">
+                                            {{this.razao}}
                                         </option>
-                                    {{else}}
-                                        {{#if this}}
-                                            <option value="{{this.id}}">
-                                                {{this.nome}}
-                                            </option>
-                                        {{/if}}
                                     {{/if}}
                                 {{/each}}
                             </select>
@@ -50,9 +51,12 @@
                 <div class="row mt-2">
                     <div class="col-sm-12">
                         <div class="form-group">
-                            <label for="descricao">Descrição da solicitação</label>
+                            <label for="descricao">
+                                Descrição da solicitação
+                                <span class="required">*</span>
+                            </label>
                             <textarea id="descricao" name="descricao" class="form-control" rows="3"
-                                placeholder="Descrição do documento"></textarea>
+                                placeholder="Descrição do documento" maxlength="400"></textarea>
                         </div>
                     </div>
                 </div>
@@ -85,6 +89,10 @@
             $('#custom-tabs-four-documentos-tab').removeClass("disabled");
         }
 
+        //carregar o select com um valor selecionado
+        var solicitacaoEmpresa = '{{solicitacao.empresaId}}';
+        $("#empresas_id option[value='"+solicitacaoEmpresa+"']").attr('selected', 'selected').change();
+
         $('#custom-tabs-four-documentos-tab').on('click', function() {
             if(solicitacaoId) {
                 click_tab_documentos();
@@ -95,7 +103,7 @@
             $.ajax({
                 url: "/admin/documentos/solicitacao/click_tab_documentos",
                 type: "POST",
-                success: function(data) {
+                success: function(data, x, z) {
                     $('#etapa_documentos').html(data);
                     $('#custom-tabs-four-documentos-tab').attr('aria-selected', true);
                     $('#custom-tabs-four-documentos-tab').addClass("active");
@@ -125,7 +133,6 @@
         }
     }
     function store_empresa() {
-        console.log('store_empresa - novo')
         $.ajax({
             url: "/admin/documentos/solicitacao/store_solicitacao",
             type: "POST",
@@ -136,11 +143,12 @@
             },
             beforeSend: function () {
             },
-            success: function async(data, textStatus, xhr) {
-                console.log('store_empresa  - novo - sessesss')
+            success: function(data, textStatus, xhr) {
                 toastr.options.closeButton = true;
+
                 if (xhr.status == 200) {
                     toastr.success("Dados cadastrados com sucesso")
+
                     $('#etapa_documentos').html(data);
                     $('#custom-tabs-four-documentos-tab').removeClass("disabled");
                     $('#custom-tabs-four-historico-tab').removeClass("disabled");

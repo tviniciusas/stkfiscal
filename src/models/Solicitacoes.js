@@ -5,7 +5,16 @@ class Solicitacoes extends Model {
         super.init({
             descricao: {
               type: DataTypes.STRING,
-              allowNull: false
+              allowNull: false,
+              validate: {
+                notNull: {
+                  msg: 'O campo Descrição é obrigatório.'
+                },
+                notEmpty: {
+                  msg: 'O campo Descrição é obrigatório.'
+                },
+                max: 400
+              }
             },
             status: {
               type: DataTypes.STRING,

@@ -31,7 +31,7 @@ module.exports =  {
                 ['name', 'ASC']
             ]
         }).then(function(users) {
-            usuarios = users;
+            usuarios = JSON.parse(JSON.stringify(users, null, 2));
         });
 
         res.render('./admin/usuarios/index', { 
@@ -91,7 +91,7 @@ module.exports =  {
                 name: name, 
                 password: password, 
                 email: email, 
-                empresa_id: empresa_id
+                empresaId: empresa_id
             }).then(function(data) {
                 SendMailService.sendMail(name, email);
                 message = 'Dados alterados com sucesso';

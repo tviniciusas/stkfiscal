@@ -5,26 +5,30 @@
             Documentos</button>
     </div>
     <div class="card card-primary card-outline">
-        <div class="card-body table-responsive p-0">
-            <table id="tableSolicitacoesDocumentos" class="table table-sm table-striped text-nowrap m-0">
-                <thead>
-                    <tr>
-                        <th>Nome</th>
-                        <th>Descrição</th>
-                        <th>Extensão</th>
-                        <th>Ano</th>
-                        <th>Ações</th>
-                    </tr>
-                </thead>
-            </table>
+        <div class="card-body">
+            <div class="row">
+                <div class="col  table-responsive">
+                    <table id="tableSolicitacoesDocumentos" class="table table-sm table-striped">
+                        <thead class="text-nowrap">
+                            <tr>
+                                <th>Nome</th>
+                                <th>Descrição</th>
+                                <th>Extensão</th>
+                                <th>Ano</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
-</div>
-<div style="overflow:auto;">
-    <div style="float:right;">
-        {{!-- <button type="button" id="prevBtn" class="btn btn-muted" onclick="nextPage(-1)">Voltar</button> --}}
-        <button type="button" id="nextBtn" class="btn btn-muted" onclick="painel_solicitacoes()">Sair</button>
-        <button type="button" id="nextBtn" class="btn btn-warning" onclick="finalizar_solicitacao()">Finalizar e Solicitar</button>
+    <div style="overflow:auto;">
+        <div style="float:right;">
+            {{!-- <button type="button" id="prevBtn" class="btn btn-muted" onclick="nextPage(-1)">Voltar</button> --}}
+            <button type="button" id="nextBtn" class="btn btn-muted" onclick="painel_solicitacoes()">Cancelar</button>
+            <button type="button" id="nextBtn" class="btn btn-primary btn-solicitar disabled" onclick="finalizar_solicitacao()">Solicitar</button>
+        </div>
     </div>
 </div>
 
@@ -40,6 +44,14 @@
         $('#modal-adicionar-documentos').on('hidden.bs.modal', function () {
             $("#cadastrar_documento").trigger('reset');
         });
+
+        setTimeout(function() {
+            var tableCount = $('#tableSolicitacoesDocumentos tbody tr td.docs').length;
+            if (tableCount > 0) {
+                $('.btn-solicitar').removeClass('disabled');
+            }
+        }, 500);
+
     });
     function modal_adicionar_documentos() {
         var solicitacoes_id = $("#solicitacoes_id").val();
@@ -54,27 +66,34 @@
         });
     }
     function finalizar_solicitacao() {
-        $.ajax({
-            url: "/admin/documentos/solicitacao/finalizar_solicitacao",
-            type: "POST",
-            data: {
-                solicitacoes_id: $('#solicitacoes_id').val(),
-            },
-            beforeSend: function () {
-            },
-            success: function async(response) {
-                toastr.options.closeButton = true;
-                if (response.status) {
-                    toastr.success("Solicitação finalizada com sucesso")
-                    painel_solicitacoes();
-                } else {
-                    toastr.error(response.message)
+        var tableCount = $('#tableSolicitacoesDocumentos tbody tr td.docs').length;
+
+        console.log(tableCount)
+
+        if (tableCount > 0) {
+            console.log('ok')
+            $.ajax({
+                url: "/admin/documentos/solicitacao/finalizar_solicitacao",
+                type: "POST",
+                data: {
+                    solicitacoes_id: $('#solicitacoes_id').val(),
+                },
+                beforeSend: function () {
+                },
+                success: function async(response) {
+                    toastr.options.closeButton = true;
+                    if (response.status) {
+                        toastr.success(response.message)
+                        painel_solicitacoes();
+                    } else {
+                        toastr.error(response.message)
+                    }
+                },
+                error: function (error) {
+                    toastr.error(error.responseJSON.message);
                 }
-            },
-            error: function (error) {
-                toastr.error(error.responseJSON.message);
-            }
-        });
+            });
+        }
     }
     function show_solicitacoes_documentos() {
         var data = JSON.stringify({ 'solicitacoes_id': 'teste' });
@@ -94,19 +113,22 @@
                 "url": "/admin/documentos/solicitacao/show_solicitacoes_documentos",
                 "data": function (d) {
                     d.solicitacoes_id = $('#solicitacoes_id').val();
-                },
+                }
             },
             "columns": [
-                { "data": "documento.nome" },
+                { "data": "documento.nome", "className": 'docs' },
                 { "data": "documento.descricao" },
                 { "data": "documento.extensao" },
                 { "data": "ano" },
                 {
                     "data": null,
-                    "defaultContent": '<i style="cursor: pointer" class="text-primary icon fas fa-pen editar mr-3" data-toggle="tooltip" title="Editar"></i><i style="cursor: pointer" class="text-danger icon fas fa-trash excluir" data-toggle="tooltip" title="Excluir"></i>'
+                    "defaultContent": '<div class="text-nowrap"><i style="cursor: pointer" class="text-danger icon fas fa-trash excluir" data-toggle="tooltip" title="Excluir"></i></div>'
                 }
             ]
         });
+
+        //<i style="cursor: pointer" class="text-primary icon fas fa-pen editar mr-3" data-toggle="tooltip" title="Editar"></i>
+
         $('#tableSolicitacoesDocumentos tbody').on('click', 'tr .editar', async function () {
             var data = await table.row($(this).parents('tr')).data();
             edit_solcicitacoes_documentos(data.id);
@@ -139,6 +161,10 @@
                 show_solicitacoes_documentos();
                 toastr.options.closeButton = true;
                 toastr.success(response.message)
+
+                if (response.count < 1) {
+                    $('.btn-solicitar').addClass('disabled');
+                }
             },
         });
     }
