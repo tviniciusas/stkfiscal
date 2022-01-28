@@ -145,7 +145,7 @@ module.exports = {
         }
     },
     
-    async historic(req, res) {
+    async historico(req, res) {
 
         var solicitacaoId = req.params.id;
         var historicos;
@@ -162,7 +162,7 @@ module.exports = {
             });
         });
 
-        return res.status(200).render('./admin/documentos/historico/historico', { 
+        return res.status(200).render('./admin/documentos/historico/modal_historico', { 
             layout: false, 
             historicos: historicos
         });

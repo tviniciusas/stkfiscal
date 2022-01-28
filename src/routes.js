@@ -103,7 +103,7 @@ router.post("/admin/documentos/solicitacao/click_tab_documentos", DocumentosSoli
 router.post("/admin/documentos/solicitacao/store_solicitacoes_documentos", DocumentosSolicitacoes.store_solicitacoes_documentos);
 router.post("/admin/documentos/solicitacao/finalizar_solicitacao", DocumentosSolicitacoes.finalizar_solicitacao);
 router.get("/admin/documentos/solicitacao/edit/:id", DocumentosSolicitacoes.edit);
-router.get("/admin/documentos/solicitacao/historico/:id", DocumentosSolicitacoes.historic);
+router.get("/admin/documentos/solicitacao/historico/:id", DocumentosSolicitacoes.historico);
 router.get("/admin/documentos/solicitacao/edit_solcicitacoes_documentos/:id", DocumentosSolicitacoes.edit_solcicitacoes_documentos);
 router.delete("/admin/documentos/solicitacao/destroy_solcicitacoes_documentos", DocumentosSolicitacoes.destroy_solcicitacoes_documentos);
 
