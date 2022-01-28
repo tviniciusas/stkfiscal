@@ -79,24 +79,28 @@
                     }
                 </script>
                 {{#each historicos}}
-                    <div class="canvas">
-                        <div class="linha-vertical"></div>
-                        <div class="circulo"></div>
-                        <div class="linha-vertical2"></div>
-                    </div>
-                    <div class="time">{{this.data_hora}}</div>
-                    <div class="card custom">
-                        <div class="card-body">
-                            <div class="dados">
-                                <div class="status{{@index}}">
-                                    <strong>Status:</strong> <span class="badge">{{this.status}}</span>
-                                </div>
-                                <div class="admin"><strong>Empresa:</strong> {{this.empresa}}</div>
-                                <div><strong>Descrição:</strong> {{this.descricao}}</div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="canvas">
+                                <div class="linha-vertical"></div>
+                                <div class="circulo"></div>
+                                <div class="linha-vertical2"></div>
                             </div>
+                            <div class="time">{{this.data_hora}}</div>
+                            <div class="card custom">
+                                <div class="card-body">
+                                    <div class="dados">
+                                        <div class="status{{@index}}">
+                                            <strong>Status:</strong> <span class="badge">{{this.status}}</span>
+                                        </div>
+                                        <div class="admin"><strong>Empresa:</strong> {{this.empresa}}</div>
+                                        <div><strong>Descrição:</strong> {{this.descricao}}</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <script>addBadge({{@index}}, '{{this.status}}');</script>
                         </div>
                     </div>
-                    <script>addBadge({{@index}}, '{{this.status}}');</script>
                 {{/each}}
             </div>
             <div class="modal-footer">

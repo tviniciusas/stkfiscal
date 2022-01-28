@@ -5,13 +5,13 @@ const DocumentoService = require('../services/DocumentoService');
 function fieldsValidate(documento) {
     var msg = '';
 
-    if (documento.nome === null || documento.nome === '') {
+    if (!documento.nome.trim()) {
         msg = 'O campo Nome é obrigatório';
     }
-    else if (documento.extensao === null || documento.extensao === '') {
+    else if (!documento.extensao.trim()) {
         msg = 'O campo Extensão é obrigatório';
     }
-    else if (documento.descricao === null || documento.descricao === '') {
+    else if (!documento.descricao.trim()) {
         msg = 'O campo Descrição é obrigatório';
     }
     

@@ -11,10 +11,10 @@ const UtilService = require('../services/UtilService.js');
 function fieldsValidate(mes, ano) {
     var msg = '';
 
-    if (mes === null || mes === '') {
+    if (!mes) {
         msg = 'O campo Mês é obrigatório';
     }
-    else if (ano === null || ano === '') {
+    else if (!ano) {
         msg = 'O campo Ano é obrigatório';
     }
     

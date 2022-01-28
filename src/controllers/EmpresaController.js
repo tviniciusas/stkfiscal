@@ -8,28 +8,28 @@ const UtilService = require('../services/UtilService');
 function fieldsValidate(empresa) {
     var msg = '';
 
-    if (empresa.nome === null || empresa.nome === '') {
+    if (!empresa.nome.trim()) {
         msg = 'O campo Nome é obrigatório';
     }
-    else if (empresa.razao === null || empresa.razao === '') {
+    else if (!empresa.razao.trim()) {
         msg = 'O campo Razão Social é obrigatório';
     }
-    else if (empresa.cnpj === null || empresa.cnpj === '') {
+    else if (!empresa.cnpj.trim()) {
         msg = 'O campo CNPJ é obrigatório';
     }
-    else if (empresa.ie === null || empresa.ie === '') {
+    else if (!empresa.ie.trim()) {
         msg = 'O campo Inscrição estadual é obrigatório';
     }
-    else if (empresa.email === null || empresa.email === '') {
+    else if (!empresa.email.trim()) {
         msg = 'O campo E-mail é obrigatório';
     }
-    else if (empresa.telefone === null || empresa.telefone === '') {
+    else if (!empresa.telefone.trim()) {
         msg = 'O campo Telefone é obrigatório';
     }
-    else if (empresa.estado === null || empresa.estado === '') {
+    else if (!empresa.estado) {
         msg = 'O campo Estado é obrigatório';
     }
-    else if (empresa.cidade === null || empresa.cidade === '') {
+    else if (!empresa.cidade) {
         msg = 'O campo Cidade é obrigatório';
     }
     

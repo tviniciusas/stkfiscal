@@ -1,4 +1,6 @@
 <style type="text/css">
+  .table td, .table th { border-top: none; }
+  .required { color: #dc3545; }
 </style>
 
 {{> scripts}}
@@ -8,7 +10,7 @@
     <div class="card-buttons mb-3">
         <button type="button" onclick="cadastrar_usuario()" class="btn btn-primary swalDefaultSuccess"><i
         class="fas fa-plus mr-2"></i>
-            Cadastrar novo usuario
+            Novo usuario
         </button>
     </div>
 
@@ -18,60 +20,61 @@
       <div class="card-header">
         <h3 class="card-title">Usuários</h3>
       </div>
-      <div class="card-body table-responsive p-0">
-        <table id="tableUsers" class="table table-sm table-striped text-nowrap m-0"> 
-          <thead>
-            <tr>
-                <th>Nome</th>
-                <th>E-mail</th>
-                <th>Empresa</th>
-                <th>Ações</th>
-            </tr>
-          </thead>
-          <tbody>
-            <script>
-              function editDesabled(index, empresaClienteId) {
-                if(empresaClienteId) {
-                  var _this = $('.userEdit'+index);
-                  _this.attr('href', '#void');
-                  _this.find('.editar').attr('style', 'color: #cccccc !important');
-                }
-              }
-            </script>
-            {{#if usuarios}}
-              {{#each usuarios}}
+      <div class="card-body">
+        <div class="row">
+          <div class="col table-responsive">
+            <table id="tableUsers" class="table table-sm table-striped"> 
+              <thead class="text-nowrap">
                 <tr>
-                  <td>{{this.name}}</td>
-                  <td>{{this.email}}</td>
-                  <td>{{this.empresaCliente.razao}}</td>
-                  <td>
-                    <a class="userEdit{{@index}}" href="#" onclick="editar_usuario({{this.id}}, {{this.empresaCliente.id}})">
-                        <i style="cursor: pointer" class="text-primary icon fas fa-search editar mr-2" data-toggle="tooltip" title="Editar"></i>
-                    </a>
-
-                    <a href="#" onclick="deletar_usuario({{this.id}})">
-                        <i style="cursor: pointer" class="text-danger icon fas fa-trash excluir mr-2" data-toggle="tooltip" title="Excluir"></i>
-                    </a>
-                  </td>
+                    <th>Nome</th>
+                    <th>E-mail</th>
+                    <th>Empresa</th>
+                    <th>Ações</th>
                 </tr>
-                <script>editDesabled({{@index}}, {{this.empresaCliente.id}});</script>
-              {{/each}}
-            {{else}} 
-              <tr>
-                <td class="dataTables_empty" colspan="4">
-                  <div class='text-center text-muted p-4'>
-                    <i class='icon far fa-folder-open fa-2x'></i><br>
-                    <small>Nenhum documento cadastrado</small><br>
-                    <button type='button' onclick='cadastrar_usuario()' 
-                    class='btn btn-outline-primary swalDefaultSuccess mt-3'>
-                      <i class='fas fa-plus mr-2'></i>Cadastrar agora
-                    </button>
-                  </div>
-                </td>
-              </tr>
-          {{/if}}
-          </tbody>
-        </table>
+              </thead>
+              <tbody>
+                <script>
+                  function editDesabled(index, empresaClienteId) {
+                    if(empresaClienteId) {
+                      var _this = $('.userEdit'+index);
+                      _this.attr('style', 'color: #cccccc !important');
+                    }
+                  }
+                </script>
+                {{#if usuarios}}
+                  {{#each usuarios}}
+                    <tr>
+                      <td>{{this.name}}</td>
+                      <td>{{this.email}}</td>
+                      <td>{{this.empresaCliente.razao}}</td>
+                      <td>
+                        <i style="cursor: pointer" class="userEdit{{@index}} text-primary icon fas fa-pen editar mr-3" 
+                        data-toggle="tooltip" title="Editar" onclick="editar_usuario({{this.id}}, {{this.empresaCliente.id}})"></i>
+
+                        <i style="cursor: pointer" class="text-danger icon fas fa-trash excluir mr-2" 
+                        data-toggle="tooltip" title="Excluir" onclick="deletar_usuario({{this.id}})"></i>
+                      </td>
+                    </tr>
+                    <script>editDesabled({{@index}}, {{this.empresaCliente.id}});</script>
+                  {{/each}}
+                {{else}} 
+                  <tr>
+                    <td class="dataTables_empty" colspan="4">
+                      <div class='text-center text-muted p-4'>
+                        <i class='icon far fa-folder-open fa-2x'></i><br>
+                        <small>Nenhum usuário cadastrado</small><br>
+                        <button type='button' onclick='cadastrar_usuario()' 
+                        class='btn btn-outline-primary swalDefaultSuccess mt-3'>
+                          <i class='fas fa-plus mr-2'></i>Cadastrar agora
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+              {{/if}}
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -93,7 +96,10 @@
             <div class="row">
               <div class="col-sm-12">
                 <div class="form-group mb-3">
-                  <label for="name">Nome</label>
+                  <label for="name">
+                    Nome
+                    <span class="required">*</span>
+                  </label>
                   <input value="\{{name}}" type="text" id="name" name="name" class="form-control"
                       placeholder="Nome do usuário">
                 </div>
@@ -103,7 +109,10 @@
             <div class="row">
               <div class="col-sm-12">
                 <div class="form-group mb-3">
-                  <label for="email">E-mail</label>
+                  <label for="email">
+                    E-mail
+                    <span class="required">*</span>
+                  </label>
                   <input value="\{{email}}" type="text" id="email" name="email" class="form-control"
                       placeholder="E-mail">
                 </div>

@@ -7,9 +7,9 @@ module.exports =  {
 
     async index(req, res) {
         const users = await User.findAll();
-        if(users == '' || users == null) {
-            return res.status(200).send({message: "Nenhum usuário cadastrado"});
-        }
+        // if(users == '' || users == null) {
+        //     return res.status(200).send({message: "Nenhum usuário cadastrado"});
+        // }
         return res.status(200).send({users});
     },
 
@@ -68,12 +68,12 @@ module.exports =  {
 
         try {
 
-            if (name === null || name === '') {
+            if (!name.trim()) {
                 message = 'O campo Nome é obrigatório.';
                 throw message;
             }
 
-            if (email === null || email === '') {
+            if (!email.trim()) {
                 message = 'O campo E-mail é obrigatório.';
                 throw message;
             }
