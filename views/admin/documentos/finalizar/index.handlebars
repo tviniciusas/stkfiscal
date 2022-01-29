@@ -26,9 +26,8 @@
                             <td>{{this.dt_solicitado}}</td>
                             <td>{{this.dt_atendido}}</td>
                             <td>
-                                <a href="#" onclick="modal_finalizar({{this.id}})">
-                                    <i style="cursor: pointer" class="text-info icon fas fa-clipboard-check historico mr-2" data-toggle="tooltip" title="Finalizar"></i>
-                                </a>
+                                <i style="cursor: pointer" class="text-info icon fas fa-clipboard-check mr-2" 
+                                data-toggle="tooltip" title="Finalizar" onclick="modal_finalizar({{this.id}})"></i>
                             </td>
                         </tr>
                     {{/each}}

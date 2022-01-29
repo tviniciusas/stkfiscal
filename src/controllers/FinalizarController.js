@@ -136,15 +136,19 @@ module.exports =  {
         try {
             const upload = await Upload.findByPk(uploadId);
 
-            const url = 'https://www.pexels.com/pt-br/foto/papel-de-parede-4k-wallpaper-4k-animal-bicho-10556334/';
-            message = DownloadService.downloadFile(url);
+            //const url = 'https://images.pexels.com/photos/1036657/pexels-photo-1036657.jpeg';
+            const url = 'https://images.pexels.com/photos/1451040/pexels-photo-1451040.jpeg';
+            await DownloadService.downloadFile(url, function(fn) {
+                console.log(fn);
+                message = 'Download realizado com sucesso!';
 
-            message = 'Download realizado com sucesso!';
-    
-            return res.status(200).send({
-                status: 'success',
-                message: message
+                return res.status(200).send({
+                    status: 'success',
+                    message: message
+                });
             });
+
+    
         } catch (error) {
             res.status(400).send({
                 status: 'error',

@@ -150,17 +150,17 @@
 
     function download(id) {
         console.log(id);
-    //    $.ajax({
-    //        url: '/admin/documentos/download',
-    //        data: {uploadId: id},
-    //        type: "POST",
-    //        success: function(response) {
-    //            toastr.options.closeButton = true;
-    //            toastr.success(response.message);
-    //        },
-    //        error: function (error) {
-    //            toastr.error(error.responseJSON.message);
-    //        }
-    //    });
+        $.ajax({
+            url: '/admin/documentos/download',
+            data: {uploadId: id},
+            type: "POST",
+            success: function(response) {
+                toastr.options.closeButton = true;
+                toastr.success(response.message);
+            },
+            error: function (error) {
+                toastr.error(error.responseJSON.message);
+            }
+        });
     }
 </script>
