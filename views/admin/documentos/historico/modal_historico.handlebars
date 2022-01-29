@@ -47,6 +47,41 @@
 
 {{> scripts}}
 
+<script>
+    function addBadge(index, status) {
+        var label = '';
+        switch(status) {
+            case 'DIGITAÇÃO': 
+                label = 'primary';
+                break;
+            case 'SOLICITADO': 
+                label = 'warning';
+                break;
+            case 'ATENDIDO': 
+                label = 'info';
+                break;
+            case 'FINALIZADO': 
+                label = 'success';
+                break;
+        }
+        
+        $(".status"+index).find('span').addClass('badge-'+label);
+    }
+    //pega o percentual de aumento na altura 
+    //de uma div e aplica na outra
+    function getHeight(index) {
+        var hAtual = $('.dados'+index).height();
+        var hLinVert = $('.lv'+index).height();
+        var hBase = 72;
+
+        var x = hAtual - hBase;
+        var z = x * 100 / hAtual;
+        var h = hLinVert + z;
+
+        $('.lv'+index).height(h);
+    }
+</script>
+
 <div class="modal fade" id="modal-historico">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -57,39 +92,18 @@
                 </button>
             </div>
             <div class="modal-body">
-                <script>
-                    function addBadge(index, status) {
-                        var label = '';
-                        switch(status) {
-                            case 'DIGITAÇÃO': 
-                                label = 'primary';
-                                break;
-                            case 'SOLICITADO': 
-                                label = 'warning';
-                                break;
-                            case 'ATENDIDO': 
-                                label = 'info';
-                                break;
-                            case 'FINALIZADO': 
-                                label = 'success';
-                                break;
-                        }
-                        
-                        $(".status"+index).find('span').addClass('badge-'+label);
-                    }
-                </script>
                 {{#each historicos}}
                     <div class="row">
                         <div class="col">
                             <div class="canvas">
                                 <div class="linha-vertical"></div>
                                 <div class="circulo"></div>
-                                <div class="linha-vertical2"></div>
+                                <div class="linha-vertical2 lv{{@index}}"></div>
                             </div>
                             <div class="time">{{this.data_hora}}</div>
                             <div class="card custom">
                                 <div class="card-body">
-                                    <div class="dados">
+                                    <div class="dados{{@index}}">
                                         <div class="status{{@index}}">
                                             <strong>Status:</strong> <span class="badge">{{this.status}}</span>
                                         </div>
@@ -98,7 +112,10 @@
                                     </div>
                                 </div>
                             </div>
-                            <script>addBadge({{@index}}, '{{this.status}}');</script>
+                            <script>
+                                addBadge({{@index}}, '{{this.status}}'); 
+                                setTimeout(function() {getHeight({{@index}});}, 500);
+                            </script>
                         </div>
                     </div>
                 {{/each}}
