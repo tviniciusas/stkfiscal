@@ -1,4 +1,4 @@
-const file = require('../config/Upload');
+const file = require('../config/upload');
 const User = require('../models/User.js');
 const Upload = require('../models/Upload.js');
 const Empresa = require('../models/Empresa');
