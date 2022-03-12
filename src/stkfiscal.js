@@ -87,7 +87,7 @@ app.use('/plugins', express.static('plugins'))
 app.use(routes);
 
 
-app.listen(3000,  (req, res) => {
+app.listen(3030,  (req, res) => {
     console.log(`** Servidor rodando em http://localhost:3000/ **`);
 })
 
