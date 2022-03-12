@@ -1,6 +1,6 @@
 const Documento = require('../models/Documento');
 const SolicitacaoDocumentos = require('../models/SolicitacaoDocumentos');
-const DocumentoService = require('../services/DocumentoService');
+const DocumentoService = require('../services/documentoService');
 
 function fieldsValidate(documento) {
     var msg = '';
